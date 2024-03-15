@@ -66,4 +66,8 @@ f: fclean
 re: fclean
 	$(MAKE) all
 
+t:
+	@$(CC) $(CFLAGS) $(INC_DIR) test/spacer_test.c src/spacer.c -o bin/spacer_test
+	@./bin/spacer_test
+
 .PHONY: all clean fclean re run
