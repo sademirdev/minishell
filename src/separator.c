@@ -1,37 +1,38 @@
-#include <stdbool.h>
-#include <stdint.h>
+#include "minishell.h"
 
-int64_t	separated_list_len(char *prompt);
 int64_t	pass_quoted_str(char *p, int64_t *oi);
 
-// char	**separate_prompt_by_space(char *prompt)
-// {
-// 	return 0;
-// }
-
-int64_t	separated_list_len(char *prompt)
+t_token	*separate_prompt_by_space(t_token **tokens, char *prompt)
 {
 	int64_t	i;
-	int64_t	len;
+	int64_t	start;
+	char	*data;
+	t_token	*new;
 
 	i = 0;
-	len = 0;
+	start = 0;
 	while (prompt[i])
 	{
 		while (prompt[i] && prompt[i] == ' ')
 			i++;
-		if (prompt[i])
-			len++;
+		start = i;
 		while (prompt[i] && prompt[i] != ' ')
 		{
 			if (prompt[i] && (prompt[i] == '\'' || prompt[i] == '"'))
 				if (pass_quoted_str(prompt, &i) == -42)
-					return (-42);
+					return (NULL);
 			while (prompt[i] && prompt[i] != ' ' && prompt[i] != '\'' && prompt[i] != '"')
 				i++;
 		}
+		data = ft_substr(prompt, start, i - start);
+		if (!data)
+			return (token_dispose(tokens), NULL);
+		new = token_new(data, NONE);
+		if (!new)
+			return (NULL);
+		token_add(*tokens, new);
 	}
-	return (len);
+	return (*tokens);
 }
 
 int64_t	pass_quoted_str(char *p, int64_t *oi)

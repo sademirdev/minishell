@@ -8,7 +8,7 @@ BIN_DIR				=	bin
 INC_DIR				= -Iinc
 OBJ_DIR				=	build
 NAME					= $(BIN_DIR)/$(PROGRAM)
-SRCS					= src/spacer.c
+SRCS					= src/separator.c src/token.c
 OBJS					= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CMD						= $(CMD_DIR)/$(PROGRAM).c
 DEPENDENCIES	=
@@ -67,7 +67,10 @@ re: fclean
 	$(MAKE) all
 
 t:
-	@$(CC) $(CFLAGS) $(INC_DIR) test/spacer_test.c src/spacer.c -o bin/spacer_test
-	@./bin/spacer_test
+	@$(CC) $(CFLAGS) $(INC_DIR) test/separator_test.c src/separator.c src/util.c src/token.c -o bin/separator_test
+	@./bin/separator_test
+# t:
+# 	@$(CC) $(CFLAGS) $(INC_DIR) test/token_test.c src/token.c -o bin/token_test
+# 	@./bin/token_test
 
 .PHONY: all clean fclean re run

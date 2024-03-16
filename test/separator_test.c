@@ -59,45 +59,28 @@ void test_pass_quoted_str()
 	}
 }
 
-void test_separated_list_len()
+void test_separate_prompt_by_space()
 {
 	typedef struct {
 		char	*name;
 		char	*desc;
+		t_token *token;
 		char	*prompt;
-		int64_t	expected;
+		t_token	*expected;
 	} c;
+
+	t_token *t0_token = token_new("", INIT);
+	t_token *t0_expected = token_new("", INIT);
+	t0_expected->next = token_new("at", NONE);
+	t0_expected->next->next = token_new("adam'a 'bbb", NONE);
 
 	c testCases[] = {
 		{
 			.name = __FILE__,
 			.desc = "return len when success 1",
+			.token = t0_token,
 			.prompt = "at adam'a 'bbb",
-			.expected = 2,
-		},
-		{
-			.name = __FILE__,
-			.desc = "return len when success 2",
-			.prompt = " 'a 'b 'aa ''bb'a'b' a ''",
-			.expected = 4,
-		},
-		{
-			.name = __FILE__,
-			.desc = "return len when success 3",
-			.prompt = "''''''''''a'' ''a '' aa'' a's' ",
-			.expected = 5,
-		},
-		{
-			.name = __FILE__,
-			.desc = "return len when success 4",
-			.prompt = "' a\"'\"\" \" bc\" \"'''\"",
-			.expected = 3,
-		},
-		{
-			.name = __FILE__,
-			.desc = "return len when quote not closed",
-			.prompt = "' a\"'\"\" \" bc\" \"'''",
-			.expected = -42,
+			.expected = t0_expected,
 		},
 	};
 
@@ -106,8 +89,8 @@ void test_separated_list_len()
 	while (i < size)
 	{
 		c tc = testCases[i];
-		int64_t actual = separated_list_len(tc.prompt);
-		equal_int64(tc.name, tc.desc, actual, tc.expected);
+		t_token *actual = separate_prompt_by_space(&tc.token, tc.prompt);
+		equal_token_list(tc.name, tc.desc, actual, tc.expected);
 		i++;
 	}
 }
@@ -115,5 +98,5 @@ void test_separated_list_len()
 int main(void)
 {
 	test_pass_quoted_str();
-	test_separated_list_len();
+	test_separate_prompt_by_space();
 }
