@@ -7,7 +7,7 @@ t_token	*token_new(char *data, t_token_type type)
 
 	if (!data)
 		return (NULL);
-	token = (t_token *) malloc(sizeof token);
+	token = (t_token *) malloc(sizeof (t_token));
 	if (!token)
 		return (NULL);
 	token->next = NULL;
@@ -18,7 +18,7 @@ t_token	*token_new(char *data, t_token_type type)
 
 void	token_add(t_token *root, t_token *new)
 {
-	if (!root || !new)
+	if (!root)
 		return ;
 	while (root->next)
 		root = root->next;

@@ -9,6 +9,8 @@ t_token	*separate_prompt_by_space(t_token **tokens, char *prompt)
 	char	*data;
 	t_token	*new;
 
+	if (!tokens || !*tokens || !prompt)
+		return (NULL);
 	i = 0;
 	start = 0;
 	while (prompt[i])
