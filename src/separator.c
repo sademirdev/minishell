@@ -64,3 +64,14 @@ int64_t	pass_quoted_str(char *p, int64_t *oi)
 	}
 	return (0);
 }
+
+t_token	*extract_meta_chars(t_token	*tokens)
+{
+	t_token	tmp;
+
+	while (tokens->next)
+	{
+		// todo(sademir): complete this function!
+		tokens = tokens->next;
+	}
+}

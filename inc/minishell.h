@@ -24,6 +24,7 @@ typedef struct s_token
 	char			*data;
 	t_token_type	type;
 	struct s_token	*next;
+	struct s_token	*prev;
 }	t_token;
 
 int64_t	ft_strlen(const char *s);

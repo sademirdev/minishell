@@ -11,6 +11,7 @@ t_token	*token_new(char *data, t_token_type type)
 	if (!token)
 		return (NULL);
 	token->next = NULL;
+	token->prev = NULL;
 	token->data = data;
 	token->type = type;
 	return (token);
@@ -23,22 +24,22 @@ void	token_add(t_token *root, t_token *new)
 	while (root->next)
 		root = root->next;
 	root->next = new;
+	root->next->prev = root;
 }
 
-void	token_dispose(t_token **root)
+void	token_add_next(t_token *token, t_token *new)
 {
-	t_token *temp;
-
-	if (!root || !*root)
+	if (!token || !new)
 		return ;
-	temp = *root;
-	while (temp->next)
-	{
-		root = &temp;
-		temp = temp->next;
-		free((*root)->data);
-		(*root)->data = NULL;
-		free(*root);
-		*root = NULL;
-	}
+	token->next = new;
+	token->next->prev = token;
+}
+
+void	token_add_prev(t_token **token, t_token *new)
+{
+	if (!token || !*token || !new)
+		return ;
+	(*token)->prev = new;
+	new->next = *token;
+	// todo(hkizrak-): fix segmentation error!
 }

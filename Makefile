@@ -67,6 +67,7 @@ re: fclean
 	$(MAKE) all
 
 t:
+	@mkdir -p bin
 	@$(CC) $(CFLAGS) $(INC_DIR) test/separator_test.c src/separator.c src/util.c src/token.c -o bin/separator_test
 	@./bin/separator_test
 # t:
