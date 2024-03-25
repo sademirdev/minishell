@@ -1,2 +1,6 @@
 .vscode/
+build/
+bin/
+
 .DS_Store
+*.out
