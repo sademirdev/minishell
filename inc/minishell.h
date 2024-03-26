@@ -26,6 +26,9 @@ typedef struct s_token
 	struct s_token	*next;
 	struct s_token	*prev;
 }	t_token;
+// Komutun kendisi için bir char *
+// Komutun argümanları için bir char **
+
 
 int64_t	ft_strlen(const char *s);
 char	*ft_strdup(const char *src);
