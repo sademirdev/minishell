@@ -73,7 +73,7 @@ void	token_add_prev(t_token **token, t_token *new)
 
 void	token_dispose(t_token **token)
 {
-	if (!token && !*token)
+	if (!token)
 		return ;
 	if (*token)
 	{
@@ -107,10 +107,12 @@ int64_t	token_count_pipe(t_token *token)
 	return (count);
 }
 
+// todo(apancar): separate function for norm
 t_token	**token_separate_by_pipe(t_token *token)
 {
 	t_token	**token_arr;
 	t_token	*iter;
+	t_token	*tmp;
 	t_token	*tmp_root;
 	int64_t	i;
 
@@ -124,45 +126,20 @@ t_token	**token_separate_by_pipe(t_token *token)
 	{
 		if (iter->type == PIPE)
 		{
+			tmp = iter;
 			token_arr[i] = tmp_root;
 			tmp_root = iter->next;
 			iter->prev->next = NULL;
 			iter = iter->next;
-			// todo(sademir): handle freeing last PIPE
-			if (tmp_root)
-				token_dispose(&tmp_root->prev);
+			if (tmp)
+				token_dispose(&tmp);
 			if (tmp_root && tmp_root->type == PIPE)
 				return (NULL); // todo(sademir): give syntax error
 			i++;
 		}
 		else
-		{
 			iter = iter->next;
-		}
 	}
 	token_arr[i] = NULL;
 	return (token_arr);
 }
-
-// #include <stdio.h>
-// #include <string.h>
-// int main()
-// {
-// 	t_token *new = token_new(strdup("1"), CMD);
-// 	token_add_last(new, token_new(strdup("1"), ARG));
-// 	token_add_last(new, token_new(strdup("1"), PIPE));
-// 	// token_dispose(&new->next->next);
-// 	token_dispose(&new->next);
-// 	token_dispose(&new);
-// 	// token_add_last(new, token_new(strdup("root2"), CMD));
-// 	// token_add_last(new, token_new(strdup("d"), ARG));
-// 	// token_add_last(new, token_new(strdup("d"), ARG));
-// 	// token_add_last(new, token_new(strdup("pipe2"), PIPE));
-// 	// token_add_last(new, token_new(strdup("d"), ARG));
-
-// 	t_token **at = token_separate_by_pipe(new);
-// 	free(at);
-// 	// printf("1. %p\n", at[0]->next->next);
-// 	// printf("2. %p\n", at[1]->next->next->next);
-
-// }
