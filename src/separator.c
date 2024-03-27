@@ -1,15 +1,17 @@
+#include <stdlib.h>
 #include "minishell.h"
 
 int64_t	pass_quoted_str(char *p, int64_t *oi);
 
-t_token	*separate_prompt_by_space(t_token **tokens, char *prompt)
+t_token	*separate_prompt_by_space(char *prompt)
 {
 	int64_t	i;
 	int64_t	start;
 	char	*data;
 	t_token	*new;
+	t_token	*tokens;
 
-	if (!tokens || !*tokens || !prompt)
+	if (!prompt)
 		return (NULL);
 	i = 0;
 	start = 0;
@@ -31,10 +33,12 @@ t_token	*separate_prompt_by_space(t_token **tokens, char *prompt)
 			return (token_dispose(tokens), NULL);
 		new = token_new(data, NONE);
 		if (!new)
-			return (NULL);
-		token_add(*tokens, new);
+			return (free(data), token_dispose(tokens), NULL);
+		tokens = token_add_last(tokens, new);
+		if (!tokens)
+			return (free(data), free(new), NULL);
 	}
-	return (*tokens);
+	return (tokens);
 }
 
 int64_t	pass_quoted_str(char *p, int64_t *oi)
@@ -67,11 +71,13 @@ int64_t	pass_quoted_str(char *p, int64_t *oi)
 
 t_token	*extract_meta_chars(t_token	*tokens)
 {
-	t_token	tmp;
+	// t_token	tmp;
 
-	while (tokens->next)
-	{
-		// todo(sademir): complete this function!
-		tokens = tokens->next;
-	}
+	// while (tokens->next)
+	// {
+	// 	// todo(sademir): complete this function!
+	// 	tokens = tokens->next;
+	// }
+	(void)tokens;
+	return (NULL);
 }
