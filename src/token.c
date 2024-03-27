@@ -22,6 +22,7 @@ t_token	*token_add_last(t_token *token, t_token *new)
 	t_token	*root;
 
 	root = token;
+	printf("token: %p\n", token);
 	if (!root)
 	{
 		root = (t_token *) malloc(sizeof(t_token));
@@ -32,7 +33,8 @@ t_token	*token_add_last(t_token *token, t_token *new)
 	while (token->next)
 		token = token->next;
 	token->next = new;
-	token->next->prev = token;
+	if (token->next)
+		token->next->prev = token;
 	return (root);
 }
 
