@@ -17,7 +17,10 @@
 
 typedef struct s_execute
 {
-	char	*path;
+	char	*cmd;
+	char	*operator;
+	char	*file;
+	char	*path_of_cmd;
 	char	**args;
 	struct s_execute	*next;
 }	t_execute;
