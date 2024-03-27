@@ -29,36 +29,53 @@ t_execute	**init_promt(t_token **head, char *envp[])
 {
 	t_token		*tmp;
 	t_execute	*exec;
-	t_execute	**promts;
+	t_execute	**rtrn;
 
-	promts = (t_execute **)malloc(sizeof(t_execute *));
-	exec = *promts;
+	exec = NULL;
+	*rtrn = &exec;
 	tmp = *head;
 	while (tmp)
 	{
-		if (tmp->type != PIPE)
+		if (tmp->type == PIPE)
 		{
-			define_n_add(tmp, exec, envp);
+			pipe_came(exec);
+			exec = exec->next;
 		}
 		else
-			exec = exec->next;
+			define_n_add(tmp, exec);
 		tmp = tmp->next;
 	}
-	
-	return (0);
+	return (rtrn);
 }
 
-//Bu fonksiyon tokenin tipine göre işlem yapacak
-t_execute	*define_n_add(t_token *head, t_execute *exec, char *envp[])
+//Pipe geldiği durumda yeni bir execute yapısını oluşturacak
+void	pipe_came(t_execute *tmp)
 {
-	if (head->type <= 7 && head->type >= 4)
-		exec->operator = head->data;
-	else if (head->type == CMD)
-	{
-		exec->cmd = head->data;
-		exec->path_of_cmd = ft_findpath(exec->cmd, envp);
-	}
+	t_execute	*added;
 
+	added = malloc(sizeof(t_execute));
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = added;
+}
+
+//Tokenları execute yapısına ekleyecek
+void	define_n_add(t_token *head, t_execute *exec)
+{
+	if (head->type == CMD)
+		exec->cmd = ft_strdup(head->data);
+	else if (head->type == ARG)
+	{
+		exec->args = ft_srtjoin(exec->args, head->data);
+		exec->args = ft_srtjoin(exec->args, " ");
+	}
+	else if (head->type >= 4 && head->type <= 7)
+		exec->operator = ft_strdup(head->data);
+	else if (head->type == PIPE)
+	{
+		exec->next = malloc(sizeof(t_execute));
+		exec = exec->next;
+	}
 }
 
 //Genel manada bütün error mesajlarımızı burası döndürecek
