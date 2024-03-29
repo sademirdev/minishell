@@ -3,13 +3,29 @@
 
 int64_t	pass_quoted_str(char *p, int64_t *oi);
 
+int64_t	create_separated_node(t_token **root, char *prompt, int64_t start, int64_t i)
+{
+	char	*data;
+	t_token	*new;
+
+	data = ft_substr(prompt, start, i - start);
+	if (!data)
+		return (token_dispose(root), 1);
+	new = token_new(data, NONE);
+	if (!new)
+		return (free(data), token_dispose(root), 1);
+	*root = token_add_last(*root, new);
+	if (!*root)
+		return (free(data), free(new), 1);
+	return (0);
+}
+
+// todo(apancar): handle if return NULL, (syntax error)
 t_token	*separate_prompt_by_space(char *prompt)
 {
 	int64_t	i;
 	int64_t	start;
-	char	*data;
-	t_token	*new;
-	t_token	*tokens;
+	t_token	*root;
 
 	if (!prompt)
 		return (NULL);
@@ -28,17 +44,11 @@ t_token	*separate_prompt_by_space(char *prompt)
 			while (prompt[i] && prompt[i] != ' ' && prompt[i] != '\'' && prompt[i] != '"')
 				i++;
 		}
-		data = ft_substr(prompt, start, i - start);
-		if (!data)
-			return (token_dispose(&tokens), NULL);
-		new = token_new(data, NONE);
-		if (!new)
-			return (free(data), token_dispose(&tokens), NULL);
-		tokens = token_add_last(tokens, new);
-		if (!tokens)
-			return (free(data), free(new), NULL);
+		// todo(sademir): add constants to header '0'
+		if (create_separated_node(&root, prompt, start, i) != 0)
+			return (NULL);
 	}
-	return (tokens);
+	return (root);
 }
 
 int64_t	pass_quoted_str(char *p, int64_t *oi)
@@ -81,150 +91,248 @@ t_token_type	get_meta_type(char *data, int64_t i)
 		return (RED_RR);
 	if (data[i] == '>')
 		return (RED_R);
-	return (NONE);
+	else
+		return (NONE);
 }
 
 void	token_append_meta_pipe(t_token **token)
 {
-	t_token_type	type;
 	t_token			*new;
 	char			*data;
 
-	if (type == PIPE)
-	{
-		data = ft_strdup("|");
-		if (!data)
-			return ; // todo(sademir): handle error
-		new = token_new(data, PIPE);
-		if (!new)
-			return ; // todo(sademir): handle error
-		token_add_prev(token, new);
-	}
+	data = ft_strdup("|");
+	if (!data)
+		return ; // todo(sademir): handle error
+	new = token_new(data, PIPE);
+	if (!new)
+		return ; // todo(sademir): handle error
+	token_add_prev(token, new);
 }
 
 void	token_append_meta_redl(t_token **token)
 {
-	t_token_type	type;
 	t_token			*new;
 	char			*data;
 
-	if (type == RED_L)
-	{
-		data = ft_strdup("<");
-		if (!data)
-			return ; // todo(sademir): handle error
-		new = token_new(data, RED_L);
-		if (!new)
-			return ; // todo(sademir): handle error
-		token_add_prev(token, new);
-	}
+	data = ft_strdup("<");
+	if (!data)
+		return ; // todo(sademir): handle error
+	new = token_new(data, RED_L);
+	if (!new)
+		return ; // todo(sademir): handle error
+	token_add_prev(token, new);
 }
 
 void	token_append_meta_redll(t_token **token)
 {
-	t_token_type	type;
 	t_token			*new;
 	char			*data;
 
-	if (type == RED_LL)
-	{
-		data = ft_strdup("<<");
-		if (!data)
-			return ; // todo(sademir): handle error
-		new = token_new(data, RED_LL);
-		if (!new)
-			return ; // todo(sademir): handle error
-		token_add_prev(token, new);
-	}
+	data = ft_strdup("<<");
+	if (!data)
+		return ; // todo(sademir): handle error
+	new = token_new(data, RED_LL);
+	if (!new)
+		return ; // todo(sademir): handle error
+	token_add_prev(token, new);
 }
 
 void	token_append_meta_redr(t_token **token)
 {
-	t_token_type	type;
 	t_token			*new;
 	char			*data;
 
-	if (type == RED_R)
-	{
-		data = ft_strdup(">");
-		if (!data)
-			return ; // todo(sademir): handle error
-		new = token_new(data, RED_R);
-		if (!new)
-			return ; // todo(sademir): handle error
-		token_add_prev(token, new);
-	}
+	data = ft_strdup(">");
+	if (!data)
+		return ; // todo(sademir): handle error
+	new = token_new(data, RED_R);
+	if (!new)
+		return ; // todo(sademir): handle error
+	token_add_prev(token, new);
 }
 
 void	token_append_meta_redrr(t_token **token)
 {
-	t_token_type	type;
 	t_token			*new;
 	char			*data;
 
-	if (type == RED_RR)
-	{
-		data = ft_strdup(">>");
-		if (!data)
-			return ; // todo(sademir): handle error
-		new = token_new(data, RED_RR);
-		if (!new)
-			return ; // todo(sademir): handle error
-		token_add_prev(token, new);
-	}
+	data = ft_strdup(">>");
+	if (!data)
+		return ; // todo(sademir): handle error
+	new = token_new(data, RED_RR);
+	if (!new)
+		return ; // todo(sademir): handle error
+	token_add_prev(token, new);
 }
 
-void	token_append_meta(t_token **token)
+bool	is_meta(t_token_type type)
 {
-	t_token_type	type;
+	return (type == PIPE || type == RED_L || type == RED_LL 
+		|| type == RED_R || type == RED_RR);
+}
+
+bool	is_meta_char(char *data, int64_t i)
+{
+	if (!data)
+		return (false);
+	if (data[i] == '>' && data[i + 1] == '>')
+		return (true);
+	if (data[i] == '<' && data[i + 1] == '<')
+		return (true);
+	return (data[i] == '|' || data[i] == '>' || data[i] == '<');
+}
+
+void	token_append_str(t_token **token, int64_t start, int64_t i)
+{
 	t_token			*new;
-	int64_t			i;
+	char			*data;
 
-	i = 0;
-	while ((*token)->data[i])
-	{
-		type = get_meta_type((*token)->data, i);
-		if (type == PIPE)
-			token_append_meta_pipe(token);
-		if (type == RED_L)
-			token_append_meta_redl(token);
-		if (type == RED_LL)
-			token_append_meta_redll(token);
-		if (type == RED_R)
-			token_append_meta_redr(token);
-		if (type == RED_RR)
-			token_append_meta_redrr(token);
-		if (type == RED_LL || type == RED_RR)
-			i++;
-		i++;
-	}
+	data = ft_substr((*token)->data, start, i - start);
+	if (!data)
+		return ; // todo(sademir): handle error
+	new = token_new(data, NONE);
+	if (!new)
+		return ; // todo(sademir): handle error
+	token_add_prev(token, new);
 }
 
-t_token	*extract_meta_chars(t_token	**token)
+char	get_in_quote(char old, char data)
 {
-	t_token			*tmp;
-	t_token			*old_node;
+	if (old == '"' && data == '"')
+		old = 0;
+	else if (old == '\'' && data == '\'')
+		old = 0;
+	else if (data == '\'' || data == '"')
+		old = data;
+	return (old);
+}
 
-	tmp = *token;
+void	token_append_all(t_token **token, int64_t start, int64_t i, t_token_type type)
+{
+	if (start != -1)
+		token_append_str(token, start, i);
+	// todo(hkizrak-): check if there are two PIPE side by side after this func (throw syntax error)
+	if (type == PIPE)
+		token_append_meta_pipe(token);
+	if (type == RED_L)
+		token_append_meta_redl(token); 
+	// todo(hkizrak-): check if there are > or >> after this created node (throw syntax error)
+	if (type == RED_LL)
+		token_append_meta_redll(token);
+	if (type == RED_R)
+		token_append_meta_redr(token);
+	// todo(hkizrak-): check if there are < or << after this created node (throw syntax error)
+	if (type == RED_RR)
+		token_append_meta_redrr(token);
+}
+
+void	token_append_meta_data_init(t_token_append_meta_data *md, t_token **token)
+{
+	md->i = 0;
+	if (!is_meta_char((*token)->data, md->i))
+		md->start = 0;
+	else
+		md->start = -1;
+	md->has_meta = false;
+	md->in_quote = 0;
+}
+
+// todo(hkizrak-): check possible errors for side by side metas (throw syntax error)
+bool	token_append_meta(t_token **token)
+{
+	t_token_append_meta_data md;
+
+	token_append_meta_data_init(&md, token);
+	while ((*token)->data[md.i])
+	{
+		md.in_quote = get_in_quote(md.in_quote, (*token)->data[md.i]);
+		md.type = get_meta_type((*token)->data, md.i);
+		if (is_meta(md.type) && !md.in_quote)
+		{
+			md.has_meta = true;
+			token_append_all(token, md.start, md.i, md.type);
+			if (md.type == RED_LL || md.type == RED_RR)
+				md.i++;
+			if ((*token)->data[md.i + 1] && !is_meta_char((*token)->data, md.i + 1))
+				md.start = md.i + 1;
+			else
+				md.start = -1;
+		}
+		if (!(*token)->data[md.i + 1] && md.has_meta && md.start != -1)
+			token_append_str(token, md.start, md.i + 1);
+		md.i++;
+	}
+	return (md.has_meta);
+}
+
+t_token	*token_get_root(t_token *node)
+{
+	if (!node)
+		return (NULL);
+	while (node->prev)
+		node = node->prev;
+	return (node);
+}
+
+bool	token_is_just_meta(t_token **token)
+{
+	if (!token && !*token && !(*token)->data)
+		return (false);
+	if ((*token)->data[0] == '>' && (*token)->data[1] == '>' && (*token)->data[2] == '\0')
+		(*token)->type = RED_RR;
+	else if ((*token)->data[0] == '<' && (*token)->data[1] == '<' && (*token)->data[2] == '\0')
+		(*token)->type = RED_LL;
+	else if ((*token)->data[0] == '|' && (*token)->data[1] == '\0')
+		(*token)->type = PIPE;
+	else if ((*token)->data[0] == '|' && (*token)->data[1] == '\0')
+		(*token)->type = PIPE;
+	else if ((*token)->data[0] == '|' && (*token)->data[1] == '\0')
+		(*token)->type = PIPE;
+	else
+		return (false);
+	return (true);
+}
+
+t_token	*extract_meta_chars(t_token	**root)
+{
+	t_token	*tmp;
+	t_token	*old_node;
+	t_token	*last;
+
+	tmp = *root;
+	last = tmp;
 	while (tmp)
 	{
-		token_append_meta(token);
-		old_node = tmp;
-		tmp->prev->next = tmp->next->prev;
-		tmp->next->prev = tmp->prev->next;
-		tmp = tmp->next;
-		token_dispose(&old_node);
+		if (!tmp->next)
+			last = tmp;
+		if (token_is_just_meta(&tmp))
+			tmp = tmp->next;
+		else if (token_append_meta(&tmp))
+		{
+			old_node = tmp;
+			if (tmp->prev)
+				tmp->prev->next = tmp->next;
+			if (tmp->next)
+				tmp->next->prev = tmp->prev;
+			tmp = tmp->next;
+			token_dispose(&old_node);
+		}
+		else
+			tmp = tmp->next;
 	}
-	return (NULL);
+	return (token_get_root(last));
 }
 
-// int main()
-// {
-// 	t_token *root = separate_prompt_by_space("ls -l | cat");
-// 	extract_meta_chars(&root);
-// 	while (root)
-// 	{
-// 		printf("%s\n", root->data);
-// 		root = root->next;
-// 	}
-// }
+int main()
+{
+	t_token *root = separate_prompt_by_space("a<a <<b|c>d>>f|");
+	printf("root: %d\n", (int)root);
+	t_token *tmp = root;
+	root = extract_meta_chars(&root);
+	while (root)
+	{
+		printf("ARG: %s\nTYPE: %u\n\n", root->data, root->type);
+		root = root->next;
+	}
+	return (0);
+}
