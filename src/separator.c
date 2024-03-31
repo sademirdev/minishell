@@ -167,7 +167,7 @@ void	token_append_meta_redrr(t_token **token)
 
 bool	is_meta(t_token_type type)
 {
-	return (type == PIPE || type == RED_L || type == RED_LL 
+	return (type == PIPE || type == RED_L || type == RED_LL
 		|| type == RED_R || type == RED_RR);
 }
 
@@ -215,7 +215,7 @@ void	token_append_all(t_token **token, int64_t start, int64_t i, t_token_type ty
 	if (type == PIPE)
 		token_append_meta_pipe(token);
 	if (type == RED_L)
-		token_append_meta_redl(token); 
+		token_append_meta_redl(token);
 	// todo(hkizrak-): check if there are > or >> after this created node (throw syntax error)
 	if (type == RED_LL)
 		token_append_meta_redll(token);
@@ -323,16 +323,16 @@ t_token	*extract_meta_chars(t_token	**root)
 	return (token_get_root(last));
 }
 
-int main()
-{
-	t_token *root = separate_prompt_by_space("a<a <<b|c>d>>f|");
-	printf("root: %d\n", (int)root);
-	t_token *tmp = root;
-	root = extract_meta_chars(&root);
-	while (root)
-	{
-		printf("ARG: %s\nTYPE: %u\n\n", root->data, root->type);
-		root = root->next;
-	}
-	return (0);
-}
+// int main()
+// {
+// 	t_token *root = separate_prompt_by_space("a<a <<b|c>d>>f|");
+// 	printf("root: %d\n", (int)root);
+// 	t_token *tmp = root;
+// 	root = extract_meta_chars(&root);
+// 	while (root)
+// 	{
+// 		printf("ARG: %s\nTYPE: %u\n\n", root->data, root->type);
+// 		root = root->next;
+// 	}
+// 	return (0);
+// }

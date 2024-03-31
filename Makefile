@@ -66,12 +66,13 @@ f: fclean
 re: fclean
 	$(MAKE) all
 
+# t:
+# 	@mkdir -p bin
+# 	@$(CC) $(CFLAGS) $(INC_DIR) test/separator_test.c src/separator.c src/util.c src/token.c -o bin/separator_test
+# 	@./bin/separator_test
 t:
 	@mkdir -p bin
-	@$(CC) $(CFLAGS) $(INC_DIR) test/separator_test.c src/separator.c src/util.c src/token.c -o bin/separator_test
-	@./bin/separator_test
-# t:
-# 	@$(CC) $(CFLAGS) $(INC_DIR) test/token_test.c src/token.c -o bin/token_test
-# 	@./bin/token_test
+	@$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/separator_test.c src/token.c src/separator.c test/equal_primitive.c src/util.c -o bin/test
+	@./bin/test
 
 .PHONY: all clean fclean re run
