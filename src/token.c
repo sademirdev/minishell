@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include "minishell.h"
+#include <stdlib.h>
 
 t_token	*token_new(char *data, t_token_type type)
 {
@@ -7,7 +7,7 @@ t_token	*token_new(char *data, t_token_type type)
 
 	if (!data)
 		return (NULL);
-	token = (t_token *) malloc(sizeof(t_token));
+	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->next = NULL;
@@ -24,7 +24,7 @@ t_token	*token_add_last(t_token *token, t_token *new)
 	root = token;
 	if (!root)
 	{
-		root = (t_token *) malloc(sizeof(t_token));
+		root = (t_token *)malloc(sizeof(t_token));
 		if (!root)
 			return (NULL);
 		root = new;
@@ -118,7 +118,8 @@ t_token	**token_separate_by_pipe(t_token *token)
 	t_token	*tmp_root;
 	int64_t	i;
 
-	token_arr = (t_token **) malloc(sizeof(t_token *) * (token_count_pipe(token) + 1));
+	token_arr = (t_token **)malloc(sizeof(t_token *) * (token_count_pipe(token)
+				+ 1));
 	if (!token_arr)
 		return (NULL);
 	iter = token;

@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include "minishell.h"
+#include <stdlib.h>
 
 int64_t	ft_strlen(const char *s)
 {
@@ -22,7 +22,7 @@ char	*ft_strdup(const char *src)
 	if (!src)
 		return (NULL);
 	len = ft_strlen(src);
-	str = (char *) malloc((len + 1) * sizeof(char));
+	str = (char *)malloc((len + 1) * sizeof(char));
 	if (!str)
 		return (NULL);
 	i = 0;
@@ -31,6 +31,7 @@ char	*ft_strdup(const char *src)
 		str[i] = src[i];
 		i++;
 	}
+	str[i] = '\0';
 	return (str);
 }
 
@@ -47,7 +48,7 @@ char	*ft_substr(char const *s, unsigned int start, int64_t len)
 		return (ft_strdup(""));
 	if (len > slen - start)
 		len = slen - start;
-	buf = (char *) malloc((len + 1) * sizeof(char));
+	buf = (char *)malloc((len + 1) * sizeof(char));
 	if (buf == NULL)
 		return (NULL);
 	i = 0;
