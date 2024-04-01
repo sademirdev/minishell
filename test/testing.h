@@ -37,9 +37,25 @@ typedef struct {
 #define __EXP "\t\t\t\texpected: "
 #define _A_PTR __ACT "%p\n"
 #define _E_PTR __EXP "%p\n"
+
+#ifdef __GNUC__
 #define _E_PTR_NOT_NULL __EXP "(not nil)\n"
+#elif
+#define _E_PTR_NOT_NULL __EXP "(0x0)\n"
+#endif
 #define _A_STR __ACT "%s\n"
 #define _E_STR __EXP "%s\n"
+#define _A_I64 __ACT "%lld\n"
+#define _E_I64 __EXP "%lld\n"
+#define _A_I32 __ACT "%d\n"
+#define _E_I32 __EXP "%d\n"
+#define _A_BOOL __ACT "%s\n"
+#define _E_BOOL __EXP "%s\n"
+#define _bool_tostr(x) x ? "true" : "false"
+#define _E_TOKEN                                                               \
+  __EXP "{\n\t\t\t\t    data: %s,\n\t\t\t\t    type: %s\n\t\t\t\t}\n"
+#define _A_TOKEN                                                               \
+  __EXP "{\n\t\t\t\t    data: %s,\n\t\t\t\t    type: %s\n\t\t\t\t}\n"
 
 #define t_test_run()                                                           \
   {                                                                            \
@@ -95,21 +111,22 @@ typedef struct {
   printf(_RED _ERR_T _NOT_E _E_PTR_NOT_NULL _A_PTR _T_END _RESET, __FILE__, a, \
          test)
 #define p_diff_str(a, e)                                                       \
-  printf(_RED _ERR_T _NOT_E _A_STR _E_STR _T_END _RESET, a, e)
-#define p_diff_int64(a, e)                                                     \
-  printf(_RED "  actual: %lld\nexpected: %lld\n" _RESET, a, e)
-#define p_diff_int32(a, e)                                                     \
-  printf(_RED "  actual: %ld\nexpected: %ld\n" _RESET, a, e)
-#define p_diff_bool(a, e)                                                      \
-  printf(_RED "  actual: %d\nexpected: %d\n" RESET, a, e)
-#define p_diff_token(a, e)                                                     \
+  printf(_RED _ERR_T _NOT_E _E_STR _A_STR _T_END _RESET, __FILE__, a, e, test)
+#define p_diff_int64(test, a, e)                                               \
+  printf(_RED _ERR_T _NOT_E _E_I64 _A_I64 _T_END _RESET, __FILE__, a, e, test)
+#define p_diff_int32(test, a, e)                                               \
+  printf(_RED _ERR_T _NOT_E _E_I32 _A_I32 _T_END _RESET, __FILE__, a, e, test)
+#define p_diff_bool(test, a, e)                                                \
+  printf(_RED _ERR_T _NOT_E _E_BOOL _A_BOOL _T_END _RESET, __FILE__,           \
+         _bool_tostr(a), _bool_tostr(e), test)
+
+#define p_diff_token(test, a, e)                                               \
   {                                                                            \
     t_token *actual = (t_token *)a;                                            \
     t_token *expected = (t_token *)e;                                          \
-    printf(_RED "expected: {\n  data: %s,\n  type: %s\n}" _RESET, a->data,     \
-           _token_type_tostr(a->type));                                        \
-    printf(_RED "  actual: {\n  data: %s,\n  type: %s\n}" _RESET, e->data,     \
-           _token_type_tostr(e->type));                                        \
+    printf(_RED _ERR_T _NOT_E _E_TOKEN _A_TOKEN _T_END _RESET, __FILE__,       \
+           actual->data, _token_type_tostr(actual->type), expected->data,      \
+           _token_type_tostr(expected->type), test);                           \
   }
 
 #define expect_null(test, actual)                                              \
@@ -129,6 +146,46 @@ typedef struct {
     } else {                                                                   \
       p_failure(test);                                                         \
       p_diff_ptr_not_null(test, actual);                                       \
+    }                                                                          \
+  }
+
+#define expect_equal_int64(test, actual, expected)                             \
+  {                                                                            \
+    if (equal_int64(actual, expected)) {                                       \
+      /*pass*/                                                                 \
+    } else {                                                                   \
+      p_failure(test);                                                         \
+      p_diff_int64(test, actual, expected);                                    \
+    }                                                                          \
+  }
+
+#define expect_equal_int32(test, actual, expected)                             \
+  {                                                                            \
+    if (equal_int32(actual, expected)) {                                       \
+      /*pass*/                                                                 \
+    } else {                                                                   \
+      p_failure(test);                                                         \
+      p_diff_int32(test, actual, expected);                                    \
+    }                                                                          \
+  }
+
+#define expect_equal_bool(test, actual, expected)                              \
+  {                                                                            \
+    if (equal_bool(actual, expected)) {                                        \
+      /*pass*/                                                                 \
+    } else {                                                                   \
+      p_failure(test);                                                         \
+      p_diff_bool(test, actual, expected);                                     \
+    }                                                                          \
+  }
+
+#define expect_equal_token(test, actual, expected)                             \
+  {                                                                            \
+    if (equal_token(actual, expected)) {                                       \
+      /*pass*/                                                                 \
+    } else {                                                                   \
+      p_failure(test);                                                         \
+      p_diff_token(test, actual, expected);                                    \
     }                                                                          \
   }
 

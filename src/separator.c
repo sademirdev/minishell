@@ -284,10 +284,10 @@ bool	token_is_just_meta(t_token **token)
 		(*token)->type = RED_LL;
 	else if ((*token)->data[0] == '|' && (*token)->data[1] == '\0')
 		(*token)->type = PIPE;
-	else if ((*token)->data[0] == '|' && (*token)->data[1] == '\0')
-		(*token)->type = PIPE;
-	else if ((*token)->data[0] == '|' && (*token)->data[1] == '\0')
-		(*token)->type = PIPE;
+	else if ((*token)->data[0] == '<' && (*token)->data[1] == '\0')
+		(*token)->type = RED_L;
+	else if ((*token)->data[0] == '>' && (*token)->data[1] == '\0')
+		(*token)->type = RED_R;
 	else
 		return (false);
 	return (true);

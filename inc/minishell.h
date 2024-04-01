@@ -14,8 +14,7 @@ typedef enum e_token_type
 	RED_L,
 	RED_LL,
 	RED_R,
-	RED_RR,
-	INIT
+	RED_RR
 }	t_token_type;
 
 typedef struct s_token
