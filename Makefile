@@ -8,7 +8,9 @@ BIN_DIR				=	bin
 INC_DIR				= -Iinc
 OBJ_DIR				=	build
 NAME					= $(BIN_DIR)/$(PROGRAM)
-SRCS					= src/separator.c src/token.c
+SRCS					= src/meta.c src/quote.c src/separator.c src/token.c \
+	src/token_add.c src/token_append.c src/token_append_util.c src/token_util.c \
+	src/util.c
 OBJS					= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CMD						= $(CMD_DIR)/$(PROGRAM).c
 DEPENDENCIES	=
@@ -46,13 +48,14 @@ all: $(DEPENDENCIES)
 	@$(MAKE) $(NAME)
 
 $(NAME): $(CMD) $(OBJS)
+	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
 
-$(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) $(INC_DIR) -c $(SRCS) -o $(OBJS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(INC_DIR) -c $< -o $@
 
-run: all
-	@echo "\n\x1B[32m===================================program======================================\n\x1B[0m"
+r: all
 	./$(NAME)
 
 clean:

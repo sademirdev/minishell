@@ -68,5 +68,6 @@ bool				token_append_meta(t_token **token);
 t_token				*token_get_root(t_token *node);
 bool				token_is_just_meta(t_token **token);
 t_token				*extract_meta_chars(t_token **root);
+bool				has_syntax_errs(t_token **root);
 
 #endif
