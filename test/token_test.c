@@ -12,9 +12,9 @@ void test_token_new_2() {
   int32_t a = 1;
   bool e = true;
   expect_null("at", NULL);
-  expect_equal_bool("at", e, true);
-  expect_equal_int32("be", a, (int32_t)1);
-  t_token token = {.data = "at1", .type = ARG};
+  expect_equal_bool("atsdfsgdrsg", e, false);
+  expect_equal_int32("be", a, (int32_t)3);
+  t_token token = {.data = "at", .type = NONE};
   t_token expected = {.data = "at", .type = ARG};
   t_token *pt = &token;
   t_token *pe = &expected;

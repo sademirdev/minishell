@@ -55,7 +55,7 @@ typedef struct {
 #define _E_TOKEN                                                               \
   __EXP "{\n\t\t\t\t    data: %s,\n\t\t\t\t    type: %s\n\t\t\t\t}\n"
 #define _A_TOKEN                                                               \
-  __EXP "{\n\t\t\t\t    data: %s,\n\t\t\t\t    type: %s\n\t\t\t\t}\n"
+  __ACT "{\n\t\t\t\t    data: %s,\n\t\t\t\t    type: %s\n\t\t\t\t}\n"
 
 #define t_test_run()                                                           \
   {                                                                            \
