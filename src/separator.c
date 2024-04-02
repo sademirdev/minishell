@@ -223,8 +223,6 @@ char	get_in_quote(char old, char data)
 void	token_append_all(t_token **token, int64_t start, int64_t i,
 		t_token_type type)
 {
-	if (start != -1)
-		token_append_str(token, start, i);
 	// todo(hkizrak-): check if there are two PIPE side by side after this func
 	// (throw syntax error)
 	if (type == PIPE)
@@ -256,7 +254,7 @@ void	token_append_meta_data_init(t_token_append_meta_data *md,
 }
 
 // todo(hkizrak-): check possible errors for side by side metas (throw syntax
-// error)
+// error)  a<b
 bool	token_append_meta(t_token **token)
 {
 	t_token_append_meta_data	md;
@@ -270,10 +268,13 @@ bool	token_append_meta(t_token **token)
 		if (is_meta(md.type) && !md.in_quote)
 		{
 			md.has_meta = true;
+			if (md.start != -1)
+				token_append_str(token, md.start, md.i);
 			token_append_all(token, md.start, md.i, md.type);
 			if (md.type == RED_LL || md.type == RED_RR)
 				md.i++;
-			if ((*token)->data[md.i + 1] && !is_meta_char((*token)->data, md.i + 1))
+			if ((*token)->data[md.i + 1] && !is_meta_char((*token)->data, md.i
+					+ 1))
 				md.start = md.i + 1;
 			else
 				md.start = -1;
@@ -336,7 +337,10 @@ t_token	*extract_meta_chars(t_token **root)
 				tmp->prev->next = tmp->next;
 			if (tmp->next)
 				tmp->next->prev = tmp->prev;
-			tmp = tmp->next;
+			if (*root == tmp)
+				tmp = tmp->next;
+			else
+				tmp = tmp->next;
 			token_dispose(&old_node);
 		}
 		else
@@ -345,19 +349,47 @@ t_token	*extract_meta_chars(t_token **root)
 	return (token_get_root(last));
 }
 
+bool	has_syntax_errs(t_token **root)
+{
+	t_token *tmp;
+
+	tmp = *root;
+	int	i = 0;
+	while (tmp->prev)
+	{
+		i++;
+		tmp = tmp->prev;
+	}
+	printf("%d\n",i);
+	if (tmp->type == PIPE)
+		return (true);
+	tmp = tmp->next;
+	while (tmp)
+	{
+		if (tmp->type != NONE && tmp->prev->type != NONE)
+			return (true);
+		tmp = tmp->next;
+	}
+	return (false);
+}
+
 int	main(void)
 {
 	t_token	*root;
 	t_token	*tmp;
 
-	root = separate_prompt_by_space("<b c<<d");
-	printf("a<b c<<d\n");
+	root = separate_prompt_by_space("|'s''a|b'  >>s'' ''\">>c>d\" <<e|f|");
 	tmp = root;
 	root = extract_meta_chars(&root);
 	while (root)
 	{
 		printf("ARG: %s\nTYPE: %u\n\n", root->data, root->type);
 		root = root->next;
+	}
+
+	if (has_syntax_errs(&tmp))
+	{
+		printf("\n***\nsyntax error\n***\n");
 	}
 	return (0);
 }

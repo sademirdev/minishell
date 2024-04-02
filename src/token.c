@@ -64,6 +64,7 @@ void	token_add_prev(t_token **token, t_token *new)
 		new->next = tmp;
 		tmp->prev = new;
 		new->prev = NULL;
+		*token = (*token)->next;
 		return ;
 	}
 	tmp = (*token)->prev;
