@@ -56,6 +56,8 @@ typedef struct {
   __EXP "{\n\t\t\t\t    data: %s,\n\t\t\t\t    type: %s\n\t\t\t\t}\n"
 #define _A_TOKEN                                                               \
   __ACT "{\n\t\t\t\t    data: %s,\n\t\t\t\t    type: %s\n\t\t\t\t}\n"
+#define _TOKEN_LIST                                                               \
+  "\t\t\t\t  {\n\t\t\t\t      data: %s,\n\t\t\t\t      type: %s\n\t\t\t\t  },\n"
 
 #define t_test_run()                                                           \
   {                                                                            \
@@ -129,6 +131,27 @@ typedef struct {
            _token_type_tostr(expected->type), test);                           \
   }
 
+#define p_diff_token_list(test, a, e)                                               \
+  {                                                                            \
+    t_token *actual = (t_token *)a;                                            \
+    t_token *expected = (t_token *)e;                                          \
+    printf(_RED _ERR_T _NOT_E _RESET, __FILE__); \
+    printf(_RED __EXP "[\n" _RESET); \
+    while (actual)                                                           \
+    {                                                                           \
+      printf(_RED _TOKEN_LIST _RESET, actual->data, _token_type_tostr(actual->type)); \
+      actual = actual->next;                                                      \
+    }                                                                         \
+    printf(_RED "\t\t\t\t]\n" _RESET); \
+    printf(_RED __ACT "[\n" _RESET); \
+    while (expected)                                                           \
+    {                                                                           \
+      printf(_RED _TOKEN_LIST _RESET, expected->data, _token_type_tostr(expected->type)); \
+      expected = expected->next;                                                      \
+    }                                                                         \
+    printf(_RED "\t\t\t\t]\n" _RESET); \
+  }
+
 #define expect_null(test, actual)                                              \
   {                                                                            \
     if (equal_ptr(actual, NULL)) {                                             \
@@ -186,6 +209,16 @@ typedef struct {
     } else {                                                                   \
       p_failure(test);                                                         \
       p_diff_token(test, actual, expected);                                    \
+    }                                                                          \
+  }
+
+#define expect_equal_token_list(test, actual, expected)                             \
+  {                                                                            \
+    if (equal_token_arr(actual, expected)) {                                   \
+      /*pass*/                                                                 \
+    } else {                                                                   \
+      p_failure(test);                                                         \
+      p_diff_token_list(test, actual, expected);                                    \
     }                                                                          \
   }
 

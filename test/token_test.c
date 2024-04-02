@@ -7,24 +7,8 @@ void test_token_new() {
   t_test_end();
 }
 
-void test_token_new_2() {
-  t_test_run();
-  int32_t a = 1;
-  bool e = true;
-  expect_null("at", NULL);
-  expect_equal_bool("atsdfsgdrsg", e, false);
-  expect_equal_int32("be", a, (int32_t)3);
-  t_token token = {.data = "at", .type = NONE};
-  t_token expected = {.data = "at", .type = ARG};
-  t_token *pt = &token;
-  t_token *pe = &expected;
-  expect_equal_token("ooo", (t_token *)pt, (t_token *)pe);
-  t_test_end();
-}
-
 void run_token_test() {
   t_group_run();
   test_token_new();
-  test_token_new_2();
   t_group_finish();
 }
