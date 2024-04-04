@@ -6,7 +6,7 @@
 /*   By: abostano <abostano@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 15:40:48 by abostano          #+#    #+#             */
-/*   Updated: 2024/03/26 18:40:02 by abostano         ###   ########.fr       */
+/*   Updated: 2024/04/04 10:00:06 by abostano         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,6 @@
 # define EXECUTE_H
 
 # include "minishell.h"
-
-typedef struct s_execute
-{
-	char	*cmd;
-	char	*operator;
-	char	*file;
-	char	*path_of_cmd;
-	char	*args;
-	struct s_execute	*next;
-}	t_execute;
 
 size_t	ft_strlen(const char *a);
 char	*ft_strnstr(const char *str1, const char *str2, size_t n);

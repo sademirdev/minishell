@@ -6,7 +6,7 @@
 /*   By: abostano <abostano@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 16:12:34 by abostano          #+#    #+#             */
-/*   Updated: 2024/03/26 18:22:39 by abostano         ###   ########.fr       */
+/*   Updated: 2024/04/04 11:16:16 by abostano         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,71 +16,92 @@
 //Mainde başlatılacak fonksiyon burası olacak
 int	ft_execute(t_token **head, char *envp[])
 {
-	pid_t	child_pid;
+	int		i;
+	int		j;
+
+	j = 0;
+	i = define_list(head);
+	while (j < i)
+	{
+		j++;
+	}
+}
+
+void	ft_recursive(t_token **head, char *envp[], int number, int maks)
+{
+	pid_t	pid;
 	int		pipefd[2];
-
-	if (pipe(pipefd) == -1)
-		error("pipe");
-	child_pid = fork();
-}
-
-//Bu fonksiyon pipelar arasını bir promt olarak bölecek
-t_execute	**init_promt(t_token **head, char *envp[])
-{
-	t_token		*tmp;
-	t_execute	*exec;
-	t_execute	**rtrn;
-
-	exec = NULL;
-	*rtrn = &exec;
-	tmp = *head;
-	while (tmp)
+	
+	if (number != maks)
 	{
-		if (tmp->type == PIPE)
-		{
-			pipe_came(exec);
-			exec = exec->next;
-		}
-		else
-			define_n_add(tmp, exec);
-		tmp = tmp->next;
+		if (pipe(pipefd) == -1)
+			error();
+		pid = fork();
+		if (pid == -1)
+			error();
+		if (pid == 0)
+			ft_recursive(head, envp, number + 1, maks);
+		ft_execute_cmd(head, envp, pipefd);
 	}
-	return (rtrn);
-}
-
-//Pipe geldiği durumda yeni bir execute yapısını oluşturacak
-void	pipe_came(t_execute *tmp)
-{
-	t_execute	*added;
-
-	added = malloc(sizeof(t_execute));
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = added;
-}
-
-//Tokenları execute yapısına ekleyecek
-void	define_n_add(t_token *head, t_execute *exec)
-{
-	if (head->type == CMD)
-		exec->cmd = ft_strdup(head->data);
-	else if (head->type == ARG)
+	else
 	{
-		exec->args = ft_srtjoin(exec->args, head->data);
-		exec->args = ft_srtjoin(exec->args, " ");
-	}
-	else if (head->type >= 4 && head->type <= 7)
-		exec->operator = ft_strdup(head->data);
-	else if (head->type == PIPE)
-	{
-		exec->next = malloc(sizeof(t_execute));
-		exec = exec->next;
+		ft_execute_cmd(head, envp, pipefd);
 	}
 }
 
-//Genel manada bütün error mesajlarımızı burası döndürecek
-void	error(char *str)
+//bu komut chatgpt ile yazıldı ve yukarıdaki fonksiyonun içinde kullanıldı
+//bir çok hataya sahip
+//AYRICA NORM HATALARI DA VAR
+void	ft_execute_cmd(t_token **head, char *envp[], int pipefd[])
 {
-	perror(str);
-	exit(1);
+	// Komut için gerekli değişkenler
+    char *cmd = (*head)->data; // İlk token komutu temsil eder
+    t_token *arg_token = (*head)->next; // İkinci token argümanları temsil eder
+
+    // Pipe'ı kapat
+    close(pipefd[0]);
+
+    // Eğer argüman varsa, komutu ve argümanları execvp fonksiyonuyla çalıştır
+    if (arg_token != NULL) {
+        // Komutun ve argümanlarının listesi
+        char *args[10]; // Argümanlar için bir dizi
+        args[0] = cmd; // İlk argüman komuttur
+        int i = 1;
+        while (arg_token != NULL) {
+            args[i] = arg_token->data;
+            arg_token = arg_token->next;
+            i++;
+        }
+        args[i] = NULL; // execvp'nin son argümanı NULL olmalıdır
+
+        // Pipe'ı stdout'a yönlendir (write end)
+        dup2(pipefd[1], STDOUT_FILENO);
+
+        // execvp çağrısı
+        if (execvp(cmd, args) == -1) {
+            perror("execvp failed");
+            exit(EXIT_FAILURE);
+        }
+    }
+    // Argüman yoksa, sadece komutu çalıştır
+    else {
+        // Pipe'ı stdout'a yönlendir (write end)
+        dup2(pipefd[1], STDOUT_FILENO);
+
+        // execvp çağrısı
+        if (execlp(cmd, cmd, (char *)NULL) == -1) {
+            perror("execlp failed");
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+int	define_list(t_token **head)
+{
+	int		i;
+
+	i = 0;
+	while (head[i])
+		i++;
+	return (i);
 }
