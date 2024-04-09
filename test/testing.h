@@ -3,6 +3,7 @@
 
 #include "equal_primitive.h"
 #include "minishell.h"
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -45,8 +46,8 @@ typedef struct {
 #endif
 #define _A_STR __ACT "%s\n"
 #define _E_STR __EXP "%s\n"
-#define _A_I64 __ACT "%lld\n"
-#define _E_I64 __EXP "%lld\n"
+#define _A_I64 __ACT "%" PRId64 "\n"
+#define _E_I64 __EXP "%" PRId64 "\n"
 #define _A_I32 __ACT "%d\n"
 #define _E_I32 __EXP "%d\n"
 #define _A_BOOL __ACT "%s\n"
@@ -56,8 +57,9 @@ typedef struct {
   __EXP "{\n\t\t\t\t    data: %s,\n\t\t\t\t    type: %s\n\t\t\t\t}\n"
 #define _A_TOKEN                                                               \
   __ACT "{\n\t\t\t\t    data: %s,\n\t\t\t\t    type: %s\n\t\t\t\t}\n"
-#define _TOKEN_LIST                                                               \
-  "\t\t\t\t  {\n\t\t\t\t      data: %s,\n\t\t\t\t      type: %s\n\t\t\t\t  },\n"
+#define _TOKEN_LIST                                                            \
+  "\t\t\t\t  {\n\t\t\t\t      data: %s,\n\t\t\t\t      type: %s\n\t\t\t\t  "   \
+  "},\n"
 
 #define t_test_run()                                                           \
   {                                                                            \
@@ -115,7 +117,8 @@ typedef struct {
 #define p_diff_str(a, e)                                                       \
   printf(_RED _ERR_T _NOT_E _E_STR _A_STR _T_END _RESET, __FILE__, a, e, test)
 #define p_diff_int64(test, a, e)                                               \
-  printf(_RED _ERR_T _NOT_E _E_I64 _A_I64 _T_END _RESET, __FILE__, a, e, test)
+  printf(_RED _ERR_T _NOT_E _E_I64 _A_I64 _T_END _RESET, __FILE__, (int64_t)a, \
+         (int64_t)e, test)
 #define p_diff_int32(test, a, e)                                               \
   printf(_RED _ERR_T _NOT_E _E_I32 _A_I32 _T_END _RESET, __FILE__, a, e, test)
 #define p_diff_bool(test, a, e)                                                \
@@ -131,25 +134,25 @@ typedef struct {
            _token_type_tostr(expected->type), test);                           \
   }
 
-#define p_diff_token_list(test, a, e)                                               \
+#define p_diff_token_list(test, a, e)                                          \
   {                                                                            \
     t_token *actual = (t_token *)a;                                            \
     t_token *expected = (t_token *)e;                                          \
-    printf(_RED _ERR_T _NOT_E _RESET, __FILE__); \
-    printf(_RED __EXP "[\n" _RESET); \
-    while (actual)                                                           \
-    {                                                                           \
-      printf(_RED _TOKEN_LIST _RESET, actual->data, _token_type_tostr(actual->type)); \
-      actual = actual->next;                                                      \
-    }                                                                         \
-    printf(_RED "\t\t\t\t]\n" _RESET); \
-    printf(_RED __ACT "[\n" _RESET); \
-    while (expected)                                                           \
-    {                                                                           \
-      printf(_RED _TOKEN_LIST _RESET, expected->data, _token_type_tostr(expected->type)); \
-      expected = expected->next;                                                      \
-    }                                                                         \
-    printf(_RED "\t\t\t\t]\n" _RESET); \
+    printf(_RED _ERR_T _NOT_E _RESET, __FILE__);                               \
+    printf(_RED __EXP "[\n" _RESET);                                           \
+    while (actual) {                                                           \
+      printf(_RED _TOKEN_LIST _RESET, actual->data,                            \
+             _token_type_tostr(actual->type));                                 \
+      actual = actual->next;                                                   \
+    }                                                                          \
+    printf(_RED "\t\t\t\t]\n" _RESET);                                         \
+    printf(_RED __ACT "[\n" _RESET);                                           \
+    while (expected) {                                                         \
+      printf(_RED _TOKEN_LIST _RESET, expected->data,                          \
+             _token_type_tostr(expected->type));                               \
+      expected = expected->next;                                               \
+    }                                                                          \
+    printf(_RED "\t\t\t\t]\n" _RESET);                                         \
   }
 
 #define expect_null(test, actual)                                              \
@@ -174,11 +177,13 @@ typedef struct {
 
 #define expect_equal_int64(test, actual, expected)                             \
   {                                                                            \
+    int64_t a = (int64_t)actual;                                               \
+    int64_t e = (int64_t)expected;                                             \
     if (equal_int64(actual, expected)) {                                       \
       /*pass*/                                                                 \
     } else {                                                                   \
       p_failure(test);                                                         \
-      p_diff_int64(test, actual, expected);                                    \
+      p_diff_int64(test, a, e);                                                \
     }                                                                          \
   }
 
@@ -212,13 +217,13 @@ typedef struct {
     }                                                                          \
   }
 
-#define expect_equal_token_list(test, actual, expected)                             \
+#define expect_equal_token_list(test, actual, expected)                        \
   {                                                                            \
     if (equal_token_arr(actual, expected)) {                                   \
       /*pass*/                                                                 \
     } else {                                                                   \
       p_failure(test);                                                         \
-      p_diff_token_list(test, actual, expected);                                    \
+      p_diff_token_list(test, actual, expected);                               \
     }                                                                          \
   }
 

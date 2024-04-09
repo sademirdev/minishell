@@ -70,4 +70,11 @@ bool				token_is_just_meta(t_token **token);
 t_token				*extract_meta_chars(t_token **root);
 bool				has_syntax_errs(t_token **root);
 
+int	ft_strncmp(const char *s1, const char *s2, size_t n);
+
+void	token_dispose(t_token **token);
+void	token_dispose_all(t_token **token);
+int64_t	token_count_pipe(t_token *token);
+t_token	**token_separate_by_pipe(t_token *token);
+
 #endif
