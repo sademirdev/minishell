@@ -15,6 +15,15 @@
 
 # include "minishell.h"
 
+typedef struct execute
+{
+	char	*cmd;
+	char	*file;
+	char	*operator;
+	char	**args;
+	struct execute *next;
+}	exec_c;
+
 size_t	ft_strlen(const char *a);
 char	*ft_strnstr(const char *str1, const char *str2, size_t n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
