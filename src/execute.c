@@ -84,10 +84,38 @@ exec_c	**init_exec_s(t_token **head)
 		if (tmp->type == CMD)
 			test->cmd = tmp->data;
 		else if (tmp->type == ARG)
-			//Argümanları **args dizisine ekleyecek komut
+			test->args = add_args(test->args, tmp->data);
 		else if (tmp->type >= 4 && tmp->type <= 7)
 			test->operator = tmp->data;
 		tmp = tmp->next;
 	}
 	
+}
+
+char	**add_args(char	**args, char *added)
+{
+	char	**new_args;
+	int		i;
+
+	i = 0;
+	while (args[i])
+		i++;
+	new_args = malloc(sizeof(char *) * (i + 1));
+	i = 0;
+	while (args[i])
+	{
+		new_args[i] = ft_strdup(args[i]);
+		i++;
+	}
+	new_args[i++] = ft_strdup(added);
+	new_args[i + 1] = NULL;
+	i = 0;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+	return (new_args);
+
 }
