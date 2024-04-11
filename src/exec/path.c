@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/execute.h"
+#include "../../inc/execute.h"
 #include <unistd.h>
 
 char	*ft_path(char *envp[])

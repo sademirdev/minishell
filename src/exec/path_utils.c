@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/execute.h"
+#include "../../inc/execute.h"
 #include <stddef.h>
 
 size_t	ft_strlen(const char *a)

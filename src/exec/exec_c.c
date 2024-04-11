@@ -1,43 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   execute.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: abostano <abostano@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/26 16:12:34 by abostano          #+#    #+#             */
-/*   Updated: 2024/04/04 11:16:16 by abostano         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "../inc/execute.h"
-#include <fcntl.h>
-
-//Mainde başlatılacak fonksiyon burası olacak
-int	ft_execute(t_token **head, char *envp[])
-{
-	t_token	*tmp;
-
-	tmp = *head;
-	while (tmp)
-	{
-
-		tmp = tmp->next;
-	}
-}
-
-void	ft_recursive(t_token **head, char *envp[])
-{
-	pid_t	pid;
-
-}
-
-void	ft_execute_cmd(t_token **head, char *envp[], int pipefd[])
-{
-	t_token	*tmp;
-
-
-}
+#include "../../inc/execute.h"
 
 void	lst_add(exec_c **head)
 {
@@ -89,7 +50,7 @@ exec_c	**init_exec_s(t_token **head)
 			test->operator = tmp->data;
 		tmp = tmp->next;
 	}
-	
+	return (rtrn);
 }
 
 char	**add_args(char	**args, char *added)
@@ -117,5 +78,4 @@ char	**add_args(char	**args, char *added)
 	}
 	free(args);
 	return (new_args);
-
 }
