@@ -1,5 +1,49 @@
 #include "testing.h"
 
+void test_token_dispose() {
+  t_test_run();
+
+  typedef struct s_case {
+    char *name;
+    t_token *token;
+    t_token *expected_token;
+    t_token *expected_token_data;
+    enum check_type { CHECK_NULL, CHECK_NORMAL } type;
+  } t_case;
+
+  t_token *t0_token_root = NULL;
+
+  t_case test_cases[] = {
+      {
+          .name = "should do nothing when token is null",
+          .token = t0_token_root,
+          .expected_token = t0_token_root,
+          .expected_token_data = NULL,
+          .type = CHECK_NULL,
+      },
+  };
+
+  int64_t size = sizeof(test_cases) / sizeof(t_case);
+  int64_t i = 0;
+  while (i < size) {
+    t_case tc = test_cases[i];
+    token_dispose(&tc.token);
+    switch (tc.type) {
+    case CHECK_NORMAL:
+      expect_null(tc.name, tc.expected_token);
+      expect_null(tc.name, tc.expected_token_data);
+      break;
+    case CHECK_NULL:
+      expect_equal_ptr(tc.name, tc.expected_token, tc.token);
+      expect_null(tc.name, tc.expected_token_data);
+      break;
+    }
+    i++;
+  }
+
+  t_test_end();
+}
+
 void test_token_count_pipe() {
   t_test_run();
 
@@ -20,6 +64,7 @@ void test_token_count_pipe() {
   token_add_last(t1_token_root, token_new(ft_strdup("test_node_3"), NONE));
   token_add_last(t1_token_root, token_new(ft_strdup("test_node_4"), RED_L));
   t_token *t2_token_root = token_new(ft_strdup("test_root"), NONE);
+  t_token *t3_token_root = NULL;
 
   t_case test_cases[] = {
       {
@@ -35,6 +80,11 @@ void test_token_count_pipe() {
       {
           .name = "single node test success",
           .token = t2_token_root,
+          .expected = 0,
+      },
+      {
+          .name = "null node",
+          .token = t3_token_root,
           .expected = 0,
       },
   };
@@ -54,6 +104,7 @@ void test_token_count_pipe() {
 
 void run_token_test() {
   t_group_run();
+  test_token_dispose();
   test_token_count_pipe();
   t_group_finish();
 }

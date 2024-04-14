@@ -175,6 +175,16 @@ typedef struct {
     }                                                                          \
   }
 
+#define expect_equal_ptr(test, actual, expected)                               \
+  {                                                                            \
+    if (equal_ptr(actual, expected)) {                                         \
+      /* pass */                                                               \
+    } else {                                                                   \
+      p_failure(test);                                                         \
+      p_diff_ptr(test, actual, expected);                                      \
+    }                                                                          \
+  }
+
 #define expect_equal_int64(test, actual, expected)                             \
   {                                                                            \
     int64_t a = (int64_t)actual;                                               \
