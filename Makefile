@@ -10,7 +10,7 @@ OBJ_DIR				=	build
 NAME					= $(BIN_DIR)/$(PROGRAM)
 SRCS					= src/meta.c src/quote.c src/separator.c src/token.c \
 	src/token_add.c src/token_append.c src/token_append_util.c src/token_util.c \
-	src/util.c
+	src/util.c src/dollar.c
 OBJS					= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CMD						= $(CMD_DIR)/$(PROGRAM).c
 DEPENDENCIES	=
@@ -75,7 +75,7 @@ re: fclean
 # 	@./bin/separator_test
 t:
 	@mkdir -p bin
-	@$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/separator_test.c test/equal_primitive.c $(SRCS) -o bin/test
+	@$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/dollar_test.c test/equal_primitive.c $(SRCS) -o bin/test
 	@./bin/test
 
 .PHONY: all clean fclean re run

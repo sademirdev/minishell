@@ -114,8 +114,8 @@ typedef struct {
 #define p_diff_ptr_not_null(test, a)                                           \
   printf(_RED _ERR_T _NOT_E _E_PTR_NOT_NULL _A_PTR _T_END _RESET, __FILE__, a, \
          test)
-#define p_diff_str(a, e)                                                       \
-  printf(_RED _ERR_T _NOT_E _E_STR _A_STR _T_END _RESET, __FILE__, a, e, test)
+#define p_diff_str(test, a, e)                                                       \
+  printf(_RED _ERR_T _NOT_E _E_STR _A_STR _T_END _RESET, __FILE__, e, a, test)
 #define p_diff_int64(test, a, e)                                               \
   printf(_RED _ERR_T _NOT_E _E_I64 _A_I64 _T_END _RESET, __FILE__, (int64_t)a, \
          (int64_t)e, test)
@@ -234,6 +234,16 @@ typedef struct {
     } else {                                                                   \
       p_failure(test);                                                         \
       p_diff_token_list(test, actual, expected);                               \
+    }                                                                          \
+  }
+
+#define expect_equal_str(test, actual, expected)                        \
+  {                                                                            \
+    if (equal_str(actual, expected)) {                                   \
+      /*pass*/                                                                 \
+    } else {                                                                   \
+      p_failure(test);                                                         \
+      p_diff_str(test, actual, expected);                               \
     }                                                                          \
   }
 

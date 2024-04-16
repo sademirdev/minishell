@@ -34,9 +34,18 @@ typedef struct s_token_append_meta_data
 	int64_t			start;
 }					t_token_append_meta_data;
 
+typedef struct s_state
+{
+	int				status;
+	char			**argv;
+	char			**env;
+}					t_state;
+
 int64_t				ft_strlen(const char *s);
 char				*ft_strdup(const char *src);
 char				*ft_substr(char const *s, unsigned int start, int64_t len);
+int64_t				ft_strlcpy(char *dst, const char *src, int64_t dst_size);
+char				*ft_itoa(int64_t n);
 
 t_token				*token_new(char *data, t_token_type type);
 t_token				*token_add_last(t_token *token, t_token *new);
@@ -69,12 +78,13 @@ t_token				*token_get_root(t_token *node);
 bool				token_is_just_meta(t_token **token);
 t_token				*extract_meta_chars(t_token **root);
 bool				has_syntax_errs(t_token **root);
+void				extract_dollar_key_values(char **data, t_state *state);
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n);
+int					ft_strncmp(const char *s1, const char *s2, size_t n);
 
-void	token_dispose(t_token **token);
-void	token_dispose_all(t_token **token);
-int64_t	token_count_pipe(t_token *token);
-t_token	**token_separate_by_pipe(t_token *token);
+void				token_dispose(t_token **token);
+void				token_dispose_all(t_token **token);
+int64_t				token_count_pipe(t_token *token);
+t_token				**token_separate_by_pipe(t_token *token);
 
 #endif

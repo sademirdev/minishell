@@ -13,7 +13,6 @@ int64_t	ft_strlen(const char *s)
 	return (i);
 }
 
-
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	size_t	i;
@@ -76,4 +75,87 @@ char	*ft_substr(char const *s, unsigned int start, int64_t len)
 	}
 	buf[i] = '\0';
 	return (buf);
+}
+
+int64_t	ft_strlcpy(char *dst, const char *src, int64_t dst_size)
+{
+	int64_t	i;
+
+	if (dst_size == 0)
+		return (ft_strlen(src));
+	i = 0;
+	while (src[i] && i < dst_size - 1)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = '\0';
+	return (ft_strlen(src));
+}
+
+static int	ft_count_digit(int n)
+{
+	int	c;
+
+	if (n == 0)
+		return (1);
+	c = 0;
+	while (n)
+	{
+		c++;
+		n /= 10;
+	}
+	return (c);
+}
+
+static int	ft_abs(int nbr)
+{
+	if (nbr < 0)
+		return (-nbr);
+	return (nbr);
+}
+
+static void	ft_strrev(char *str)
+{
+	int64_t	length;
+	int64_t	i;
+	char	tmp;
+
+	length = ft_strlen(str);
+	i = 0;
+	while (i < length / 2)
+	{
+		tmp = str[i];
+		str[i] = str[length - i - 1];
+		str[length - i - 1] = tmp;
+		i++;
+	}
+}
+
+char	*ft_itoa(int64_t n)
+{
+	char *str;
+	int64_t is_neg;
+	int64_t length;
+
+	is_neg = (n < 0);
+	str = (char *)malloc((ft_count_digit(n) + is_neg + 1) * sizeof(char));
+	if (!str)
+		return (NULL);
+	length = 0;
+	if (n == 0)
+	{
+		str[0] = '0';
+		length++;
+	}
+	while (n != 0)
+	{
+		str[length++] = '0' + ft_abs(n % 10);
+		n /= 10;
+	}
+	if (is_neg)
+		str[length++] = '-';
+	str[length] = '\0';
+	ft_strrev(str);
+	return (str);
 }
