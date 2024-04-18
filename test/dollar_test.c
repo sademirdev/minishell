@@ -18,6 +18,14 @@ void	test_extract_dollar_key_values(t_state* state)
 	setenv("number123_dollar_key123", "TEST_NUMBER_DOLLAR_VALUE", 1);
 	setenv("_start_underscore_dollar_key", "TEST_START_UNDERSCORE_DOLLAR_VALUE", 1);
 
+	state->status = 192;
+	char *status_test_expected = calloc(100, sizeof(char));
+	strcat(status_test_expected, "prefix.");
+	char *status_test_status_str = ft_itoa(state->status);
+	strcat(status_test_expected, status_test_status_str);
+	free(status_test_status_str);
+	strcat(status_test_expected, ".suffix");
+
 	t_case test_cases[] = {
 		{
 			.name = "single dollar",
@@ -80,9 +88,14 @@ void	test_extract_dollar_key_values(t_state* state)
 			.expected = ft_strdup("prefix.$$.suffix"),
 		},
 		{
-			.name = "should give double dollar when there is double dollar side by side",
+			.name = "should give program name when there is $0",
 			.data = ft_strdup("prefix.$0.suffix"),
-			.expected = ft_strdup("prefix../minishell.suffix"),
+			.expected = ft_strdup("prefix../bin/test.suffix"),
+		},
+		{
+			.name = "should give status when there is $?",
+			.data = ft_strdup("prefix.$?.suffix"),
+			.expected = status_test_expected,
 		},
 	};
 

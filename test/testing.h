@@ -13,15 +13,6 @@
 extern int err;
 extern int err_in;
 
-typedef enum { UNKNOWN, NOT_EQUAL } t_err_type;
-
-typedef struct {
-  int fails_group;
-  int fails_test;
-  int fails_internal_test;
-  bool ended;
-} t_test_suite;
-
 #define _RED "\x1B[31m"
 #define _GRN "\x1B[32m"
 #define _YEL "\x1B[33m"
@@ -114,7 +105,7 @@ typedef struct {
 #define p_diff_ptr_not_null(test, a)                                           \
   printf(_RED _ERR_T _NOT_E _E_PTR_NOT_NULL _A_PTR _T_END _RESET, __FILE__, a, \
          test)
-#define p_diff_str(test, a, e)                                                       \
+#define p_diff_str(test, a, e)                                                 \
   printf(_RED _ERR_T _NOT_E _E_STR _A_STR _T_END _RESET, __FILE__, e, a, test)
 #define p_diff_int64(test, a, e)                                               \
   printf(_RED _ERR_T _NOT_E _E_I64 _A_I64 _T_END _RESET, __FILE__, (int64_t)a, \
@@ -154,7 +145,6 @@ typedef struct {
     }                                                                          \
     printf(_RED "\t\t\t\t]\n" _RESET);                                         \
   }
-
 #define expect_null(test, actual)                                              \
   {                                                                            \
     if (equal_ptr(actual, NULL)) {                                             \
@@ -229,21 +219,23 @@ typedef struct {
 
 #define expect_equal_token_list(test, actual, expected)                        \
   {                                                                            \
-    if (equal_token_arr(actual, expected)) {                                   \
+    t_token *a = (t_token *)actual;                                            \
+    t_token *e = (t_token *)expected;                                          \
+    if (equal_token_arr(a, e)) {                                               \
       /*pass*/                                                                 \
     } else {                                                                   \
       p_failure(test);                                                         \
-      p_diff_token_list(test, actual, expected);                               \
+      p_diff_token_list(test, a, e);                                           \
     }                                                                          \
   }
 
-#define expect_equal_str(test, actual, expected)                        \
+#define expect_equal_str(test, actual, expected)                               \
   {                                                                            \
-    if (equal_str(actual, expected)) {                                   \
+    if (equal_str(actual, expected)) {                                         \
       /*pass*/                                                                 \
     } else {                                                                   \
       p_failure(test);                                                         \
-      p_diff_str(test, actual, expected);                               \
+      p_diff_str(test, actual, expected);                                      \
     }                                                                          \
   }
 

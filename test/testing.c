@@ -31,22 +31,22 @@ int	main(int argc, char **argv)
 	}
 	env[i] = NULL;
 
-	int pid = fork();
-
 	(void)argc;
+	(void)argv;
 	t_state s = {
 		172,
 		argv,
 		env,
 	};
 
-	if (pid == 0)
-	{
-		run_token_test();
-	}
-	else
-	{
-		waitpid(pid, NULL, 0);
-		run_dollar_test(&s);
-	}
+	// int pid = fork();
+	run_dollar_test(&s);
+	// if (pid == 0)
+	// {
+	// }
+	// else
+	// {
+	// 	waitpid(pid, NULL, 0);
+	// 	// run_separator_test();
+	// }
 }

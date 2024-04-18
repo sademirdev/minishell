@@ -16,8 +16,8 @@ void test_token_dispose() {
   t_case test_cases[] = {
       {
           .name = "should do nothing when token is null",
-          .token = t0_token_root,
-          .expected_token = t0_token_root,
+          .token = t0_token_root,          // NULL
+          .expected_token = t0_token_root, // NULL
           .expected_token_data = NULL,
           .type = CHECK_NULL,
       },
@@ -102,9 +102,70 @@ void test_token_count_pipe() {
   t_test_end();
 }
 
+// void test_token_separate_by_pipe() {
+//   t_test_run();
+
+//   typedef struct s_case {
+//     char *name;
+//     t_token *token;
+//     t_token **expected;
+//     int64_t _size;
+//   } t_case;
+
+//   t_token *t0_token_root = token_new(ft_strdup("test_root"), NONE);
+//   token_add_last(t0_token_root, token_new(ft_strdup("test_node_1"), NONE));
+//   token_add_last(t0_token_root, token_new(ft_strdup("test_node_2"), PIPE));
+//   token_add_last(t0_token_root, token_new(ft_strdup("test_node_3"), NONE));
+//   token_add_last(t0_token_root, token_new(ft_strdup("test_node_4"), ARG));
+//   token_add_last(t0_token_root, token_new(ft_strdup("test_node_5"), PIPE));
+//   token_add_last(t0_token_root, token_new(ft_strdup("test_node_6"), NONE));
+//   token_add_last(t0_token_root, token_new(ft_strdup("test_node_7"), ARG));
+//   t_token *t0_expected_list_elem_1 = token_new(ft_strdup("test_root"), NONE);
+//   token_add_last(t0_expected_list_elem_1,
+//                  token_new(ft_strdup("test_node_1"), NONE));
+//   t_token *t0_expected_list_elem_2 = token_new(ft_strdup("test_node_3"), NONE);
+//   token_add_last(t0_expected_list_elem_2,
+//                  token_new(ft_strdup("test_node_4"), ARG));
+//   t_token *t0_expected_list_elem_3 = token_new(ft_strdup("test_node_6"), NONE);
+//   token_add_last(t0_expected_list_elem_3,
+//                  token_new(ft_strdup("test_node_7"), ARG));
+//   t_token *t0_expected[3] = {
+//       t0_expected_list_elem_1,
+//       t0_expected_list_elem_2,
+//       t0_expected_list_elem_3,
+//   };
+
+//   t_case test_cases[] = {
+//       {
+//           .name = "should delete pipes and return three separated token node "
+//                   "list when there is two pipe exist",
+//           .token = t0_token_root,
+//           .expected = t0_expected,
+//           ._size = 3, // used as metadata from test
+//       },
+//   };
+
+//   int64_t size = sizeof(test_cases) / sizeof(t_case);
+//   int64_t i = 0;
+//   while (i < size) {
+//     t_case tc = test_cases[i];
+//     t_token **actual = token_separate_by_pipe(tc.token);
+//     for (int64_t j = 0; j < tc._size; j++) {
+//       t_token *a = (t_token *)(*actual);
+//       t_token *e = (t_token *)(*tc.expected);
+//       expect_equal_token_list(tc.name, a, e);
+//     }
+//     token_dispose_all(&tc.token);
+//     i++;
+//   }
+
+//   t_test_end();
+// }
+
 void run_token_test() {
   t_group_run();
   test_token_dispose();
   test_token_count_pipe();
+  // test_token_separate_by_pipe();
   t_group_finish();
 }
