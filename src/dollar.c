@@ -189,6 +189,7 @@ void	extract_dollar_key_values(char **data, t_state *state)
 			else
 				i = handle_regular_dollar(data, start, i + 1);
 		}
-		i++;
+		if ((*data)[i])
+			i++;
 	}
 }

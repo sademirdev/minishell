@@ -9,6 +9,8 @@ void	run_token_test(void);
 void	run_separator_test(void);
 void	run_dollar_test(t_state *state);
 
+// https://excalidraw.com/#json=8wYiJWBqjbzAMftcEIsn3,jhzPNiUfrjQ9YXlUdwAtkw
+
 int	main(int argc, char **argv)
 {
 	extern char **environ;
