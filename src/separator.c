@@ -58,6 +58,32 @@ t_token	*separate_prompt_by_space(char *prompt)
 	return (root);
 }
 
+void	token_insert_dollar_nodes(t_token **token)
+{
+	t_token	*sub_nodes;
+	t_token	*temp;
+	t_token	*sub_last;
+
+	if (!token)
+		return ; // todo(apancar): handle error
+	temp = *token;
+	sub_nodes = separate_prompt_by_space(temp->data);
+	if (!sub_nodes)
+		return ; // todo(apancar): handle error
+	if (temp->prev)
+	{
+		temp->prev->next = sub_nodes;
+		sub_nodes->prev = temp->prev;
+	}
+	else
+		*token = sub_nodes;
+	sub_last = token_get_last(sub_nodes);
+	sub_last->next = temp->next;
+	if (temp->next) 
+		temp->next->prev = sub_last;
+	token_dispose(&temp);
+}
+
 // bool	has_syntax_errs(t_token **root)
 // {
 // 	t_token *tmp;

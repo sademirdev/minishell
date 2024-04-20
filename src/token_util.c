@@ -9,6 +9,15 @@ t_token	*token_get_root(t_token *node)
 	return (node);
 }
 
+t_token	*token_get_last(t_token *node)
+{
+	if (!node)
+		return (NULL);
+	while (node->next)
+		node = node->next;
+	return (node);
+}
+
 bool	token_is_just_meta(t_token **token)
 {
 	if (!token && !*token && !(*token)->data)

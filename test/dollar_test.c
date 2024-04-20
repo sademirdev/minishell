@@ -103,7 +103,8 @@ void	test_extract_dollar_key_values(t_state* state)
   int64_t i = 0;
   while (i < size) {
     t_case tc = test_cases[i];
-    extract_dollar_key_values(&tc.data, state);
+	bool has_dollar = false;
+    extract_dollar_key_values(&tc.data, state, &has_dollar);
     expect_equal_str(tc.name, tc.data, tc.expected);
 		i++;
   }

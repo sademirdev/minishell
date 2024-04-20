@@ -45,6 +45,7 @@ ifeq '$(test)' '1'
 endif
 
 all: $(DEPENDENCIES)
+	@mkdir -p bin
 	@$(MAKE) $(NAME)
 
 $(NAME): $(CMD) $(OBJS)

@@ -5,6 +5,7 @@ void	token_append_meta_pipe(t_token **token)
 	t_token	*new;
 	char	*data;
 
+	printf("======================== token_append_meta_pipe\n");
 	data = ft_strdup("|");
 	if (!data)
 		return ; // todo(sademir): handle error
@@ -23,6 +24,7 @@ void	token_append_meta_redl(t_token **token)
 	if (!data)
 		return ; // todo(sademir): handle error
 	new = token_new(data, RED_L);
+	printf("======================== token_append_meta_redl: %p\n", new);
 	if (!new)
 		return ; // todo(sademir): handle error
 	token_add_prev(token, new);
