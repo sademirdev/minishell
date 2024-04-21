@@ -47,7 +47,8 @@ t_token	**token_separate_by_pipe(t_token *token)
 	int64_t	i;
 
 	token_arr = (t_token **)malloc(sizeof(t_token *) * (token_count_pipe(token)
-				+ 1));
+				+ 2));
+	printf("len: %lld\n", token_count_pipe(token));
 	if (!token_arr)
 		return (NULL);
 	iter = token;
@@ -71,6 +72,7 @@ t_token	**token_separate_by_pipe(t_token *token)
 		else
 			iter = iter->next;
 	}
+	token_arr[i++] = tmp_root;
 	token_arr[i] = NULL;
 	return (token_arr);
 }

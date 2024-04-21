@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 	(void)argc;
 	state = malloc(sizeof(t_state));
 	if (!state)
-	return (1);
+		return (1);
 	state->argv = argv;
 	state->env = environ;
 	state->status = 12;
@@ -41,15 +41,31 @@ int main(int argc, char **argv) {
 	setenv("nr", "nr_0 nr_1 nr_2", 1);
 	setenv("b", " b_0 b_1 b_2 ", 1);
 	setenv("nb", "nb_0 nb_1 nb_2", 1);
-	root = separate_prompt_by_space("cat '$a' 'pre'$l $r'suf' <'pre'$b'suf' >>'pre'$nl $nr'suf'> | 'pre'$nb'suf'");
+	setenv("a", "at", 1);
+	root = separate_prompt_by_space("cat at | ls -la | grep me");
+	// root = separate_prompt_by_space("cat '$a\"\" \"at\"\"'''''a't' ''''''\"\"'' s ''");
 	// root = separate_prompt_by_space("$r'a'");
 	tmp = root;
 	root = extract_meta_chars(&root);
 	handle_dollar(&root, state);
-	while (root) {
-		printf("ptr: %p, DATA: %s\nTYPE: %s\n\n", root, root->data, _token_type_tostr(root->type));
-		root = root->next;
+	handle_unnecessary_quotes(root);
+	t_token **arr = token_separate_by_pipe(root);
+	printf("root: %p\n", root);
+	int i = 0;
+	while (arr[i])
+	{
+		root = arr[i];
+		while (root) {
+			printf("ptr: %p, DATA: %s\nTYPE: %s\n\n", root, root->data, _token_type_tostr(root->type));
+			root = root->next;
+		}
+		printf("===\n");
+		i++;
 	}
+	// while (root) {
+	// 	printf("ptr: %p, DATA: %s\nTYPE: %s\n\n", root, root->data, _token_type_tostr(root->type));
+	// 	root = root->next;
+	// }
 	token_dispose_all(&root);
 
 	// if (has_syntax_errs(&tmp))

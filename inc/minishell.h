@@ -91,4 +91,6 @@ int64_t				token_count_pipe(t_token *token);
 t_token				**token_separate_by_pipe(t_token *token);
 t_token				*token_get_last(t_token *node);
 
+
+void	handle_unnecessary_quotes(t_token *root);
 #endif
