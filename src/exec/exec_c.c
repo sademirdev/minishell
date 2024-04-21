@@ -79,3 +79,15 @@ char	**add_args(char	**args, char *added)
 	free(args);
 	return (new_args);
 }
+
+void find_path_of_command(exec_c **head, char *envp[])
+{
+	exec_c	*tmp;
+
+	tmp = *head;
+	while (tmp)
+	{
+		tmp->path = ft_strdup(ft_findpath(tmp->cmd, envp));
+		tmp = tmp->next;
+	}
+}

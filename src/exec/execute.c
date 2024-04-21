@@ -18,5 +18,6 @@ int	ft_execute(t_token **head, char *envp[])
 	exec_c	**promt;
 
 	promt = init_exec_s(head);
-	
+	find_path_of_command(head, envp);
+
 }

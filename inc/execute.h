@@ -14,6 +14,10 @@
 # define EXECUTE_H
 
 # include "minishell.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
 
 typedef struct execute
 {
@@ -21,6 +25,7 @@ typedef struct execute
 	char	*file;
 	char	*operator;
 	char	**args;
+	char	*path;
 	struct execute *next;
 }	exec_c;
 
