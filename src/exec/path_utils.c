@@ -13,6 +13,10 @@
 #include "../../inc/execute.h"
 #include <stddef.h>
 
+/*
+Buradaki her bir fonksiyon sadece bir terminal
+komutunun tutulduğu yolu (path) bulmak içindir.
+*/
 size_t	ft_strlen(const char *a)
 {
 	size_t	i;

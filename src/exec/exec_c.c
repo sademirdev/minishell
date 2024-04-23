@@ -2,6 +2,11 @@
 
 void	lst_add(exec_c **head)
 {
+	/*
+	Bu fonksiyonun amacı kullandığımız exec_c yapısına
+	yeni bir liste elemanı eklerken kolayca hareket
+	edebilmetir. Bizim yerimize bu eklemeyi yapmakta.
+	*/
 	exec_c	*tmp;
 	exec_c	*added;
 
@@ -22,10 +27,25 @@ void	lst_add(exec_c **head)
 	added->operator = NULL;
 	added->args = NULL;
 	added->next = NULL;
+	added->path = NULL;
+	added->full_command = NULL;
 }
 
 exec_c	**init_exec_s(t_token **head)
 {
+	/*
+	Bu fonksiyon t_token yapısını bizim için daha kul-
+	lanışlı olan exec_c yapısına çevirmektir. Temel 
+	manada iki pipe arasını bir promt olarak nitelen-
+	dirirsek bu yapının her bir elemenı bir promt bil-
+	sini tutmakta.
+
+	Örn :
+	ls -l | grep 0
+
+	exec_c[0] = ls -l
+	exec_c[1] = grep 0 
+	*/
 	exec_c	**rtrn;
 	exec_c	*test;
 	t_token	*tmp;
@@ -39,7 +59,7 @@ exec_c	**init_exec_s(t_token **head)
 		if (tmp->prev == NULL || tmp->type == PIPE)
 		{
 			lst_add(rtrn);
-			if (tmp->prev != NULL)
+			if (tmp->type == PIPE)
 				test = test->next;
 		}
 		if (tmp->type == CMD)
@@ -48,6 +68,7 @@ exec_c	**init_exec_s(t_token **head)
 			test->args = add_args(test->args, tmp->data);
 		else if (tmp->type >= 4 && tmp->type <= 7)
 			test->operator = tmp->data;
+		test->full_command = add_args(test->full_command, tmp->data);
 		tmp = tmp->next;
 	}
 	return (rtrn);
@@ -55,6 +76,11 @@ exec_c	**init_exec_s(t_token **head)
 
 char	**add_args(char	**args, char *added)
 {
+	/*
+	Bu fonksiyon bir char ** yapısının son kıs-
+	mına bir char * eklemekte. Kullanım kolaylığı
+	açısından eklenmiştir.
+	*/
 	char	**new_args;
 	int		i;
 
@@ -82,6 +108,10 @@ char	**add_args(char	**args, char *added)
 
 void find_path_of_command(exec_c **head, char *envp[])
 {
+	/*
+	Bu fonksiyon her bir promt yapısının komutu
+	için gereken yolu (path) bulur
+	*/
 	exec_c	*tmp;
 
 	tmp = *head;

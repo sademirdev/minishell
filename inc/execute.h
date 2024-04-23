@@ -26,6 +26,7 @@ typedef struct execute
 	char	*operator;
 	char	**args;
 	char	*path;
+	char	**full_command;
 	struct execute *next;
 }	exec_c;
 
