@@ -34,6 +34,15 @@ typedef struct s_token_append_meta_data
 	int64_t			start;
 }					t_token_append_meta_data;
 
+typedef struct s_token_separation_meta_data
+{
+	t_token	**token_arr;
+	t_token	*iter;
+	t_token	*tmp;
+	t_token	*tmp_root;
+	int64_t	i;
+}			t_token_separation_meta_data;
+
 typedef struct s_state
 {
 	int				status;
@@ -79,6 +88,21 @@ bool				token_is_just_meta(t_token **token);
 t_token				*extract_meta_chars(t_token **root);
 bool				has_syntax_errs(t_token **root);
 void				extract_dollar_key_values(char **data, t_state *state, bool *has_dollar);
+bool				token_separation_meta_data_init(t_token_separation_meta_data *md, t_token *token);
+void	token_old_del(t_token **tmp, t_token *root);
+bool	is_valid_dollar(char *data, int64_t i);
+bool	is_digit(char c);
+bool	is_alpha(char c);
+bool	is_alnum_underscore(char c);
+void	handle_dollar(t_token **root, t_state *state);
+int64_t	handle_special_dollar(char **data, int64_t start, int64_t i,
+		t_state *state);
+void	handle_number_dollar(char **data, int64_t start, int64_t i);
+int64_t	handle_regular_dollar(char **data, int64_t start, int64_t i);
+char	*create_data_from_dollar(char *data, char *value, int64_t start,
+		int64_t index);
+void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar);
+char	*get_dollar_value(char *key);
 
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
 void				token_insert_dollar_nodes(t_token **token);
@@ -90,6 +114,8 @@ void				token_dispose_all(t_token **token);
 int64_t				token_count_pipe(t_token *token);
 t_token				**token_separate_by_pipe(t_token *token);
 t_token				*token_get_last(t_token *node);
+void	assign_token_types(t_token *token);
+void	assign_token_arr_types(t_token **token_arr);
 
 
 void	handle_unnecessary_quotes(t_token *root);

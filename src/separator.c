@@ -6,9 +6,7 @@ int64_t	create_separated_node(t_token **root, char *prompt, int64_t start,
 {
 	char	*data;
 	t_token	*new;
-	static int ii;
 
-	ii++;
 	data = ft_substr(prompt, start, i - start);
 	if (!data)
 		return (token_dispose(root), 1);
@@ -16,7 +14,6 @@ int64_t	create_separated_node(t_token **root, char *prompt, int64_t start,
 	if (!new)
 		return (free(data), token_dispose(root), 1);
 	*root = token_add_last(*root, new);
-	system("leaks minishell");
 	if (!*root)
 		return (free(data), free(new), 1);
 	return (0);
@@ -32,7 +29,6 @@ int64_t	pass_data(char *prompt, int64_t *i)
 		(*i)++;
 	return (0);
 }
-
 
 // todo(apancar): handle if return NULL, (syntax error)
 t_token	*separate_prompt_by_space(char *prompt)
@@ -82,7 +78,7 @@ void	token_insert_dollar_nodes(t_token **token)
 		*token = sub_nodes;
 	sub_last = token_get_last(sub_nodes);
 	sub_last->next = temp->next;
-	if (temp->next) 
+	if (temp->next)
 		temp->next->prev = sub_last;
 	token_dispose(&temp);
 }

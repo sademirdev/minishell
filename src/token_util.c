@@ -4,7 +4,7 @@ t_token	*token_get_root(t_token *node)
 {
 	if (!node)
 		return (NULL);
-	while (node->prev)
+	while (node && node->prev)
 		node = node->prev;
 	return (node);
 }
@@ -37,4 +37,22 @@ bool	token_is_just_meta(t_token **token)
 	else
 		return (false);
 	return (true);
+}
+
+void	token_old_del(t_token **tmp, t_token *root)
+{
+	t_token	*old_node;
+
+	printf("tmp->prev->data:%s\ntmp:%p\nroot->data:%s\nroot:%p\n", (*tmp)->prev->data, (*tmp), root->data, root);
+	if (!tmp || !*tmp || !root)
+		return ;
+	old_node = *tmp;
+	if ((*tmp)->prev)
+		(*tmp)->prev->next = (*tmp)->next;
+	if ((*tmp)->next)
+		(*tmp)->next->prev = (*tmp)->prev;
+	if (root == *tmp)
+		root = (*tmp)->next;
+	*tmp = (*tmp)->next;
+	token_dispose(&old_node);
 }
