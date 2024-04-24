@@ -90,6 +90,7 @@ bool	has_unnecessary_quotes(char *data)
 	int64_t	i;
 
 	i = 0;
+	quote = 0;
 	while (data[i])
 	{
 		is_unnecessary_quote(&quote, data[i]);

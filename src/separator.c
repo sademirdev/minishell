@@ -6,7 +6,9 @@ int64_t	create_separated_node(t_token **root, char *prompt, int64_t start,
 {
 	char	*data;
 	t_token	*new;
+	static int ii;
 
+	ii++;
 	data = ft_substr(prompt, start, i - start);
 	if (!data)
 		return (token_dispose(root), 1);
@@ -14,6 +16,7 @@ int64_t	create_separated_node(t_token **root, char *prompt, int64_t start,
 	if (!new)
 		return (free(data), token_dispose(root), 1);
 	*root = token_add_last(*root, new);
+	system("leaks minishell");
 	if (!*root)
 		return (free(data), free(new), 1);
 	return (0);
