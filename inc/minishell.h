@@ -28,9 +28,9 @@ typedef struct s_token
 }	t_token;
 
 
-int64_t	ft_strlen(const char *s);
-char	*ft_strdup(const char *src);
-char	*ft_substr(char const *s, unsigned int start, int64_t len);
+//int64_t	ft_strlen(const char *s);
+//char	*ft_strdup(const char *src);
+//char	*ft_substr(char const *s, unsigned int start, int64_t len);
 
 t_token	*token_new(char *data, t_token_type type);
 void	token_add(t_token *root, t_token *new);

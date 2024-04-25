@@ -31,7 +31,7 @@ void	lst_add(exec_c **head)
 	added->full_command = NULL;
 }
 
-exec_c	**init_exec_s(t_token **head)
+exec_c	**init_exec_s(t_token **head, exec_c **rtrn)
 {
 	/*
 	Bu fonksiyon t_token yapısını bizim için daha kul-
@@ -46,12 +46,9 @@ exec_c	**init_exec_s(t_token **head)
 	exec_c[0] = ls -l
 	exec_c[1] = grep 0 
 	*/
-	exec_c	**rtrn;
 	exec_c	*test;
 	t_token	*tmp;
 
-	rtrn = (exec_c **)malloc(sizeof(exec_c *));
-	*rtrn = NULL;
 	test = *rtrn;
 	tmp = *head;
 	while (tmp)

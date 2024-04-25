@@ -10,6 +10,7 @@ void	workit(exec_c **head)
 	exec_c	*tmp;
 	int		pipefd[2];
 
+	tmp = *head;
 	work_one_part(tmp, pipefd);
 
 }
