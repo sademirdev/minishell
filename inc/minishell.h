@@ -50,6 +50,13 @@ typedef struct s_state
 	char			**env;
 }					t_state;
 
+typedef struct s_error
+{
+	int		errnum;
+	char	*message;
+	bool	fatal;
+}				t_error;
+
 int64_t				ft_strlen(const char *s);
 char				*ft_strdup(const char *src);
 char				*ft_substr(char const *s, unsigned int start, int64_t len);
@@ -117,6 +124,8 @@ t_token				*token_get_last(t_token *node);
 void	assign_token_types(t_token *token);
 void	assign_token_arr_types(t_token **token_arr);
 
+void	error_print(t_error *err);
+t_token	**lexer(char *prompt, t_state *state);
 
 void	handle_unnecessary_quotes(t_token *root);
 #endif

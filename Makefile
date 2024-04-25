@@ -10,7 +10,8 @@ OBJ_DIR				=	build
 NAME					= $(BIN_DIR)/$(PROGRAM)
 SRCS					= src/meta.c src/quote.c src/separator.c src/token.c \
 	src/token_add.c src/token_append.c src/token_append_util.c src/token_util.c \
-	src/util.c src/dollar.c src/dollar_util.c src/dollar_handle.c src/assign_token_types.c 
+	src/util.c src/dollar.c src/dollar_util.c src/dollar_handle.c \
+	src/assign_token_types.c src/lexer.c src/error.c
 OBJS					= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CMD						= $(CMD_DIR)/$(PROGRAM).c
 DEPENDENCIES	=

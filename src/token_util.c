@@ -43,7 +43,6 @@ void	token_old_del(t_token **tmp, t_token *root)
 {
 	t_token	*old_node;
 
-	printf("tmp->prev->data:%s\ntmp:%p\nroot->data:%s\nroot:%p\n", (*tmp)->prev->data, (*tmp), root->data, root);
 	if (!tmp || !*tmp || !root)
 		return ;
 	old_node = *tmp;
@@ -51,8 +50,8 @@ void	token_old_del(t_token **tmp, t_token *root)
 		(*tmp)->prev->next = (*tmp)->next;
 	if ((*tmp)->next)
 		(*tmp)->next->prev = (*tmp)->prev;
-	if (root == *tmp)
-		root = (*tmp)->next;
+	// if (root == *tmp)
+	// 	root = (*tmp)->next; // todo(apancar): check again unnecessary assignment
 	*tmp = (*tmp)->next;
 	token_dispose(&old_node);
 }

@@ -47,15 +47,6 @@ void	token_add_next(t_token *token, t_token *new)
 	new->next = tmp;
 	tmp->prev = new;
 }
-// 		tmp = *token;
-// 		printf("0. token->data:%s\ntoken:%p\n\n", (*token)->data, (*token));
-// 		*token = new;
-// 		printf("1. token->data%s\ntoken:%p\n\n", (*token)->data, (*token));
-// 		new->next = tmp;
-// 		new->prev = NULL;
-// 		*token = new;
-// 		printf("2.token->data:%s\ntoken:%p\n\n", (*token)->data, (*token));
-// 		return ;
 
 void	token_add_prev(t_token **token, t_token *new)
 {
@@ -66,14 +57,11 @@ void	token_add_prev(t_token **token, t_token *new)
 	if (!(*token)->prev)
 	{
 		tmp = *token;
-		printf("0. token->data:%s\ntoken:%p\n\n", (*token)->data, (*token));
 		*token = new;
-		printf("1. token->data%s\ntoken:%p\n\n", (*token)->data, (*token));
 		new->next = tmp;
 		tmp->prev = new;
 		new->prev = NULL;
 		*token = (*token)->next;
-		printf("2.token->data:%s\ntoken:%p\n\n", (*token)->data, (*token));
 		return ;
 	}
 	tmp = (*token)->prev;

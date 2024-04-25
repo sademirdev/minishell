@@ -4,9 +4,11 @@ t_token	*extract_meta_chars(t_token **root)
 {
 	t_token	*tmp;
 	t_token	*last;
+	t_token	*tmp_prev;
 
 	tmp = *root;
 	last = tmp;
+	tmp_prev = NULL;
 	while (tmp)
 	{
 		if (!tmp->next)
@@ -14,10 +16,16 @@ t_token	*extract_meta_chars(t_token **root)
 		if (token_is_just_meta(&tmp))
 			tmp = tmp->next;
 		else if (token_append_meta(&tmp))
+		{
+			if ((*tmp).prev)
+				tmp_prev = (*tmp).prev;
 			token_old_del(&tmp, *root);
+		}
 		else
 			tmp = tmp->next;
 	}
+	if (tmp_prev)
+		return (token_get_root(tmp_prev));
 	return (token_get_root(last));
 }
 

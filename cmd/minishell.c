@@ -35,6 +35,8 @@ int main(int argc, char **argv) {
 	state->argv = argv;
 	state->env = environ;
 	state->status = 12;
+	lexer("at", state);
+
 	setenv("l", " l_0 l_1 l_2", 1);
 	setenv("nl", "nl_0 nl_1 nl_2", 1);
 	setenv("r", "r_0 r_1 r_2 ", 1);
@@ -42,6 +44,7 @@ int main(int argc, char **argv) {
 	setenv("b", " b_0 b_1 b_2 ", 1);
 	setenv("nb", "nb_0 nb_1 nb_2", 1);
 	setenv("a", "at", 1);
+
 	root = separate_prompt_by_space("a|b|c");
 	// "<<<"
 	// "at1  $NOVAR | at 2 | at 3 | at 4"
@@ -52,6 +55,7 @@ int main(int argc, char **argv) {
 	handle_dollar(&root, state);
 	handle_unnecessary_quotes(root);
 	t_token **arr = token_separate_by_pipe(root);
+	printf("root: %p\n", root);
 	assign_token_arr_types(arr);
 	int i = 0;
 	printf("\n");
