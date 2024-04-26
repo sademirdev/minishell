@@ -1,20 +1,24 @@
-CC						= clang
-CFLAGS				=
-PROGRAM				= minishell
-LIB						=	lib
-SRC_DIR				=	src
-CMD_DIR				=	cmd
-BIN_DIR				=	bin
-INC_DIR				= -Iinc
-OBJ_DIR				=	build
-NAME					= $(BIN_DIR)/$(PROGRAM)
-SRCS					= src/meta.c src/quote.c src/separator.c src/token.c \
+CC				= clang
+CFLAGS			=
+PROGRAM			= minishell
+LIB				= lib
+SRC_DIR			= src
+CMD_DIR			= cmd
+BIN_DIR			= bin
+INC_DIR			= -Iinc
+OBJ_DIR			= build
+NAME			= $(BIN_DIR)/$(PROGRAM)
+SRCS			= src/meta.c src/quote.c src/separator.c src/token.c \
 	src/token_add.c src/token_append.c src/token_append_util.c src/token_util.c \
 	src/util.c src/dollar.c src/dollar_util.c src/dollar_handle.c \
 	src/assign_token_types.c src/lexer.c src/error.c
-OBJS					= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-CMD						= $(CMD_DIR)/$(PROGRAM).c
+OBJS			= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+CMD				= $(CMD_DIR)/$(PROGRAM).c
 DEPENDENCIES	=
+RM				= rm -rf
+RLFLAGS			= -L./lib/readline/lib -I./lib/readline/include/readline -lreadline 
+DIR				= $(shell echo $(PWD))
+READLINE		= ./lib/readline/lib/libreadline.a
 
 os = ${shell uname -s}
 ifeq '$(os)' 'Darwin'
@@ -45,13 +49,20 @@ ifeq '$(test)' '1'
 ./$(attest) .
 endif
 
-all: $(DEPENDENCIES)
+all: $(DEPENDENCIES) $(READLINE)
 	@mkdir -p bin
 	@$(MAKE) $(NAME)
 
+$(READLINE):
+	@curl -O https://ftp.gnu.org/gnu/readline/readline-8.2-rc1.tar.gz
+	@tar -xvf readline-8.2-rc1.tar.gz
+	@$(RM) readline-8.2-rc1.tar.gz
+	@cd readline-8.2-rc1 && ./configure --prefix=$(DIR)/lib/readline && make && make install
+	@$(RM) readline-8.2-rc1
+
 $(NAME): $(CMD) $(OBJS)
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(RLFLAGS) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
@@ -66,15 +77,12 @@ c: clean
 
 fclean: clean
 	$(RM) $(NAME) & wait
+	$(RM) lib/readline
 f: fclean
 
 re: fclean
 	$(MAKE) all
 
-# t:
-# 	@mkdir -p bin
-# 	@$(CC) $(CFLAGS) $(INC_DIR) test/separator_test.c src/separator.c src/util.c src/token.c -o bin/separator_test
-# 	@./bin/separator_test
 t:
 	@mkdir -p bin
 	@$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/dollar_test.c test/equal_primitive.c $(SRCS) -o bin/test

@@ -4,6 +4,8 @@
 # include <stdbool.h>
 # include <stdint.h>
 # include <stdio.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 typedef enum e_token_type
 {

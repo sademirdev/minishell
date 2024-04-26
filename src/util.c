@@ -134,9 +134,9 @@ static void	ft_strrev(char *str)
 
 char	*ft_itoa(int64_t n)
 {
-	char *str;
-	int64_t is_neg;
-	int64_t length;
+	char	*str;
+	int64_t	is_neg;
+	int64_t	length;
 
 	is_neg = (n < 0);
 	str = (char *)malloc((ft_count_digit(n) + is_neg + 1) * sizeof(char));

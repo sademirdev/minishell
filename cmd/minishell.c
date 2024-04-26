@@ -44,8 +44,10 @@ int main(int argc, char **argv) {
 	setenv("b", " b_0 b_1 b_2 ", 1);
 	setenv("nb", "nb_0 nb_1 nb_2", 1);
 	setenv("a", "at", 1);
-
-	root = separate_prompt_by_space("a|b|c");
+	char *line = NULL;
+	line = readline("minishell$ ");
+	// add_history(line);
+	root = separate_prompt_by_space(line);
 	// "<<<"
 	// "at1  $NOVAR | at 2 | at 3 | at 4"
 	// "at1 >>> $PATH | at 2 | at 3 | at 4"
@@ -73,6 +75,7 @@ int main(int argc, char **argv) {
 	i = -1;
 	while (arr[++i])
 		token_dispose_all(&arr[i]);
+	free(line);
 	free(arr);
 	free(state);
 	return (0);
