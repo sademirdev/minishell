@@ -1,75 +1,5 @@
-#include <stdlib.h>
 #include "minishell.h"
-
-t_token	*token_new(char *data, t_token_type type)
-{
-	t_token	*token;
-
-	if (!data)
-		return (NULL);
-	token = (t_token *) malloc(sizeof(t_token));
-	if (!token)
-		return (NULL);
-	token->next = NULL;
-	token->prev = NULL;
-	token->data = data;
-	token->type = type;
-	return (token);
-}
-
-t_token	*token_add_last(t_token *token, t_token *new)
-{
-	t_token	*root;
-
-	root = token;
-	if (!root)
-	{
-		root = (t_token *) malloc(sizeof(t_token));
-		if (!root)
-			return (NULL);
-		return (root);
-	}
-	while (token->next)
-		token = token->next;
-	token->next = new;
-	token->next->prev = token;
-	return (root);
-}
-
-void	token_add_next(t_token *token, t_token *new)
-{
-	t_token	*tmp;
-
-	if (!token || !new)
-		return ;
-	tmp = token->next;
-	token->next = new;
-	new->prev = token;
-	new->next = tmp;
-	tmp->prev = new;
-}
-
-void	token_add_prev(t_token **token, t_token *new)
-{
-	t_token	*tmp;
-
-	if (!token || !*token || !new)
-		return ;
-	if (!(*token)->prev)
-	{
-		tmp = *token;
-		*token = new;
-		new->next = tmp;
-		tmp->prev = new;
-		new->prev = NULL;
-		return ;
-	}
-	tmp = (*token)->prev;
-	(*token)->prev = new;
-	new->next = *token;
-	tmp->next = new;
-	new->prev = tmp;
-}
+#include <stdlib.h>
 
 void	token_dispose(t_token **token)
 {
@@ -107,39 +37,43 @@ int64_t	token_count_pipe(t_token *token)
 	return (count);
 }
 
-// todo(apancar): separate function for norm
+bool	token_separation_meta_data_init(t_token_separation_meta_data *md, t_token *token)
+{
+	(*md).token_arr = (t_token **)malloc(sizeof(t_token *) * (token_count_pipe(token)
+				+ 2));
+	if (!(*md).token_arr)
+		return (true);
+	(*md).iter = token;
+	(*md).tmp_root = token;
+	(*md).i = 0;
+	return (false);
+}
+
 t_token	**token_separate_by_pipe(t_token *token)
 {
-	t_token	**token_arr;
-	t_token	*iter;
-	t_token	*tmp;
-	t_token	*tmp_root;
-	int64_t	i;
+	t_token_separation_meta_data md;
 
-	token_arr = (t_token **) malloc(sizeof(t_token *) * (token_count_pipe(token) + 1));
-	if (!token_arr)
+	if (token_separation_meta_data_init(&md, token))
 		return (NULL);
-	iter = token;
-	tmp_root = token;
-	i = 0;
-	while (iter)
+	while (md.iter)
 	{
-		if (iter->type == PIPE)
+		if (md.iter->type == PIPE)
 		{
-			tmp = iter;
-			token_arr[i] = tmp_root;
-			tmp_root = iter->next;
-			iter->prev->next = NULL;
-			iter = iter->next;
-			if (tmp)
-				token_dispose(&tmp);
-			if (tmp_root && tmp_root->type == PIPE)
+			md.tmp = md.iter;
+			md.token_arr[md.i] = md.tmp_root;
+			md.tmp_root = md.iter->next;
+			md.iter->prev->next = NULL; // note: segfault when prev NULL.
+			md.iter = md.iter->next;
+			if (md.tmp)
+				token_dispose(&md.tmp);
+			if (md.tmp_root && md.tmp_root->type == PIPE)
 				return (NULL); // todo(sademir): give syntax error
-			i++;
+			md.i++;
 		}
 		else
-			iter = iter->next;
+			md.iter = md.iter->next;
 	}
-	token_arr[i] = NULL;
-	return (token_arr);
+	md.token_arr[md.i++] = md.tmp_root;
+	md.token_arr[md.i] = NULL;
+	return (md.token_arr);
 }

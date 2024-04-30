@@ -1,6 +1,7 @@
 .vscode/
 build/
 bin/
+lib/
 
 .DS_Store
 *.out
