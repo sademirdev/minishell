@@ -25,7 +25,7 @@ char *_token_type_tostr(t_token_type type) {
 int main(int argc, char **argv) {
 	extern char **environ;
 	t_token *root;
-	t_token *tmp;
+	// t_token *tmp;
 	t_state *state;
 
 	(void)argc;
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 	state->argv = argv;
 	state->env = environ;
 	state->status = 12;
-	lexer("at", state);
+	// lexer("at", state);
 
 	setenv("l", " l_0 l_1 l_2", 1);
 	setenv("nl", "nl_0 nl_1 nl_2", 1);
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 	// "at1  $NOVAR | at 2 | at 3 | at 4"
 	// "at1 >>> $PATH | at 2 | at 3 | at 4"
 	// root = separate_prompt_by_space("$r'a'");
-	tmp = root;
+	// tmp = root;
 	root = extract_meta_chars(&root);
 	handle_dollar(&root, state);
 	handle_unnecessary_quotes(root);
