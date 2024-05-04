@@ -50,3 +50,14 @@ If you would like to contribute to the project:
 - Fork the project and make improvements in your own branch.
 - Commit your changes and create a pull request.
 - Describe your pull request in detail.
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
+
+## Authors
+- Samet Demir
+- Mehmet Ali Keklik
+- Ali Berk Pancar
+- Hülya Kızrak Yiğit
+- Ahmet Cemil Bostanoğlu
