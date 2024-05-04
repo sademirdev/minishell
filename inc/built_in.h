@@ -20,6 +20,7 @@ typedef struct s_built_in
 {
 	char				*data;
 	t_built_in_type		type;
+	char				*path;
 	struct s_built_in	*next;
 	struct s_built_in	*previous;
-}					t_built_in;
+}						t_built_in;

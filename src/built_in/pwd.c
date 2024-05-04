@@ -1,6 +1,11 @@
 #include "built_in.h"
 
-void	handle_pwd(t_built_in *built)
+static void	handle_pwd()
 {
-	//getcwd
+	char cwd[1024];
+	
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
+		printf("%s\n", cwd);
+	else
+		return;
 }
