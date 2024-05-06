@@ -35,7 +35,7 @@ static int64_t	ft_strlen(const char *s)
 	return (i);
 }
 
-void	handle_export(t_built_in *built)
+int64_t	handle_export(t_built_in *built)
 {
 	int64_t		i;
 	int64_t		len;
@@ -43,7 +43,7 @@ void	handle_export(t_built_in *built)
 	t_built_in	*temp;
 
 	if (!built)
-		return ;
+		return (1);
 	var = NULL;
 	len = ft_strlen(built->data);
 	temp = built;
@@ -56,6 +56,7 @@ void	handle_export(t_built_in *built)
 		i++;
 	}
 	printf("export %s\n", var);
+	return (0);
 }
 
 int main()

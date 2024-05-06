@@ -1,11 +1,11 @@
 #include "built_in.h"
 
-void	handle_exit(t_built_in *built)
+int64_t	handle_exit(t_built_in *built)
 {
 	t_built_in	*temp;
 
 	if (!built)
-		return ;
+		return (1);
 	temp = built;
 	if (!is_numeric(temp->next))
 	{
@@ -21,9 +21,7 @@ void	handle_exit(t_built_in *built)
 		//"exit 1 at" bash: exit: too many arguments
 		exit(1);
 	}
-
-
-	
+	return (0);
 }
 /*
 - process termination and 
