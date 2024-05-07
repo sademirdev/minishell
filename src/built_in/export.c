@@ -1,74 +1,95 @@
-// #include "built_in.h"
+#include "../../inc/built_in.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <stddef.h>
+#include <string.h>
 
-typedef enum e_built_in_type
+static void	export_var(void)
 {
-	NONE,
-	CMD,
-	ARG,
-	PIPE,
-	RED_L,
-	RED_LL,
-	RED_R,
-	RED_RR
-}					t_built_in_type;
+	extern char	**environ;
+	char		**env;
+	char		*value;
 
-typedef struct s_built_in
+	env = environ;
+	while (*env != NULL)
+	{
+		value = getenv(*env);
+		if (!value)
+			printf("%s=(null)\n", *env);
+		else
+			printf("declare -x=%s\n", value);
+		env++;
+	}
+}
+
+static int64_t	env_add(char *var, char *temp)
 {
-	char				*data;
-	t_built_in_type		type;
-	char				*path;
-	struct s_built_in	*next;
-	struct s_built_in	*previous;
-}					t_built_in;
+	extern char	**environ;
+	char		**env;
+	char		*new_var;
+	int64_t		i;
 
-static int64_t	ft_strlen(const char *s)
-{
-	int64_t	i;
-
-	if (!s)
-		return (0);
 	i = 0;
-	while (s[i])
+	new_var = ft_strdup("");
+	if (!new_var)
+		return (1);
+	while (environ[i] != NULL)
+	{
+		if (ft_strncmp(environ[i], var, ft_strlen(var)) == 0)
+		{
+			new_var = ft_strjoin(new_var, temp);
+			if (!new_var)
+				return (free (new_var), 1);
+			free(environ[i]);
+			environ[i] = new_var;
+			return (0);
+		}
 		i++;
-	return (i);
+	}
+	new_var = ft_strjoin(new_var, temp);
+	if (!new_var)
+		return (1);
+	env = (char **)malloc(sizeof(char *) * (i + 2));
+	if (!env)
+		return (1);
+	i = 0;
+	while (environ[i] != NULL)
+	{
+		env[i] = environ[i];
+		i++;
+	}
+	env[i] = new_var;
+	env[i + 1] = NULL;
+	environ = env;
+	// return (environ)???
+	return (0);
 }
 
 int64_t	handle_export(t_built_in *built)
 {
 	int64_t		i;
-	int64_t		len;
-	char		*var;
+	char		**var;
 	t_built_in	*temp;
 
 	if (!built)
 		return (1);
-	var = NULL;
-	len = ft_strlen(built->data);
-	temp = built;
-	i = 0;
-	while(temp->data[i] != ' ')
-		i++;
-	while (temp->data[i])
+	if (built->next == NULL)
 	{
-		var = ft_strjoin(var, temp->data[i]);
-		i++;
+		export_var();
+		return (0);
 	}
-	printf("export %s\n", var);
+	var = NULL;
+	temp = built->next;
+	var = ft_split(temp->data, '=');
+	if (!var)
+		return (1);
+	i = 0;
+	if (env_add(var[0], temp->data) == 1)
+	{
+		while (var[i] != NULL)
+			free(var[i++]);
+		free(var);
+		return (1);
+	}
 	return (0);
 }
-
-int main()
-{
-	t_built_in *built;
-	built = (t_built_in *)malloc(sizeof(t_built_in));
-	built->data = "export a=5";
-	handle_export(built);
-	return 0;
-}
-
-/*
-	export a=5
-	export a="5"
-*/

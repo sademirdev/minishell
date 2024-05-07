@@ -1,9 +1,11 @@
-#include "built_in.h"
+#include "../../inc/built_in.h"
+#include <unistd.h>
+#include <stdio.h>
 
-int64_t	handle_pwd()
+int64_t	handle_pwd(void)
 {
-	char cwd[1024];
-	
+	char	cwd[1024];
+
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
 		if (ft_strlen(cwd) == 0)
