@@ -1,45 +1,79 @@
-#include <stdlib.h>
 #include "minishell.h"
+#include <stdlib.h>
 
-t_token	*token_new(char *data, t_token_type type)
+void	token_dispose(t_token **token)
 {
-	t_token	*token;
-
-	if (!data)
-		return (NULL);
-	token = (t_token *) malloc(sizeof (t_token));
 	if (!token)
+		return ;
+	if (*token)
+	{
+		free((*token)->data);
+		(*token)->data = NULL;
+	}
+	free(*token);
+	*token = NULL;
+}
+
+void	token_dispose_all(t_token **token)
+{
+	if (!token || !*token)
+		return ;
+	if ((*token)->next)
+		token_dispose_all(&(*token)->next);
+	token_dispose(token);
+}
+
+int64_t	token_count_pipe(t_token *token)
+{
+	int64_t	count;
+
+	count = 0;
+	while (token)
+	{
+		if (token->type == PIPE)
+			count++;
+		token = token->next;
+	}
+	return (count);
+}
+
+bool	token_separation_meta_data_init(t_token_separation_meta_data *md, t_token *token)
+{
+	(*md).token_arr = (t_token **)malloc(sizeof(t_token *) * (token_count_pipe(token)
+				+ 2));
+	if (!(*md).token_arr)
+		return (true);
+	(*md).iter = token;
+	(*md).tmp_root = token;
+	(*md).i = 0;
+	return (false);
+}
+
+t_token	**token_separate_by_pipe(t_token *token)
+{
+	t_token_separation_meta_data md;
+
+	if (token_separation_meta_data_init(&md, token))
 		return (NULL);
-	token->next = NULL;
-	token->prev = NULL;
-	token->data = data;
-	token->type = type;
-	return (token);
-}
-
-void	token_add(t_token *root, t_token *new)
-{
-	if (!root)
-		return ;
-	while (root->next)
-		root = root->next;
-	root->next = new;
-	root->next->prev = root;
-}
-
-void	token_add_next(t_token *token, t_token *new)
-{
-	if (!token || !new)
-		return ;
-	token->next = new;
-	token->next->prev = token;
-}
-
-void	token_add_prev(t_token **token, t_token *new)
-{
-	if (!token || !*token || !new)
-		return ;
-	(*token)->prev = new;
-	new->next = *token;
-	// todo(hkizrak-): fix segmentation error!
+	while (md.iter)
+	{
+		if (md.iter->type == PIPE)
+		{
+			md.tmp = md.iter;
+			md.token_arr[md.i] = md.tmp_root;
+			md.tmp_root = md.iter->next;
+			md.iter->prev->next = NULL; // note: segfault when prev NULL.
+			md.iter = md.iter->next;
+			if (md.tmp)
+				token_dispose(&md.tmp);
+			if (md.tmp_root && md.tmp_root->type == PIPE)
+				return (NULL); // todo(sademir): give syntax error
+			md.i++;
+		}
+		else
+			md.iter = md.iter->next;
+	}
+	md.token_arr[md.i++] = md.tmp_root;
+	md.token_arr[md.i] = NULL;
+	return (md.token_arr);
 }

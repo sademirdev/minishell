@@ -1,17 +1,24 @@
-CC						= clang
-CFLAGS				=
-PROGRAM				= minishell
-LIB						=	lib
-SRC_DIR				=	src
-CMD_DIR				=	cmd
-BIN_DIR				=	bin
-INC_DIR				= -Iinc
-OBJ_DIR				=	build
-NAME					= $(BIN_DIR)/$(PROGRAM)
-SRCS					= src/separator.c src/token.c
-OBJS					= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-CMD						= $(CMD_DIR)/$(PROGRAM).c
+CC				= clang
+CFLAGS			=
+PROGRAM			= minishell
+LIB				= lib
+SRC_DIR			= src
+CMD_DIR			= cmd
+BIN_DIR			= bin
+INC_DIR			= -Iinc
+OBJ_DIR			= build
+NAME			= $(BIN_DIR)/$(PROGRAM)
+SRCS			= src/meta.c src/quote.c src/separator.c src/token.c \
+	src/token_add.c src/token_append.c src/token_append_util.c src/token_util.c \
+	src/util.c src/dollar.c src/dollar_util.c src/dollar_handle.c \
+	src/assign_token_types.c src/lexer.c src/error.c
+OBJS			= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+CMD				= $(CMD_DIR)/$(PROGRAM).c
 DEPENDENCIES	=
+RM				= rm -rf
+RLFLAGS			= -L./lib/readline/lib -I./lib/readline/include/readline -lreadline 
+DIR				= $(shell echo $(PWD))
+READLINE		= ./lib/readline/lib/libreadline.a
 
 os = ${shell uname -s}
 ifeq '$(os)' 'Darwin'
@@ -42,17 +49,26 @@ ifeq '$(test)' '1'
 ./$(attest) .
 endif
 
-all: $(DEPENDENCIES)
+all: $(DEPENDENCIES) $(READLINE)
+	@mkdir -p bin
 	@$(MAKE) $(NAME)
 
+$(READLINE):
+	@curl -O https://ftp.gnu.org/gnu/readline/readline-8.2-rc1.tar.gz
+	@tar -xvf readline-8.2-rc1.tar.gz
+	@$(RM) readline-8.2-rc1.tar.gz
+	@cd readline-8.2-rc1 && ./configure --prefix=$(DIR)/lib/readline && make && make install
+	@$(RM) readline-8.2-rc1
+
 $(NAME): $(CMD) $(OBJS)
-	$(CC) $(CFLAGS) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(RLFLAGS) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
 
-$(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) $(INC_DIR) -c $(SRCS) -o $(OBJS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(INC_DIR) -c $< -o $@
 
-run: all
-	@echo "\n\x1B[32m===================================program======================================\n\x1B[0m"
+r: all
 	./$(NAME)
 
 clean:
@@ -61,6 +77,7 @@ c: clean
 
 fclean: clean
 	$(RM) $(NAME) & wait
+	$(RM) lib/readline
 f: fclean
 
 re: fclean
@@ -68,10 +85,7 @@ re: fclean
 
 t:
 	@mkdir -p bin
-	@$(CC) $(CFLAGS) $(INC_DIR) test/separator_test.c src/separator.c src/util.c src/token.c -o bin/separator_test
-	@./bin/separator_test
-# t:
-# 	@$(CC) $(CFLAGS) $(INC_DIR) test/token_test.c src/token.c -o bin/token_test
-# 	@./bin/token_test
+	@$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/dollar_test.c test/equal_primitive.c $(SRCS) -o bin/test
+	@./bin/test
 
 .PHONY: all clean fclean re run
