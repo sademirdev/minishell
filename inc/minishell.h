@@ -116,8 +116,6 @@ char	*get_dollar_value(char *key);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
 void				token_insert_dollar_nodes(t_token **token);
 
-void	handle_dollar(t_token **root, t_state *state);
-
 void				token_dispose(t_token **token);
 void				token_dispose_all(t_token **token);
 int64_t				token_count_pipe(t_token *token);
