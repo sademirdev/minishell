@@ -61,3 +61,4 @@ This project is licensed under the [MIT License](./LICENSE).
 - Ali Berk Pancar
 - Hülya Kızrak Yiğit
 - Ahmet Cemil Bostanoğlu
+- Kaan Karakuş

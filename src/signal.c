@@ -1,5 +1,23 @@
 #include "minishell.h"
+#include "termios.h"
 #include "signal.h"
+
+void	set_termios(void)
+{
+	struct termios	term1;
+
+	if (tcgetattr(STDIN_FILENO, &term1) != 0)
+		exit((perror("error"), -1));
+	else
+	{
+		term1.c_cc[VQUIT] = _POSIX_VDISABLE;
+		term1.c_lflag |= ECHOE | ICANON;
+		if (tcsetattr(STDIN_FILENO, TCSANOW, &term1) != 0)
+			exit((perror("error"), -1));
+		if (tcgetattr(STDIN_FILENO, &term1) != 0)
+			exit((perror("error"), -1));
+	}
+}
 
 void	signal_handler_ctrl_c(int signo)
 {
@@ -12,15 +30,7 @@ void	signal_handler_ctrl_c(int signo)
 	}
 }
 
-void	signal_handler_ctrl_slash(int signo)
-{
-	if (signo == SIGQUIT)
-	{
-		ft_putstr_fd("Quit: 3\n", 1);
-	}
-}
-
-void	signal_handler_ctrl_z(int signo)
+void	signal_handler_ctrl_d(int signo)
 {
 	if (signo == SIGTSTP)
 	{
@@ -33,7 +43,7 @@ void	signal_handler_ctrl_z(int signo)
 
 void signals(void)
 {
+	set_termios();
 	signal(SIGINT, signal_handler_ctrl_c);
-	signal(SIGQUIT, signal_handler_ctrl_slash);
-	signal(SIGTSTP, signal_handler_ctrl_z);
+	signal(SIGTSTP, signal_handler_ctrl_d);
 }
