@@ -14,7 +14,7 @@ int64_t	handle_built_in(t_built_in *built)
 	else if ((ft_strncmp(built->data, "pwd", 3) == 0)
 		&& ft_strlen(built->data) == 3)
 		result = handle_pwd();
-	else if ((ft_strncmp(built->data, "export ", 7) == 0)
+	else if ((ft_strncmp(built->data, "export", 6) == 0)
 		&& ft_strlen(built->data) == 7)
 		result = handle_export(built);
 	else if ((ft_strncmp(built->data, "unset", 5) == 0)
@@ -27,4 +27,32 @@ int64_t	handle_built_in(t_built_in *built)
 		&& ft_strlen(built->data) == 4)
 		result = handle_exit(built);
 	return (result);
+}
+
+bool	is_built_in(t_built_in *built)
+{
+	if (!built || built->type != CMD)
+		return (false);
+	if ((ft_strncmp(built->data, "echo", 4) == 0)
+		&& ft_strlen(built->data) == 4)
+		return (true);
+	else if ((ft_strncmp(built->data, "cd", 2) == 0)
+		&& ft_strlen(built->data) == 2)
+		return (true);
+	else if ((ft_strncmp(built->data, "pwd", 3) == 0)
+		&& ft_strlen(built->data) == 3)
+		return (true);
+	else if ((ft_strncmp(built->data, "export", 6) == 0)
+		&& ft_strlen(built->data) == 6)
+		return (true);
+	else if ((ft_strncmp(built->data, "unset", 5) == 0)
+		&& ft_strlen(built->data) == 5)
+		return (true);
+	else if ((ft_strncmp(built->data, "env", 3) == 0)
+		&& ft_strlen(built->data) == 3)
+		return (true);
+	else if ((ft_strncmp(built->data, "exit", 4) == 0)
+		&& ft_strlen(built->data) == 4)
+		return (true);
+	return (false);
 }

@@ -7,14 +7,12 @@ int64_t	handle_echo(t_built_in *built)
 {
 	t_built_in	*temp;
 	char		*buffer;
-	bool		new_line;
 
 	buffer = ft_strdup("");
-	if (!built || !buffer)
+	if (!buffer)
 		return (free(buffer), 1);
 	temp = built->next;
-	new_line = ft_strcmp(temp->data, "-n") == 0;
-	if (new_line)
+	if (ft_strcmp(temp->data, "-n") == 0)
 		temp = temp->next;
 	while (temp && temp->type == ARG)
 	{
@@ -30,7 +28,7 @@ int64_t	handle_echo(t_built_in *built)
 		temp = temp->next;
 	}
 	printf("%s", buffer);
-	if (!new_line)
+	if (built->next && ft_strcmp(built->next->data, "-n") == 0)
 		printf("\n");
 	return (0);
 }

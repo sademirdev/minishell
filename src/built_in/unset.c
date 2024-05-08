@@ -10,20 +10,20 @@ int64_t	handle_unset(t_built_in *built)
 	temp = built->next;
 	while (temp)
 	{
-		i = 0;
-		while (environ[i])
+		i = -1;
+		while (environ[++i])
 		{
 			if (ft_strncmp(environ[i], temp->data, ft_strlen(temp->data)) == 0)
 			{
 				free(environ[i]);
-				while (environ[i])
+				while (environ[i + 1])
 				{
 					environ[i] = environ[i + 1];
 					i++;
 				}
+				environ[i] = NULL;
 				break ;
 			}
-			i++;
 		}
 		temp = temp->next;
 	}
