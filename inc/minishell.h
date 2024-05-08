@@ -128,4 +128,6 @@ void	error_print(t_error *err);
 t_token	**lexer(char *prompt, t_state *state);
 
 void	handle_unnecessary_quotes(t_token *root);
+char	**ft_split(char const *str, char c);
+
 #endif
