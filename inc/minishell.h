@@ -7,6 +7,23 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+typedef struct s_syntax
+{
+	unsigned char		duplex;
+	unsigned char		simplex;
+	unsigned char		zero_pipe;
+	unsigned char		undefined;
+}					t_syntax;
+
+# define UNKNOWN_ERR	"shell says: I don't know what you're trying to do\n"
+# define ZERO_PIPE		"shell says: syntax error near expected non-exist \
+token before `|'\n"
+# define EMPTY_AFTER	"shell says: syntax error near unexpected token after \
+`|', `>', `<', `>>', `<<'\n"
+# define MISS_QUOTE		"shell says: unexpected EOF while looking for matching \
+`'', `\"'\n"
+
+
 typedef enum e_token_type
 {
 	NONE,
@@ -50,6 +67,8 @@ typedef struct s_state
 	int				status;
 	char			**argv;
 	char			**env;
+	char			*promt;
+	int64_t			cmd_ct;
 }					t_state;
 
 typedef struct s_error
@@ -58,6 +77,15 @@ typedef struct s_error
 	char	*message;
 	bool	fatal;
 }				t_error;
+
+void				syntax_squote(t_syntax *syntax);
+void				syntax_dquote(t_syntax *syntax);
+int					syntax_pipe(t_state *shell, t_syntax *syntax, size_t *_);
+int					syntax_sarrow(t_syntax *syntax, size_t *_);
+int					syntax_darrow(t_syntax *syntax, size_t *_);
+int					i_space(char character);
+void				print_syntax_err(int errs);
+int32_t				syntax_check(t_state *shell);
 
 int64_t				ft_strlen(const char *s);
 char				*ft_strdup(const char *src);

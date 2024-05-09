@@ -11,7 +11,8 @@ NAME			= $(BIN_DIR)/$(PROGRAM)
 SRCS			= src/meta.c src/quote.c src/separator.c src/token.c \
 	src/token_add.c src/token_append.c src/token_append_util.c src/token_util.c \
 	src/util.c src/dollar.c src/dollar_util.c src/dollar_handle.c \
-	src/assign_token_types.c src/lexer.c src/error.c
+	src/assign_token_types.c src/lexer.c src/error.c src/syntax_check.c \
+	src/syntax_check_util_00.c
 OBJS			= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CMD				= $(CMD_DIR)/$(PROGRAM).c
 DEPENDENCIES	=
@@ -85,7 +86,13 @@ re: fclean
 
 t:
 	@mkdir -p bin
-	@$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/dollar_test.c test/equal_primitive.c $(SRCS) -o bin/test
+	$(CC) $(CFLAGS) \
+		$(INC_DIR) \
+		-Itest/libs \
+		test/libs/murmur_test/testing.c \
+		test/main.c \
+		test/tests/murmur_tests/murmur_test.c \
+		-D TEST=1 $(SRCS) -o bin/test
 	@./bin/test
 
 .PHONY: all clean fclean re run
