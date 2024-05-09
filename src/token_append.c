@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include "stdlib.h"
 
 // todo(hkizrak-): check possible errors for side by side metas (throw syntax
 // error)  a<b
@@ -77,4 +78,79 @@ void	token_append_str(t_token **token, int64_t start, int64_t i)
 	if (!new)
 		return ; // todo(sademir): handle error
 	token_add_prev(token, new);
+}
+
+int64_t	token_count_args(t_token *token)
+{
+	t_token *tmp;
+	int64_t	len;
+	bool		on_arg;
+
+	if (!token)
+		return (FAILURE);
+	tmp = token;
+	len = 0;
+	while (tmp)
+	{
+		if (tmp->type == ARG)
+		{
+			len++;
+			on_arg = true;
+		}
+		else if (on_arg)
+			break ;
+		tmp = tmp->next;
+	}
+	return (len);
+}
+
+char	**token_to_arg(t_token *token, char *cmd_path)
+{
+	char		**argv;
+	int64_t i;
+	bool 		on_arg;
+
+	if (!token || !cmd_path)
+		return (NULL);
+	argv = (char **) malloc(sizeof(char *) * (token_count_args(token) + 2));
+	if (!argv)
+		return (NULL);
+	argv[0] = cmd_path;
+	i = 1;
+	on_arg = false;
+	while (token)
+	{
+		if (token->type == ARG)
+		{
+			argv[i++] = token->data;
+			on_arg = true;
+		}
+		else if (on_arg)
+			break ;
+		token = token->next;
+	}
+	argv[i] = NULL;
+	return (argv);
+}
+
+t_cmd	*token_to_cmd(t_token *token, t_state *state)
+{
+	t_cmd	*cmd;
+	char	**argv;
+	char	*cmd_path;
+
+	if (!token)
+		return (NULL);
+	cmd = (t_cmd *) malloc(sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
+	cmd_path = find_path(token->data, state->env);
+	if (!cmd_path)
+		return (free(cmd), NULL);
+	argv = token_to_arg(token, cmd_path);
+	if (!argv)
+		return (free(cmd), free(cmd_path), NULL);
+	cmd->cmd = cmd_path;
+	cmd->argv = argv;
+	return (cmd);
 }

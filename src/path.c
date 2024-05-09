@@ -1,5 +1,6 @@
 #include "minishell.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 char	*get_env_path(char **env)
 {
@@ -23,7 +24,7 @@ void	dispose_paths(char **paths)
 	int64_t	i;
 
 	if (!paths)
-		return (NULL);
+		return ;
 	i = 0;
 	while (paths[i])
 	{
@@ -44,15 +45,14 @@ char *join_path(char **paths, char *command)
 	i = 0;
 	while (paths[i])
 	{
-		tmp = ft_strjoin(paths[i], "/");
+		tmp = ft_strjoin(paths[i], "/", false);
 		if (!tmp)
 			return (dispose_paths(paths), NULL);
-		cmd_path = ft_strjoin(tmp, command);
+		cmd_path = ft_strjoin(tmp, command, true);
 		if (!cmd_path)
-			return (dispose_paths(paths), free(tmp), NULL);
+			return (dispose_paths(paths), NULL);
 		if (access(cmd_path, X_OK) == 0)
-			return (dispose_paths(paths), free(tmp), cmd_path);
-		free(tmp);
+			return (dispose_paths(paths), cmd_path);
 		free(cmd_path);
 		i++;
 	}
