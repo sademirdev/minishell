@@ -5,7 +5,6 @@
 char	*get_env_path(char **env)
 {
 	int64_t	i;
-	char		*path;
 
 	if (!env)
 		return (NULL);

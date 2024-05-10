@@ -20,12 +20,12 @@ RLFLAGS			= -L./lib/readline/lib -I./lib/readline/include/readline -lreadline
 DIR				= $(shell echo $(PWD))
 READLINE		= ./lib/readline/lib/libreadline.a
 
-os = ${shell uname -s}
-ifeq '$(os)' 'Darwin'
-NPROCS = $(shell sysctl -n hw.ncpu)
-else ifeq '$(os)' 'Linux'
-NPROCS = $(shell nproc)
-endif
+# os = ${shell uname -s}
+# ifeq '$(os)' 'Darwin'
+# NPROCS = $(shell sysctl -n hw.ncpu)
+# else ifeq '$(os)' 'Linux'
+# NPROCS = $(shell nproc)
+# endif
 # MAKEFLAGS += -j$(NPROCS)
 
 w = 1

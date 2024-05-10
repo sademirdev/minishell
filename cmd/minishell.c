@@ -41,9 +41,10 @@ int	main(int argc, char **argv)
 	state->argv = argv;
 	state->env = environ;
 	state->status = 12;
-	while ("false")
-	{
-		line = readline("at: ");
+	// while ("false")
+	// {
+		// line = readline("at: ");
+		line = ft_strdup("ls -l | grep a | wc -l");
 		root = separate_prompt_by_space(line);
 		tmp = root;
 		root = extract_meta_chars(&root);
@@ -59,8 +60,8 @@ int	main(int argc, char **argv)
 			root = arr[i];
 			while (root)
 			{
-				printf("ptr: %p, DATA: %s\nTYPE: %s\n\n", root, root->data,
-					_token_type_tostr(root->type));
+				// printf("ptr: %p, DATA: %s\nTYPE: %s\n\n", root, root->data,
+				// 	_token_type_tostr(root->type));
 				root = root->next;
 			}
 			printf("===\n\n");
@@ -74,7 +75,7 @@ int	main(int argc, char **argv)
 		line = 0;
 		free(arr);
 		arr = 0;
-	}
+	// }
 	free(state);
 	return (0);
 }

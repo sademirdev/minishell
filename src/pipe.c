@@ -2,9 +2,55 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int64_t	pipe_single_exec(t_token *token_arr, t_state *state)
+static bool	is_built_in(t_token *token)
 {
-	return (1);
+	if (!token || token->type != CMD)
+		return (false);
+	if (ft_strncmp(token->data, "echo", 4) == 0)
+		return (true);
+	else if (ft_strncmp(token->data, "cd", 2) == 0)
+		return (true);
+	else if (ft_strncmp(token->data, "pwd", 3) == 0)
+		return (true);
+	else if (ft_strncmp(token->data, "export", 6) == 0)
+		return (true);
+	else if (ft_strncmp(token->data, "unset", 5) == 0)
+		return (true);
+	else if (ft_strncmp(token->data, "env", 3) == 0)
+		return (true);
+	else if (ft_strncmp(token->data, "exit", 4) == 0)
+		return (true);
+	return (false);
+}
+
+int64_t	pipe_single_exec(t_token *token, t_state *state)
+{
+	int			pid;
+	t_cmd		*cmd;
+
+	if (!token || !state)
+		return (FAILURE);
+
+	cmd = token_to_cmd(token, state);
+	if (!cmd)
+		return (FAILURE);
+	if (!is_built_in(token))
+	{
+		pid = fork();
+		if (pid == -1)
+			return (FAILURE); // todo(kkarakus): handle close;
+		if (pid == 0)
+		{
+			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
+				exit(1); // todo(sademir): handle error case
+		}
+	}
+	else
+	{
+		if (execve(cmd->cmd, cmd->argv, state->env) == -1)
+			return (FAILURE);
+	}
+	return (SUCCESS);
 }
 
 int64_t	pipe_init(int (*fd)[2], int64_t pipe_count)
@@ -26,7 +72,8 @@ int64_t	pipe_init(int (*fd)[2], int64_t pipe_count)
 int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *state)
 {
 	int64_t	i;
-	int			pid;
+	int64_t	j;
+	pid_t		pid;
 	t_cmd		*cmd;
 
 	i = 0;
@@ -39,16 +86,37 @@ int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *s
 			return (FAILURE); // todo(kkarakus): handle close;
 		if (pid == 0)
 		{
+			j = 0;
+			while (j < arr_len - 3)
+			{
+				if (j != i - 1 && j != i)
+				{
+					close(fd[j][0]);
+					close(fd[j][1]);
+				}
+				j++;
+			}
 			if (i != 0)
+			{
+				close(fd[i - 1][1]);
 				dup2(fd[i - 1][0], STDIN_FILENO);
+			}
 			if (i != arr_len - 1)
+			{
+				close(fd[i][0]);
 				dup2(fd[i][1], STDOUT_FILENO);
+			}
 			cmd = token_to_cmd(token_arr[i], state);
 			if (!cmd)
+			{
+				printf("cmd is null\n");
 				exit(1); // todo(sademir): handle error case
+			}
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
+			{
+				printf("execve\n");
 				exit(1); // todo(sademir): handle error case
-			break ;
+			}
 		}
 		i++;
 	}
