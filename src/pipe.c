@@ -69,88 +69,94 @@ int64_t	pipe_init(int (*fd)[2], int64_t pipe_count)
 	return (SUCCESS);
 }
 
-static void	handle_child_process(t_pipe_exec_metadata *md)
+static void	handle_child_process(t_token **token_arr, t_state *state, int i, int (*fd)[2])
 {
 	int64_t	j;
+	int64_t	arr_len;
 	t_cmd	*cmd;
 
+	arr_len = token_arr_len(token_arr);
+	if (!token_arr[i] || !state || arr_len < 1)
+		exit(1); // todo(sademir): handle error case
 	j = 0;
-	while (j < md->arr_len - 1)
+	while (j < arr_len - 1)
 	{
-		if (j != md->i - 1 && j != md->i)
+		if (j != i - 1 && j != i)
 		{
-			close(md->fd[j][0]);
-			close(md->fd[j][1]);
+			close(fd[j][0]);
+			close(fd[j][1]);
 		}
 		j++;
 	}
-	if (md->i != 0)
+	if (i != 0)
 	{
-		close(md->fd[md->i - 1][1]);
-		dup2(md->fd[md->i - 1][0], STDIN_FILENO);
+		close(fd[i - 1][1]);
+		dup2(fd[i - 1][0], STDIN_FILENO);
 	}
-	if (md->i != md->arr_len - 1)
+	if (i != arr_len - 1)
 	{
-		close(md->fd[md->i][0]);
-		dup2(md->fd[md->i][1], STDOUT_FILENO);
+		close(fd[i][0]);
+		dup2(fd[i][1], STDOUT_FILENO);
 	}
-	cmd = token_to_cmd(md->token_arr[md->i], md->state);
+	cmd = token_to_cmd(token_arr[i], state);
 	if (!cmd)
 	{
 		printf("cmd is null\n");
 		exit(1); // todo(sademir): handle error case
 	}
-	if (execve(cmd->cmd, cmd->argv, md->state->env) == -1)
+	if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 	{
 		printf("execve\n");
 		exit(1); // todo(sademir): handle error case
 	}
 }
 
-int64_t	fork_init(t_pipe_exec_metadata* md)
+int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *state)
 {
+	int64_t	i;
 	pid_t	pid;
 
-	md->i = 0;
-	if (!md->fd || md->arr_len < 0)
+	i = 0;
+	if (!fd || arr_len < 0)
 		return (FAILURE);
-	while (md->i < md->arr_len)
+	while (i < arr_len)
 	{
 		pid = fork();
 		if (pid == -1)
 			return (FAILURE); // todo(kkarakus): handle close;
 		if (pid == 0)
-			handle_child_process(md);
+			handle_child_process(token_arr, state, i, fd);
 		else
 		{
-			if (md->i != 0)
+			if (i != 0)
 			{
-				close(md->fd[md->i - 1][0]);
-				close(md->fd[md->i - 1][1]);
+				close(fd[i - 1][0]);
+				close(fd[i - 1][1]);
 			}
 		}
-		md->i++;
+		i++;
 	}
 	return (SUCCESS);
 }
 
 int64_t	pipe_exec(t_token **token_arr, t_state *state)
 {
-	t_pipe_exec_metadata	md;
+	int64_t	arr_len;
+	int		(*fd)[2];
 
 	if (!token_arr || !state)
 		return (FAILURE);
-	md.arr_len = token_arr_len(token_arr);
-	if (md.arr_len < 1)
+	arr_len = token_arr_len(token_arr);
+	if (arr_len < 1)
 		return (FAILURE);
-	if (md.arr_len == 1)
+	if (arr_len == 1)
 		return (pipe_single_exec(token_arr[0], state));
-	md.fd = (int (*)[2]) malloc(sizeof(int [2]) * (md.arr_len - 1));
-	if (!md.fd)
+	fd = (int (*)[2]) malloc(sizeof(int [2]) * (arr_len - 1));
+	if (!fd)
 		return (FAILURE);
-	if (pipe_init(md.fd, md.arr_len - 1) != SUCCESS)
+	if (pipe_init(fd, arr_len - 1) != SUCCESS)
 		return (FAILURE);
-	if (fork_init(&md) != SUCCESS)
+	if (fork_init(fd, arr_len, token_arr, state) != SUCCESS)
 		return (FAILURE);
 	return (SUCCESS);
 }
