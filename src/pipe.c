@@ -78,18 +78,6 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 	arr_len = token_arr_len(token_arr);
 	if (!token_arr[i] || !state || arr_len < 1)
 		exit(1); // todo(sademir): handle error case
-	if (i != 0)
-	{
-		dup2(fd[i - 1][0], STDIN_FILENO);
-		close(fd[i - 1][0]);
-		close(fd[i - 1][1]);
-	}
-	if (i != arr_len - 1)
-	{
-		dup2(fd[i][1], STDOUT_FILENO);
-		close(fd[i][0]);
-		close(fd[i][1]);
-	}
 	j = 0;
 	while (j < arr_len - 1)
 	{
@@ -99,6 +87,16 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 			close(fd[j][1]);
 		}
 		j++;
+	}
+	if (i != 0)
+	{
+		close(fd[i - 1][1]);
+		dup2(fd[i - 1][0], STDIN_FILENO);
+	}
+	if (i != arr_len - 1)
+	{
+		close(fd[i][0]);
+		dup2(fd[i][1], STDOUT_FILENO);
 	}
 	cmd = token_to_cmd(token_arr[i], state);
 	if (!cmd)
