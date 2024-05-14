@@ -160,7 +160,7 @@ char	*ft_itoa(int64_t n)
 	return (str);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char const *s1, char const *s2, bool flag_free)
 {
 	char	*buf;
 	int64_t	i;
@@ -179,5 +179,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	while (s2[i])
 		buf[j++] = s2[i++];
 	buf[j] = '\0';
+	if (flag_free)
+		free((void *) s1);
 	return (buf);
 }
