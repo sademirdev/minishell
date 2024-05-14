@@ -70,7 +70,7 @@ void	syntax_check_test_ko(t_test *test)
 	char    *result[2] = {GREEN"[OK]"RESET, RED"[KO]"RESET};
 	printf("================ %s ================\n", test->current_test->name);
     printf("try		[ %s ]\n\n", (char *)try->try);
-	
+
 	int bits = 64;
 	while(bits--)
 	{
@@ -134,7 +134,7 @@ void	test_main()
     // create test struct
 	t_test	test;
 	test.my_data = get_my_data();
-	
+
 
     // ============================= EXECUTER =============================
 	// ((t_main *)test.my_data)->cmds = (t_cmd []){
@@ -190,6 +190,50 @@ void	test_main()
 				.try = ">ls<ls ls|cat|cat>>cat<<cat$?",
 				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
 			},
+			{
+				.try = "ls -l|cat|cat|ls",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = ">cat|cat|ls",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = "><echo>a|ls",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = ">ls>ls>ls ls|cat|cat>>cat$?",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = ">ls<ls<ls|cat|ls|cat",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = "ls -l|wc -l|ls<<ls|cat",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = "<<ls<<ls>>ls>>ls<<ls|cat|cat",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = "ls<ls>ls>ls<ls<ls<ls>ls|ls|ls",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = "$?|cat|cat|ls|ls|",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = ">echo ls|ls|ls<<ls",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
+			{
+				.try = ">>echo<<ls<<ls<<ls|cat|cat<<cat<cat>>ls>>ls>ls",
+				.expected = 0b0000000000000000000000000000000000000000000000000000000000000000l,
+			},
             {
 				.try = NULL,
 				.expected = NULL,
@@ -209,7 +253,7 @@ void	test_main()
             tester(j, i, &test);
     }
 	printf("fails: %i\n", ft_lstsize(test.fails));
-	
+
 	// index kayiyo 1 tane aradan cikardinmi. index kayarsa kodun degismesi
 	// gerekir. test caselerinin sayisina bagli olmamalidir kod.
     exit(0);
