@@ -55,6 +55,15 @@ typedef struct s_state
 	char			**env;
 }					t_state;
 
+typedef struct s_pipe_exec_metadata
+{
+	int (*fd)[2];
+	t_token **token_arr;
+	int64_t arr_len;
+	int64_t i;
+	t_state *state;
+}			t_pipe_exec_metadata;
+
 typedef struct s_cmd
 {
 	char	*cmd;
@@ -142,7 +151,7 @@ int64_t	token_arr_len(t_token **token_arr);
 char	*find_path(char *command, char **env);
 char	*ft_strjoin(char const *s1, char const *s2, bool flag_free);
 char	*token_join_arg_str(t_token *token);
-int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *state);
+int64_t	fork_init(t_pipe_exec_metadata* md);
 t_cmd	*token_to_cmd(t_token *token, t_state *state);
 int64_t	pipe_single_exec(t_token *token, t_state *state);
 int64_t	pipe_init(int (*fd)[2], int64_t pipe_count);
