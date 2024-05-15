@@ -19,10 +19,22 @@ char	*_token_type_tostr(t_token_type type)
 		return ("RED_R");
 	case RED_RR:
 		return ("RED_RR");
+	case RED_FILE:
+		return ("RED_FILE");
 	default:
 		return ("NONE");
 	}
 }
+
+// int main()
+// {
+
+// 	t_token	*token = token_new("<", RED_L);
+// 	token_add_last(token, token_new("a", RED_FILE));
+// 	token_add_last(token, token_new("cat", CMD));
+// 	set_red_file_fds(token, NULL);
+
+// }
 
 int	main(int argc, char **argv)
 {
@@ -33,8 +45,10 @@ int	main(int argc, char **argv)
 	char		*line;
 	t_token		**arr;
 	int			i;
+	t_cmd		*cmd;
 
 	(void)argc;
+	cmd = NULL;
 	state = malloc(sizeof(t_state));
 	if (!state)
 		return (1);
@@ -54,20 +68,22 @@ int	main(int argc, char **argv)
 		arr = token_separate_by_pipe(root);
 		assign_token_arr_types(arr);
 		i = 0;
-		printf("\n");
-		printf("===\n\n");
+		t_token *p_tmp = arr[i];
+		if (p_tmp)
+			printf("[ ");
 		while (arr[i])
 		{
 			root = arr[i];
 			while (root)
 			{
-				printf("ptr: %p, DATA: %s\nTYPE: %s\n\n", root, root->data,
+				printf("(d: %s, t:%s) ", root->data,
 					_token_type_tostr(root->type));
 				root = root->next;
 			}
-			printf("===\n\n");
 			i++;
 		}
+		if (p_tmp)
+			printf("]\n");
 		pipe_exec(arr, state);
 		i = 0;
 		while (arr[i])

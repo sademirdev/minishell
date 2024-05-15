@@ -10,6 +10,10 @@
 # define SUCCESS 0
 # define FAILURE -1
 
+# define ERR_FILE_NOT_FOUND 1
+# define ERR_FILE_PERMISSION_DENIED 2
+# define ERR_FILE_OPEN 3
+
 typedef enum e_token_type
 {
 	NONE,
@@ -60,6 +64,8 @@ typedef struct s_cmd
 {
 	char	*cmd;
 	char	**argv;
+	int		in;
+	int		out;
 }				t_cmd;
 
 typedef struct s_error
@@ -143,9 +149,13 @@ int64_t	token_arr_len(t_token **token_arr);
 char	*find_path(char *command, char **env);
 char	*ft_strjoin(char const *s1, char const *s2, bool flag_free);
 char	*token_join_arg_str(t_token *token);
-int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *state);
-t_cmd	*token_to_cmd(t_token *token, t_state *state);
-int64_t	pipe_single_exec(t_token *token, t_state *state);
+int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *state, t_cmd *cmd);
+int64_t	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd);
 int64_t	pipe_init(int (*fd)[2], int64_t pipe_count);
+void	set_red_file_fds(t_token *token, t_cmd *cmd);
+void	handle_redl(t_token	*token, t_cmd *cmd);
+void	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd	*cmd);
+
+void	print_err(const char *file, int err_flag);
 
 #endif
