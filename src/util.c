@@ -13,9 +13,9 @@ int64_t	ft_strlen(const char *s)
 	return (i);
 }
 
-int64_t	ft_strncmp(const char *s1, const char *s2, int64_t n)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	int64_t	i;
+	size_t	i;
 
 	if (n == 0)
 		return (0);
@@ -27,16 +27,6 @@ int64_t	ft_strncmp(const char *s1, const char *s2, int64_t n)
 		i++;
 	}
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-}
-
-int64_t	ft_strcmp(char *s1, char *s2)
-{
-	int64_t i;
-
-	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0' && s2[i] != '\0')
-		i++;
-	return (s1[i] - s2[i]);
 }
 
 char	*ft_strdup(const char *src)
