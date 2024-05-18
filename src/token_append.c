@@ -1,5 +1,5 @@
 #include "minishell.h"
-#include "stdlib.h"
+#include <stdlib.h>
 
 // todo(hkizrak-): check possible errors for side by side metas (throw syntax
 // error)  a<b
@@ -107,7 +107,7 @@ int64_t	token_count_args(t_token *token)
 char	**token_to_arg(t_token *token, char *cmd_path)
 {
 	char		**argv;
-	int64_t i;
+	int64_t		i;
 	bool 		on_arg;
 
 	if (!token || !cmd_path)
@@ -133,24 +133,25 @@ char	**token_to_arg(t_token *token, char *cmd_path)
 	return (argv);
 }
 
-t_cmd	*token_to_cmd(t_token *token, t_state *state)
+void	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd	*cmd)
 {
-	t_cmd	*cmd;
 	char	**argv;
 	char	*cmd_path;
 
-	if (!token)
-		return (NULL);
-	cmd = (t_cmd *) malloc(sizeof(t_cmd));
-	if (!cmd)
-		return (NULL);
-	cmd_path = find_path(token->data, state->env);
+	if (!token || !cmd)
+		return ;
+	if (token->type == RED_L)
+		cmd_path = find_path(token->next->next->data, state->env);
+	else
+		cmd_path = find_path(token->data, state->env);
 	if (!cmd_path)
-		return (free(cmd), NULL);
+		return ;
 	argv = token_to_arg(token, cmd_path);
 	if (!argv)
-		return (free(cmd), free(cmd_path), NULL);
+	{
+		free(cmd_path);
+		return ;
+	}
 	cmd->cmd = cmd_path;
 	cmd->argv = argv;
-	return (cmd);
 }

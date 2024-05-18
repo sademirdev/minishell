@@ -19,10 +19,24 @@ char	*_token_type_tostr(t_token_type type)
 		return ("RED_R");
 	case RED_RR:
 		return ("RED_RR");
+	case RED_FILE:
+		return ("RED_FILE");
+	case RED_HEREDOC:
+		return ("RED_HEREDOC");
 	default:
 		return ("NONE");
 	}
 }
+
+// int main()
+// {
+
+// 	t_token	*token = token_new("<", RED_L);
+// 	token_add_last(token, token_new("a", RED_FILE));
+// 	token_add_last(token, token_new("cat", CMD));
+// 	set_red_file_fds(token, NULL);
+
+// }
 
 int	main(int argc, char **argv)
 {
@@ -33,8 +47,11 @@ int	main(int argc, char **argv)
 	char		*line;
 	t_token		**arr;
 	int			i;
+	t_cmd		*cmd;
+	t_token		*p_tmp;
 
 	(void)argc;
+	cmd = NULL;
 	state = malloc(sizeof(t_state));
 	if (!state)
 		return (1);
@@ -43,7 +60,7 @@ int	main(int argc, char **argv)
 	state->status = 12;
 	while ("false")
 	{
-		line = readline("at: ");
+		line = readline("at999999x: ");
 		// line = ft_strdup("ls -l | grep a | wc -l");
 		add_history(line);
 		root = separate_prompt_by_space(line);
@@ -54,20 +71,26 @@ int	main(int argc, char **argv)
 		arr = token_separate_by_pipe(root);
 		assign_token_arr_types(arr);
 		i = 0;
-		printf("\n");
-		printf("===\n\n");
+		p_tmp = arr[i];
+		if (p_tmp)
+			printf("[");
 		while (arr[i])
 		{
+			if (p_tmp)
+				printf("  [ ");
 			root = arr[i];
 			while (root)
 			{
-				printf("ptr: %p, DATA: %s\nTYPE: %s\n\n", root, root->data,
+				printf("(d: %s, t:%s) ", root->data,
 					_token_type_tostr(root->type));
 				root = root->next;
 			}
-			printf("===\n\n");
+			if (p_tmp)
+				printf("]");
 			i++;
 		}
+		if (p_tmp)
+			printf("  ]\n");
 		pipe_exec(arr, state);
 		i = 0;
 		while (arr[i])
