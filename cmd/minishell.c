@@ -21,6 +21,8 @@ char	*_token_type_tostr(t_token_type type)
 		return ("RED_RR");
 	case RED_FILE:
 		return ("RED_FILE");
+	case RED_HEREDOC:
+		return ("RED_HEREDOC");
 	default:
 		return ("NONE");
 	}
@@ -46,6 +48,7 @@ int	main(int argc, char **argv)
 	t_token		**arr;
 	int			i;
 	t_cmd		*cmd;
+	t_token		*p_tmp;
 
 	(void)argc;
 	cmd = NULL;
@@ -57,7 +60,7 @@ int	main(int argc, char **argv)
 	state->status = 12;
 	while ("false")
 	{
-		line = readline("at: ");
+		line = readline("at999999x: ");
 		// line = ft_strdup("ls -l | grep a | wc -l");
 		add_history(line);
 		root = separate_prompt_by_space(line);
@@ -68,11 +71,13 @@ int	main(int argc, char **argv)
 		arr = token_separate_by_pipe(root);
 		assign_token_arr_types(arr);
 		i = 0;
-		t_token *p_tmp = arr[i];
+		p_tmp = arr[i];
 		if (p_tmp)
-			printf("[ ");
+			printf("[");
 		while (arr[i])
 		{
+			if (p_tmp)
+				printf("  [ ");
 			root = arr[i];
 			while (root)
 			{
@@ -80,10 +85,12 @@ int	main(int argc, char **argv)
 					_token_type_tostr(root->type));
 				root = root->next;
 			}
+			if (p_tmp)
+				printf("]");
 			i++;
 		}
 		if (p_tmp)
-			printf("]\n");
+			printf("  ]\n");
 		pipe_exec(arr, state);
 		i = 0;
 		while (arr[i])

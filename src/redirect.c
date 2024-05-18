@@ -1,22 +1,51 @@
 #include "minishell.h"
-#include <unistd.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 void	set_red_file_fds(t_token *token, t_cmd *cmd)
 {
-	(void)cmd;
+	bool		has_last_heredoc;
+	t_token	*tmp;
 
 	if (!token)
 		return ;
+	has_last_heredoc = false;
+	tmp = token;
+	while (tmp)
+	{
+		if (tmp->type == RED_LL)
+			has_last_heredoc = true;
+		else if (tmp->type == RED_L)
+			has_last_heredoc = false;
+		tmp = tmp->next;
+	}
 	while (token)
 	{
 		if (token->type == RED_L)
-			handle_redl(token, cmd);
+			handle_redl(token, cmd, has_last_heredoc);
+		else if (token->type == RED_R)
+			handle_redr(token, cmd);
+		else if (token->type == RED_RR)
+			handle_redrr(token, cmd);
 		token = token->next;
 	}
 }
 
-void	handle_redl(t_token	*token, t_cmd *cmd)
+void	set_heredoc_fds(t_token *token, t_cmd *cmd)
+{
+	(void)cmd;
+	if (!token)
+		return ;
+	while (token)
+	{
+		if (token->type == RED_LL)
+			handle_redll(token, cmd);
+		token = token->next;
+	}
+}
+
+void	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc)
 {
 	t_token	*temp;
 
@@ -24,10 +53,7 @@ void	handle_redl(t_token	*token, t_cmd *cmd)
 		return ;
 	temp = token->next;
 	if (temp && !temp->next && temp->prev && !temp->prev->prev)
-	{
-		//printf("dont work\n");
 		return ;
-	}
 	if (access(temp->data, F_OK) == -1) // todo(apancar): check access()
 	{
 		print_err(temp->data, ERR_FILE_NOT_FOUND);
@@ -38,7 +64,51 @@ void	handle_redl(t_token	*token, t_cmd *cmd)
 		print_err(temp->data, ERR_FILE_PERMISSION_DENIED);
 		return ;
 	}
-	cmd->in = open(temp->data, O_RDONLY);
+	if (has_last_heredoc)
+		close(open(temp->data, O_RDONLY));
+	else
+	{
+		if (cmd->in != -2)
+			close(cmd->in);
+		cmd->in = open(temp->data, O_RDONLY);
+	}
+	if (cmd->in == -1)
+	{
+		print_err(temp->data, ERR_FILE_OPEN);
+		return ;
+	}
+}
+#include <string.h>
+void	handle_redll(t_token *token, t_cmd *cmd)
+{
+	t_token	*temp;
+	char		*buf;
+	int			fd[2];
+
+	if (!token)
+		return ;
+	temp = token->next;
+
+	if (!temp)
+		return ;
+	if (pipe(fd) == -1)
+		return ;
+	// printf("[info]\n");
+	printf("token->data: |%s|\n", token->data);
+	printf("temp->data: |%s|\n", temp->data);
+	while (true)
+	{
+		buf = readline("> ");
+		if (!buf || ft_strcmp(temp->data, buf) == 0)
+		{
+			printf("break\n");
+			break ;
+		}
+		write(fd[1], buf, ft_strlen(buf));
+		free(buf);
+	}
+	close(fd[1]);
+	cmd->in = fd[0];
 	if (cmd->in == -1)
 	{
 		print_err(temp->data, ERR_FILE_OPEN);
@@ -46,36 +116,47 @@ void	handle_redl(t_token	*token, t_cmd *cmd)
 	}
 }
 
-// "< /bin/ls grep a"  : Binary file (standard input) matches
+void	handle_redr(t_token *token, t_cmd *cmd)
+{
+	t_token	*temp;
 
+	if (!token)
+		return ;
+	temp = token->next;
+	if (!temp)
+		return ;
+	if (access(temp->data, F_OK) == 0 && access(temp->data, W_OK) == -1)
+	{
+		print_err(temp->data, ERR_FILE_PERMISSION_DENIED);
+		return ;
+	}
+	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (cmd->out == -1)
+	{
+		print_err(temp->data, ERR_FILE_OPEN);
+		return ;
+	}
+}
 
-/*
-Redirection of output causes the file whose name results from the expansion of word to be opened for writing on file descriptor n,
-or the standard output (file descriptor 1) if n is not specified.
-If the file does not exist it is created; if it does exist it is truncated to zero size.
-The general format for redirecting output is:
-[n]>[|]word
-If the redirection operator is ‘>’, and the noclobber option to the set builtin has been enabled,
-the redirection will fail if the file whose name results from the expansion of word exists and is a regular file.
-If the redirection operator is ‘>|’, or the redirection operator is ‘>’
-and the noclobber option is not enabled, the redirection is attempted even if the file named by word exists.
-*/
+void	handle_redrr(t_token *token, t_cmd *cmd)
+{
+	t_token	*temp;
 
-// int64_t	has_redr(t_token *token)
-// {
-// 	return (1);
-// }
-
-// void	handle_redr(t_token *token)
-// {
-// 	t_token	*temp;
-
-// 	if (!token)
-// 		return ;
-// 	if (!temp->next || ft_strcmp(temp->next->data, "\n") == 0)
-// 		printf("bash: syntax error near unexpected token `newline'\n");
-// 	if (temp->next->type == PIPE)
-// 		printf("bash: syntax error near unexpected token `|'\n");
-
-// }
-
+	if (!token)
+		return ;
+	temp = token->next;
+	if (!temp)
+		return ;
+	if (access(temp->data, F_OK) == 0 && access(temp->data, W_OK) == -1)
+		// todo(apancar): check access()
+	{
+		print_err(temp->data, ERR_FILE_PERMISSION_DENIED);
+		return ;
+	}
+	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (cmd->out == -1)
+	{
+		print_err(temp->data, ERR_FILE_OPEN);
+		return ;
+	}
+}

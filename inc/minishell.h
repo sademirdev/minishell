@@ -24,7 +24,8 @@ typedef enum e_token_type
 	RED_LL,
 	RED_R,
 	RED_RR,
-	RED_FILE
+	RED_FILE,
+	RED_HEREDOC
 }					t_token_type;
 
 typedef struct s_token
@@ -75,6 +76,7 @@ typedef struct s_error
 	bool	fatal;
 }				t_error;
 
+void				handle_redl(t_token *token, t_cmd *cmd);
 int64_t			ft_strlen(const char *s);
 char				*ft_strdup(const char *src);
 char				*ft_substr(char const *s, unsigned int start, int64_t len);
@@ -129,7 +131,8 @@ char	*create_data_from_dollar(char *data, char *value, int64_t start,
 void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar);
 char	*get_dollar_value(char *key);
 
-int					ft_strncmp(const char *s1, const char *s2, size_t n);
+int64_t	ft_strcmp(char *s1, char *s2);
+int64_t					ft_strncmp(const char *s1, const char *s2, int64_t n);
 void				token_insert_dollar_nodes(t_token **token);
 
 void				token_dispose(t_token **token);
@@ -153,8 +156,11 @@ int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *s
 int64_t	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd);
 int64_t	pipe_init(int (*fd)[2], int64_t pipe_count);
 void	set_red_file_fds(t_token *token, t_cmd *cmd);
-void	handle_redl(t_token	*token, t_cmd *cmd);
 void	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd	*cmd);
+void	handle_redl(t_token	*token, t_cmd *cmd);
+void	handle_redr(t_token	*token, t_cmd *cmd);
+void	handle_redrr(t_token	*token, t_cmd *cmd);
+void	handle_redll(t_token *token, t_cmd *cmd);
 
 void	print_err(const char *file, int err_flag);
 
