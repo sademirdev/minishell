@@ -50,7 +50,7 @@ char *join_path(char **paths, char *command)
 		cmd_path = ft_strjoin(tmp, command, true);
 		if (!cmd_path)
 			return (dispose_paths(paths), NULL);
-		if (access(cmd_path, R_OK) == 0)
+		if (access(cmd_path, X_OK) == 0)
 			return (dispose_paths(paths), cmd_path);
 		free(cmd_path);
 		i++;
