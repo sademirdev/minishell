@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include "built_in.h"
 #include <stdlib.h>
 
 char	*_token_type_tostr(t_token_type type)
@@ -50,7 +51,7 @@ int	main(int argc, char **argv)
 	setenv("b", " b_0 b_1 b_2 ", 1);
 	setenv("nb", "nb_0 nb_1 nb_2", 1);
 	setenv("a", "at", 1);
-	char *line = NULL;
+	line = NULL;
 	line = readline("minishell$ ");
 	// add_history(line);
 	root = separate_prompt_by_space(line);
@@ -62,7 +63,7 @@ int	main(int argc, char **argv)
 	root = extract_meta_chars(&root);
 	handle_dollar(&root, state);
 	handle_unnecessary_quotes(root);
-	t_token **arr = token_separate_by_pipe(root);
+	arr = token_separate_by_pipe(root);
 	printf("root: %p\n", root);
 	assign_token_arr_types(arr);
 	int i = 0;

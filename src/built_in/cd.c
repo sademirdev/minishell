@@ -11,7 +11,6 @@ static int64_t	handle_absolute_path(t_built_in *built);
 int64_t	handle_cd(t_built_in *built)
 {
 	const char	*home_path;
-	char		cwd[PATH_MAX];
 
 	if (!built)
 		return (1);
@@ -87,8 +86,6 @@ static int64_t	handle_relative_path(t_built_in *built)
 
 static int64_t	handle_absolute_path(t_built_in *built)
 {
-	char		cwd[PATH_MAX];
-
 	if (chdir(built->next->data) == -1)
 	{
 		printf("cd: %s: No such file or directory\n", built->next->data);

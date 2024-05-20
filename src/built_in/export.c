@@ -6,8 +6,24 @@
 
 static void		export_var(void);
 static void		export_var(void);
-static char		**get_env(char *new_var, char *temp, int64_t i);
 static int64_t	env_add(char *var, char *temp);
+
+int64_t var_exist(char *var)
+{
+	extern char	**environ;
+	int64_t		i;
+	int64_t		len;
+
+	i = 0;
+	len = strlen(var);
+	while (environ[i])
+	{
+		if (strncmp(environ[i], var, len) == 0 && environ[i][len] == '=')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int64_t	handle_export(t_built_in *built)
 {
@@ -24,6 +40,8 @@ int64_t	handle_export(t_built_in *built)
 	}
 	var = NULL;
 	temp = built->next;
+	if (temp->data[0] == '=')
+		return (1);
 	var = ft_split(temp->data, '=');
 	if (!var)
 		return (1);
@@ -56,12 +74,12 @@ static void	export_var(void)
 	}
 }
 
-static char	**get_env(char *new_var, char *temp, int64_t i)
+char	**get_env(char *new_var, char *temp, int64_t i)
 {
 	extern char	**environ;
 	char		**env;
 
-	new_var = ft_strjoin(new_var, temp);
+	new_var = ft_strjoin(new_var, temp, 1);
 	if (!new_var)
 		return (NULL);
 	env = (char **)malloc(sizeof(char *) * (i + 2));
@@ -92,7 +110,7 @@ static int64_t	env_add(char *var, char *temp)
 	{
 		if (ft_strncmp(environ[i], var, ft_strlen(var)) == 0)
 		{
-			new_var = ft_strjoin(new_var, temp);
+			new_var = ft_strjoin(new_var, temp, 1);
 			if (!new_var)
 				return (free (new_var), 1);
 			environ[i] = new_var;
@@ -103,3 +121,5 @@ static int64_t	env_add(char *var, char *temp)
 	environ = get_env(new_var, temp, i);
 	return (0);
 }
+
+

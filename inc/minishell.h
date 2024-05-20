@@ -4,6 +4,8 @@
 # include <stdbool.h>
 # include <stdint.h>
 # include <stdio.h>
+# include <unistd.h>
+# include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -86,6 +88,7 @@ typedef struct s_error
 	char	*message;
 	bool	fatal;
 }				t_error;
+
 
 int64_t			ft_strlen(const char *s);
 void				syntax_squote(t_syntax *syntax);
