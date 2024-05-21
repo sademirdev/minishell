@@ -9,10 +9,22 @@
 
 # define SUCCESS 0
 # define FAILURE -1
+typedef struct s_syntax
+{
+	unsigned char		duplex;
+	unsigned char		simplex;
+	unsigned char		zero_pipe;
+	unsigned char		undefined;
+}					t_syntax;
 
-# define ERR_FILE_NOT_FOUND 1
-# define ERR_FILE_PERMISSION_DENIED 2
-# define ERR_FILE_OPEN 3
+# define UNKNOWN_ERR	"shell says: I don't know what you're trying to do\n"
+# define ZERO_PIPE		"shell says: syntax error near expected non-exist \
+token before `|'\n"
+# define EMPTY_AFTER	"shell says: syntax error near unexpected token after \
+`|', `>', `<', `>>', `<<'\n"
+# define MISS_QUOTE		"shell says: unexpected EOF while looking for matching \
+`'', `\"'\n"
+
 
 typedef enum e_token_type
 {
@@ -24,8 +36,7 @@ typedef enum e_token_type
 	RED_LL,
 	RED_R,
 	RED_RR,
-	RED_FILE,
-	RED_HEREDOC
+	RED_FILE
 }					t_token_type;
 
 typedef struct s_token
@@ -59,6 +70,8 @@ typedef struct s_state
 	int				status;
 	char			**argv;
 	char			**env;
+	char			*promt;
+	int64_t			cmd_ct;
 }					t_state;
 
 typedef struct s_cmd

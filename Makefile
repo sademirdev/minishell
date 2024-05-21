@@ -86,7 +86,13 @@ re: fclean
 
 t:
 	@mkdir -p bin
-	@$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/dollar_test.c test/equal_primitive.c $(SRCS) -o bin/test
+	$(CC) $(CFLAGS) \
+		$(INC_DIR) \
+		-Itest/libs \
+		test/libs/murmur_test/testing.c \
+		test/main.c \
+		test/tests/murmur_tests/murmur_test.c \
+		-D TEST=1 $(SRCS) -o bin/test
 	@./bin/test
 
 .PHONY: all clean fclean re run
