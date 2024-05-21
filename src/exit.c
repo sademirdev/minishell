@@ -1,6 +1,6 @@
 #include "minishell.h"
-#include "minishell.h"
-#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 static bool	ft_is_digit(char *c);
 static void	ft_putstr_fd(char *str, int fd);

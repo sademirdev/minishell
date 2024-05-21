@@ -141,9 +141,9 @@ int		syntax_check_test(t_test *test)
 
 	try = test->current_test->trys;
 	((t_state *)(test->my_data))->cmd_ct = 0;
-	((t_state *)(test->my_data))->promt = strdup(try->try);
+	((t_state *)(test->my_data))->prompt = strdup(try->try);
 	try->result = syntax_check(test->my_data);
-	free(((t_state *)(test->my_data))->promt);
+	free(((t_state *)(test->my_data))->prompt);
 	try->err_bit = try->result;
 	return !try->result;
 }

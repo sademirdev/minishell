@@ -9,22 +9,29 @@
 
 # define SUCCESS 0
 # define FAILURE -1
+
+# define ERR_FILE_NOT_FOUND 1
+# define ERR_FILE_PERMISSION_DENIED 2
+# define ERR_FILE_OPEN 3
+
 typedef struct s_syntax
 {
-	unsigned char		duplex;
-	unsigned char		simplex;
-	unsigned char		zero_pipe;
-	unsigned char		undefined;
+	unsigned char	duplex;
+	unsigned char	simplex;
+	unsigned char	zero_pipe;
+	unsigned char	undefined;
 }					t_syntax;
 
-# define UNKNOWN_ERR	"shell says: I don't know what you're trying to do\n"
-# define ZERO_PIPE		"shell says: syntax error near expected non-exist \
+# define UNKNOWN_ERR "shell says: I don't know what you're trying to do\n"
+# define ZERO_PIPE \
+	"shell says: syntax error near expected non-exist \
 token before `|'\n"
-# define EMPTY_AFTER	"shell says: syntax error near unexpected token after \
+# define EMPTY_AFTER \
+	"shell says: syntax error near unexpected token after \
 `|', `>', `<', `>>', `<<'\n"
-# define MISS_QUOTE		"shell says: unexpected EOF while looking for matching \
+# define MISS_QUOTE \
+	"shell says: unexpected EOF while looking for matching \
 `'', `\"'\n"
-
 
 typedef enum e_token_type
 {
@@ -36,7 +43,8 @@ typedef enum e_token_type
 	RED_LL,
 	RED_R,
 	RED_RR,
-	RED_FILE
+	RED_FILE,
+	RED_HEREDOC
 }					t_token_type;
 
 typedef struct s_token
@@ -70,7 +78,7 @@ typedef struct s_state
 	int				status;
 	char			**argv;
 	char			**env;
-	char			*promt;
+	char			*prompt;
 	int64_t			cmd_ct;
 }					t_state;
 
@@ -177,26 +185,33 @@ int64_t				pipe_init(int (*fd)[2], int64_t pipe_count);
 void				set_red_file_fds(t_token *token, t_cmd *cmd);
 void				set_cmd_arg_and_path(t_token *token, t_state *state,
 						t_cmd *cmd);
-void				handle_redl(t_token *token, t_cmd *cmd,
+int					handle_redl(t_token *token, t_cmd *cmd,
 						bool has_last_heredoc);
 void				handle_redr(t_token *token, t_cmd *cmd);
 void				handle_redrr(t_token *token, t_cmd *cmd);
-void				handle_redll(t_token *token, t_cmd *cmd, int64_t i);
+int					handle_redll(t_token *token, t_cmd *cmd, int64_t i);
 
 void				print_err(const char *file, int err_flag);
 void				set_heredoc_fds(t_token *token, t_cmd *cmd, int64_t i);
 
-//built_in
-int64_t	handle_built_in(t_token *token);
-bool	is_built_in(t_token *token);
-int64_t	handle_unset(t_token *token);
-int64_t	handle_pwd(void);
-int64_t	var_exist(char *var);
-int64_t	handle_export(t_token *token);
-char	**get_env(char *new_var, char *temp, int64_t i);
-int64_t	handle_exit(t_token *token);
-int64_t	handle_env(t_token *token);
-int64_t	handle_echo(t_token *token);
-int64_t	handle_cd(t_token *token);
+// built_in
+int64_t				handle_built_in(t_token *token);
+bool				is_built_in(t_token *token);
+int64_t				handle_unset(t_token *token);
+int64_t				handle_pwd(void);
+int64_t				var_exist(char *var);
+int64_t				handle_export(t_token *token);
+char				**get_env(char *new_var, char *temp, int64_t i);
+int64_t				handle_exit(t_token *token);
+int64_t				handle_env(t_token *token);
+int64_t				handle_echo(t_token *token);
+int64_t				handle_cd(t_token *token);
+int32_t				syntax_check(t_state *shell);
+void	syntax_squote(t_syntax *syntax);
+int	syntax_darrow(t_syntax *syntax, size_t *_);
+void	syntax_dquote(t_syntax *syntax);
+int	syntax_sarrow(t_syntax *syntax, size_t *_);
+int	syntax_pipe(t_state *shell, t_syntax *syntax, size_t *_);
+void	print_syntax_err(int errs);
 
 #endif

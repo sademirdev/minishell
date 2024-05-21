@@ -14,7 +14,7 @@ int	i_space(char character)
 
 void	syntax_other(t_state *shell, t_syntax *syntax, size_t *_)
 {
-	if (i_space(shell->promt[*_]))
+	if (i_space(shell->prompt[*_]))
 		++*_;
 	else
 		syntax->zero_pipe = (syntax->simplex = (++*_, 0));
@@ -22,23 +22,23 @@ void	syntax_other(t_state *shell, t_syntax *syntax, size_t *_)
 
 int	choose(t_state *shell, t_syntax *syntax, size_t *_)
 {
-	(void)(((shell->promt[*_] == '\'') && (syntax_squote(syntax), 1)) \
-	|| ((shell->promt[*_] == '"') && (syntax_dquote(syntax), 1)));
+	(void)(((shell->prompt[*_] == '\'') && (syntax_squote(syntax), 1)) \
+	|| ((shell->prompt[*_] == '"') && (syntax_dquote(syntax), 1)));
 	if (syntax->duplex)
 		return ((*_)++, 1);
-	if ((shell->promt[*_] == '>' && shell->promt[(*_) + 1] != '>') || \
-			(shell->promt[*_] == '<' && shell->promt[(*_) + 1] != '<'))
+	if ((shell->prompt[*_] == '>' && shell->prompt[(*_) + 1] != '>') || \
+			(shell->prompt[*_] == '<' && shell->prompt[(*_) + 1] != '<'))
 	{
 		if (syntax_sarrow(syntax, _))
 			return (2);
 	}
-	else if ((shell->promt[*_] == '>' && shell->promt[(*_) + 1] == '>') || \
-			(shell->promt[*_] == '<' && shell->promt[(*_) + 1] == '<'))
+	else if ((shell->prompt[*_] == '>' && shell->prompt[(*_) + 1] == '>') || \
+			(shell->prompt[*_] == '<' && shell->prompt[(*_) + 1] == '<'))
 	{
 		if (syntax_darrow(syntax, _))
 			return (2);
 	}
-	else if (shell->promt[*_] == '|')
+	else if (shell->prompt[*_] == '|')
 	{
 		if (syntax_pipe(shell, syntax, _))
 			return (2);
@@ -59,11 +59,11 @@ int32_t syntax_check(t_state *shell)
 	syntax.duplex = 0;
 	syntax.simplex = 0;
 	_ = 0;
-	while (i_space(shell->promt[_]))
+	while (i_space(shell->prompt[_]))
 		_++;
-	if (shell->promt[_] == '\0')
+	if (shell->prompt[_] == '\0')
 		return (0);
-	while (shell->promt[_])
+	while (shell->prompt[_])
 	{
 		result = choose(shell, &syntax, &_);
 		if (result == 2)
