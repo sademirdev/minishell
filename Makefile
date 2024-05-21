@@ -11,8 +11,8 @@ NAME			= $(BIN_DIR)/$(PROGRAM)
 SRCS			= src/meta.c src/quote.c src/separator.c src/token.c \
 	src/token_add.c src/token_append.c src/token_append_util.c src/token_util.c \
 	src/util.c src/dollar.c src/dollar_util.c src/dollar_handle.c \
-	src/assign_token_types.c src/lexer.c src/error.c src/syntax_check.c \
-	src/syntax_check_util_00.c src/pipe.c src/path.c src/ft_split.c
+	src/assign_token_types.c src/lexer.c src/error.c src/pipe.c src/path.c \
+	src/ft_split.c src/redirect.c src/err.c src/redirect_handle.c
 OBJS			= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CMD				= $(CMD_DIR)/$(PROGRAM).c
 DEPENDENCIES	=

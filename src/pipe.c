@@ -34,6 +34,11 @@ int64_t	pipe_single_exec(t_token *token, t_state *state)
 	cmd = token_to_cmd(token, state);
 	if (!cmd)
 		return (FAILURE);
+	set_heredoc_fds(token, cmd, 0);
+	set_red_file_fds(token, cmd);
+	set_cmd_arg_and_path(token, state, cmd);
+	if (cmd->in == -2)
+		cmd->in = cmd->heredoc[0];
 	if (!is_built_in(token))
 	{
 		pid = fork();
@@ -41,6 +46,8 @@ int64_t	pipe_single_exec(t_token *token, t_state *state)
 			return (FAILURE); // todo(kkarakus): handle close;
 		if (pid == 0)
 		{
+			if (cmd->in != -2)
+				dup2(cmd->in, STDIN_FILENO);
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 				exit(1); // todo(sademir): handle error case
 		}
@@ -88,6 +95,8 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 		}
 		j++;
 	}
+	if (cmd->in == -2)
+		cmd->in = cmd->heredoc[i];
 	if (i != 0)
 	{
 		close(fd[i - 1][1]);
@@ -121,6 +130,7 @@ int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *s
 		return (FAILURE);
 	while (i < arr_len)
 	{
+		set_heredoc_fds(token_arr[i], cmd, i);
 		pid = fork();
 		if (pid == -1)
 			return (FAILURE); // todo(kkarakus): handle close;
@@ -136,12 +146,39 @@ int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *s
 		}
 		i++;
 	}
+	i = 0;
+	while (i < arr_len)
+	{
+		wait(NULL);
+		i++;
+	}
+	return (SUCCESS);
+}
+
+int64_t	cmd_init(t_cmd *cmd, int64_t arr_len)
+{
+	int32_t	i;
+
+	cmd->argv = NULL;
+	cmd->cmd = NULL;
+	cmd->in = -2;
+	cmd->out = -2;
+	cmd->heredoc = (int *)malloc(sizeof(int) * arr_len);
+	if (!cmd->heredoc)
+		return (FAILURE);
+	i = 0;
+	while (i < arr_len)
+	{
+		cmd->heredoc[i] = -2;
+		i++;
+	}
 	return (SUCCESS);
 }
 
 int64_t	pipe_exec(t_token **token_arr, t_state *state)
 {
 	int64_t	arr_len;
+	t_cmd		cmd;
 	int		(*fd)[2];
 
 	if (!token_arr || !state)
@@ -149,14 +186,16 @@ int64_t	pipe_exec(t_token **token_arr, t_state *state)
 	arr_len = token_arr_len(token_arr);
 	if (arr_len < 1)
 		return (FAILURE);
+	if (cmd_init(&cmd, arr_len) != SUCCESS)
+		return (FAILURE);
 	if (arr_len == 1)
 		return (pipe_single_exec(token_arr[0], state));
 	fd = (int (*)[2]) malloc(sizeof(int [2]) * (arr_len - 1));
 	if (!fd)
-		return (FAILURE);
+		return (free(cmd.heredoc), FAILURE);
 	if (pipe_init(fd, arr_len - 1) != SUCCESS)
-		return (FAILURE);
-	if (fork_init(fd, arr_len, token_arr, state) != SUCCESS)
-		return (FAILURE);
+		return (free(fd), free(cmd.heredoc), FAILURE);
+	if (fork_init(fd, arr_len, token_arr, state, &cmd) != SUCCESS)
+		return (free(fd), free(cmd.heredoc), FAILURE);
 	return (SUCCESS);
 }
