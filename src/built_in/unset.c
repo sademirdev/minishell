@@ -1,13 +1,13 @@
-#include "../../inc/built_in.h"
+#include "minishell.h"
 #include <stdlib.h>
 
-int64_t	handle_unset(t_built_in *built)
+int64_t	handle_unset(t_token *token)
 {
 	extern char	**environ;
 	int64_t		i;
-	t_built_in	*temp;
+	t_token	*temp;
 
-	temp = built->next;
+	temp = token->next;
 	while (temp)
 	{
 		i = -1;

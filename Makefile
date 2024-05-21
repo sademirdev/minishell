@@ -15,7 +15,7 @@ SRCS			= src/meta.c src/quote.c src/separator.c src/token.c \
 	src/syntax_check_util_00.c src/pipe.c src/path.c src/ft_split.c \
 	src/built_in/built_in.c src/built_in/cd.c src/built_in/echo.c \
 	src/built_in/env.c src/built_in/exit.c src/built_in/export.c \
-	src/built_in/pwd.c src/built_in/unset.c src/built_in/util.c
+	src/built_in/pwd.c src/built_in/unset.c
 # src/lexer.c src/error.c
 
 OBJS			= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

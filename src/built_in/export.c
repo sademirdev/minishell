@@ -1,4 +1,4 @@
-#include "../../inc/built_in.h"
+#include "minishell.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -25,21 +25,21 @@ int64_t var_exist(char *var)
 	return (1);
 }
 
-int64_t	handle_export(t_built_in *built)
+int64_t	handle_export(t_token *token)
 {
 	int64_t		i;
 	char		**var;
-	t_built_in	*temp;
+	t_token	*temp;
 
-	if (!built)
+	if (!token)
 		return (1);
-	if (built->next == NULL)
+	if (token->next == NULL)
 	{
 		export_var();
 		return (0);
 	}
 	var = NULL;
-	temp = built->next;
+	temp = token->next;
 	if (temp->data[0] == '=')
 		return (1);
 	var = ft_split(temp->data, '=');

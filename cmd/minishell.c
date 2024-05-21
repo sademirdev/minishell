@@ -1,5 +1,4 @@
 #include "minishell.h"
-#include "built_in.h"
 #include <stdlib.h>
 
 char	*_token_type_tostr(t_token_type type)
@@ -66,11 +65,12 @@ int	main(int argc, char **argv)
 	arr = token_separate_by_pipe(root);
 	printf("root: %p\n", root);
 	assign_token_arr_types(arr);
-	int i = 0;
+	i = 0;
 	printf("\n");
 	printf("===\n\n");
 	while (arr[i])
 	{
+		printf("arr[%d]: %p\n", i, arr[i]);
 		line = readline("at: ");
 		// line = ft_strdup("ls -l | grep a | wc -l");
 		add_history(line);
@@ -91,11 +91,13 @@ int	main(int argc, char **argv)
 			{
 				printf("ptr: %p, DATA: %s\nTYPE: %s\n\n", root, root->data,
 					_token_type_tostr(root->type));
+				printf("root  jbkjnkjn: %s\n", root->data);
 				root = root->next;
 			}
 			printf("===\n\n");
 			i++;
 		}
+
 		pipe_exec(arr, state);
 		i = 0;
 		while (arr[i])

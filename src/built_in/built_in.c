@@ -1,58 +1,58 @@
-#include "../../inc/built_in.h"
+#include "minishell.h"
 
-int64_t	handle_built_in(t_built_in *built)
+int64_t	handle_built_in(t_token *token)
 {
 	int64_t		result;
 
 	result = 0;
-	if ((ft_strncmp(built->data, "echo", 4) == 0)
-		&& ft_strlen(built->data) == 4)
-		result = handle_echo(built);
-	else if ((ft_strncmp(built->data, "cd", 2) == 0)
-		&& ft_strlen(built->data) == 2)
-		result = handle_cd(built);
-	else if ((ft_strncmp(built->data, "pwd", 3) == 0)
-		&& ft_strlen(built->data) == 3)
+	if ((ft_strncmp(token->data, "echo", 4) == 0)
+		&& ft_strlen(token->data) == 4)
+		result = handle_echo(token);
+	else if ((ft_strncmp(token->data, "cd", 2) == 0)
+		&& ft_strlen(token->data) == 2)
+		result = handle_cd(token);
+	else if ((ft_strncmp(token->data, "pwd", 3) == 0)
+		&& ft_strlen(token->data) == 3)
 		result = handle_pwd();
-	else if ((ft_strncmp(built->data, "export", 6) == 0)
-		&& ft_strlen(built->data) == 7)
-		result = handle_export(built);
-	else if ((ft_strncmp(built->data, "unset", 5) == 0)
-		&& ft_strlen(built->data) == 5)
-		result = handle_unset(built);
-	else if ((ft_strncmp(built->data, "env", 3) == 0)
-		&& ft_strlen(built->data) == 3)
-		result = handle_env(built);
-	else if ((ft_strncmp(built->data, "exit", 4) == 0)
-		&& ft_strlen(built->data) == 4)
-		result = handle_exit(built);
+	else if ((ft_strncmp(token->data, "export", 6) == 0)
+		&& ft_strlen(token->data) == 7)
+		result = handle_export(token);
+	else if ((ft_strncmp(token->data, "unset", 5) == 0)
+		&& ft_strlen(token->data) == 5)
+		result = handle_unset(token);
+	else if ((ft_strncmp(token->data, "env", 3) == 0)
+		&& ft_strlen(token->data) == 3)
+		result = handle_env(token);
+	else if ((ft_strncmp(token->data, "exit", 4) == 0)
+		&& ft_strlen(token->data) == 4)
+		result = handle_exit(token);
 	return (result);
 }
 
-bool	is_built_in(t_built_in *built)
+bool	is_built_in(t_token *token)
 {
-	if (!built || built->type != CMD)
+	if (!token || token->type != CMD)
 		return (false);
-	if ((ft_strncmp(built->data, "echo", 4) == 0)
-		&& ft_strlen(built->data) == 4)
+	if ((ft_strncmp(token->data, "echo", 4) == 0)
+		&& ft_strlen(token->data) == 4)
 		return (true);
-	else if ((ft_strncmp(built->data, "cd", 2) == 0)
-		&& ft_strlen(built->data) == 2)
+	else if ((ft_strncmp(token->data, "cd", 2) == 0)
+		&& ft_strlen(token->data) == 2)
 		return (true);
-	else if ((ft_strncmp(built->data, "pwd", 3) == 0)
-		&& ft_strlen(built->data) == 3)
+	else if ((ft_strncmp(token->data, "pwd", 3) == 0)
+		&& ft_strlen(token->data) == 3)
 		return (true);
-	else if ((ft_strncmp(built->data, "export", 6) == 0)
-		&& ft_strlen(built->data) == 6)
+	else if ((ft_strncmp(token->data, "export", 6) == 0)
+		&& ft_strlen(token->data) == 6)
 		return (true);
-	else if ((ft_strncmp(built->data, "unset", 5) == 0)
-		&& ft_strlen(built->data) == 5)
+	else if ((ft_strncmp(token->data, "unset", 5) == 0)
+		&& ft_strlen(token->data) == 5)
 		return (true);
-	else if ((ft_strncmp(built->data, "env", 3) == 0)
-		&& ft_strlen(built->data) == 3)
+	else if ((ft_strncmp(token->data, "env", 3) == 0)
+		&& ft_strlen(token->data) == 3)
 		return (true);
-	else if ((ft_strncmp(built->data, "exit", 4) == 0)
-		&& ft_strlen(built->data) == 4)
+	else if ((ft_strncmp(token->data, "exit", 4) == 0)
+		&& ft_strlen(token->data) == 4)
 		return (true);
 	return (false);
 }

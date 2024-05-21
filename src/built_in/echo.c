@@ -1,17 +1,17 @@
-#include "../../inc/built_in.h"
+#include "minishell.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <limits.h>
 
-int64_t	handle_echo(t_built_in *built)
+int64_t	handle_echo(t_token *token)
 {
-	t_built_in	*temp;
+	t_token	*temp;
 	char		*buffer;
 
 	buffer = ft_strdup("");
 	if (!buffer)
 		return (free(buffer), 1);
-	temp = built->next;
+	temp = token->next;
 	if (ft_strncmp(temp->data, "-n", 2) == 0)
 		temp = temp->next;
 	while (temp && temp->type == ARG)
@@ -28,7 +28,7 @@ int64_t	handle_echo(t_built_in *built)
 		temp = temp->next;
 	}
 	printf("%s", buffer);
-	if (built->next && ft_strncmp(built->next->data, "-n", 2) == 0)
+	if (token->next && ft_strncmp(token->next->data, "-n", 2) == 0)
 		printf("\n");
 	return (0);
 }

@@ -1,16 +1,16 @@
-#include "../../inc/built_in.h"
+#include "minishell.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-int64_t	handle_env(t_built_in *built)
+int64_t	handle_env(t_token *token)
 {
 	extern char	**environ;
 	char		**env;
 	char		*value;
 
-	if (!built)
+	if (!token)
 		return (1);
-	if (built->next && built->next->type == CMD)
+	if (token->next && token->next->type == CMD)
 		return (1);
 	env = environ;
 	if (!env || !*env)
