@@ -1,4 +1,5 @@
 #include "murmur_test/incs/testing.h"
+#include "built_in.h"
 #include "minishell.h"
 #include <string.h>
 
@@ -8,6 +9,17 @@
 # define DUPLEX(res)	((res & (0xff << 0)) >> 0)
 
 int	ft_lstsize(t_list *lst);
+
+char *ft_strchr(char *str, char c)
+{
+	while (*str)
+	{
+		if (*str == c)
+			return (str);
+		str++;
+	}
+	return (NULL);
+}
 
 // t_list	*ll_nod(t_list *node, int index)
 // {
@@ -48,6 +60,80 @@ int	ft_lstsize(t_list *lst);
 // }
 
 // t_list	*ll_nod(t_list *node, int index);
+
+
+	// else
+	// {
+	// 	if (a_case->expected == 1)
+	// 		return 1;
+	// }
+
+
+int		built_in_export_test(t_test *test)
+{
+	t_try	*a_case;
+	int		err;
+
+	a_case = test->current_test->trys;
+	t_built_in a;
+	a.next = &(t_built_in){0};
+	a.next->data = a_case->try;
+	printf("handle_export(&a): %i\n", handle_export(&a));
+	if (! (err = handle_export(&a)))
+	{
+		// if (!err && a_case->expected == NULL)
+		// {
+		// 	// a_case->result = "handle_export() = 0";
+		// 	return 0;
+		// }
+		const char *var_name;
+		char *seperator = ft_strchr(a_case->try, '=');
+		if (!seperator)
+			var_name = strdup(a_case->try);
+		else
+			var_name = strndup(a_case->try, seperator - (char *)a_case->try);
+		// printf("var_name: %s %s\n", var_name, get_dollar_value(var_name));
+		a_case->result = strdup(get_dollar_value(var_name)?:"");
+		if (!err && a_case->expected == NULL)
+			return 0;
+		free((void *)var_name);
+		if (!strcmp(a_case->result, a_case->expected))
+			return 1;
+	}
+	else
+	{
+		a_case->result = NULL;
+		if (a_case->expected == NULL)
+			return 1;
+	}
+	return 0;
+}
+
+int		built_in_export_test_ko(t_test *test)
+{
+	t_try	*try;
+
+	try = test->current_test->trys;
+	char    *result[2] = {GREEN"[OK]"RESET, RED"[KO]"RESET};
+	printf("================ %s ================\n", test->current_test->name);
+	printf("try		[ %s ]\n\n", (char *)try->try);
+	printf("expected	[ %s ]\n", (try->expected));
+	printf("your		[ %s ]\n\n", (try->result));
+	printf("=================TEST %zu=%s================\n\n\n", test->test_number, result[1]);
+}
+
+int		built_in_export_test_ok(t_test *test)
+{
+	t_try	*try;
+
+	try = test->current_test->trys;
+	char    *result[2] = {GREEN"[OK]"RESET, RED"[KO]"RESET};
+	printf("=============== %s ================\n", test->current_test->name);
+	printf("try         	[ %s ]\n", (char *)try->try);
+	printf("expected	[ %s ]\n", (char *)try->expected);
+	printf("=================TEST %zu=%s================\n\n\n", test->test_number, result[0]);
+}
+
 
 int		syntax_check_test(t_test *test)
 {
@@ -240,8 +326,74 @@ void	test_main()
 			}
         },
 
+		(t_try [])
+        {
+            {
+				.try = &(t_fun){built_in_export_test, built_in_export_test_ko, built_in_export_test_ok},
+				.expected = "built-in export assigned test",
+			},
+			{
+				.try = "a=1",
+				.expected = "1",
+			},
+			{
+				.try = "a==1",
+				.expected = "=1",
+			},
+			{
+				.try = "a=",
+				.expected = "",
+			},
+			{
+				.try = "a",
+				.expected = "",
+			},
+			{
+				.try = "a=1=1",
+				.expected = "1=1",
+			},
+			{
+				.try = "a=1=1=1",
+				.expected = "1=1=1",
+			},
+			{
+				.try = "b1=1",
+				.expected = "1",
+			},
+			{
+				.try = "=1",
+				.expected = NULL,
+			},
+			{
+				.try = "1",
+				.expected = NULL,
+			},
+            {
+				.try = NULL,
+				.expected = NULL,
+			}
+        },
+
+		// (t_try [])
+        // {
+        //     {
+		// 		.try = &(t_fun){built_in_export_test, built_in_export_test_ko, built_in_export_test_ok},
+		// 		.expected = "built-in export cant assigned test",
+		// 	},
+		// 	{
+		// 		.try = "=1",
+		// 		.expected = 1,
+		// 	},
+        //     {
+		// 		.try = NULL,
+		// 		.expected = NULL,
+		// 	}
+        // },
+
 		NULL,
 	};
+
+
 
     // initialize test
     init_test(&test, trys);
@@ -249,6 +401,7 @@ void	test_main()
     // call each tests in test groups
     for (size_t j = 0; (size_t)trys[j]; j++)
     {
+		printf("\n\n\n\n\n\ntest group: %zu\n\n\n\n\n\n", j);
         for (size_t i = 0; (size_t)trys[j][i + 1].try; i++)
             tester(j, i, &test);
     }

@@ -186,4 +186,17 @@ void				handle_redll(t_token *token, t_cmd *cmd, int64_t i);
 void				print_err(const char *file, int err_flag);
 void				set_heredoc_fds(t_token *token, t_cmd *cmd, int64_t i);
 
+//built_in
+int64_t	handle_built_in(t_token *token);
+bool	is_built_in(t_token *token);
+int64_t	handle_unset(t_token *token);
+int64_t	handle_pwd(void);
+int64_t	var_exist(char *var);
+int64_t	handle_export(t_token *token);
+char	**get_env(char *new_var, char *temp, int64_t i);
+int64_t	handle_exit(t_token *token);
+int64_t	handle_env(t_token *token);
+int64_t	handle_echo(t_token *token);
+int64_t	handle_cd(t_token *token);
+
 #endif
