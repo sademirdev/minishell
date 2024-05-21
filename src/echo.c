@@ -28,7 +28,7 @@ int64_t	handle_echo(t_token *token)
 		temp = temp->next;
 	}
 	printf("%s", buffer);
-	if (token->next && ft_strncmp(token->next->data, "-n", 2) == 0)
+	if (token->next && ft_strncmp(token->next->data, "-n", 2) != 0)
 		printf("\n");
 	return (0);
 }
