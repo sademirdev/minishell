@@ -28,66 +28,54 @@ char	*_token_type_tostr(t_token_type type)
 	}
 }
 
-int	main(int argc, char **argv)
+static void	state_init(t_state *state, char **argv, char **env)
 {
-	extern char	**environ;
-	t_token		*root;
-	t_token		*tmp;
+	state->status = 0;
+	state->argv = argv;
+	state->env = env;
+	state->prompt = 0;
+	state->cmd_ct = 0;
+}
+
+static t_token	*prepare_lexer(t_state *state, char *line,t_token *root)
+{
+	root = separate_prompt_by_space(line);
+	root = extract_meta_chars(&root);
+	handle_dollar(&root, state);
+	handle_unnecessary_quotes(root);
+	return (root);
+}
+
+int	main(int argc, char **argv, char **env)
+{
 	t_state		*state;
 	char		*line;
 	t_token		**arr;
+	t_token		*root;
 	int			i;
-	t_cmd		*cmd;
-	t_token		*p_tmp;
 
+	root = 0;
 	(void)argc;
-	cmd = NULL;
 	state = malloc(sizeof(t_state));
 	if (!state)
 		return (1);
-	state->argv = argv;
-	state->env = environ;
-	state->status = 12;
-	while ("false")
+	state_init(state, argv, env);
+	while (1)
 	{
-		line = readline("at: ");
+		line = readline("Minishell: ");
 		state->prompt = line;
+		if (!line)
+			break ;
 		int32_t err = syntax_check(state);
 		if (err)
 		{
 			print_syntax_err(err);
 			continue;
 		}
-		// line = ft_strdup("ls -l | grep a | wc -l");
 		add_history(line);
-		root = separate_prompt_by_space(line);
-		tmp = root;
-		root = extract_meta_chars(&root);
-		handle_dollar(&root, state);
-		handle_unnecessary_quotes(root);
+		root = prepare_lexer(state, line, root);
 		arr = token_separate_by_pipe(root);
 		assign_token_arr_types(arr);
-		i = 0;
-		p_tmp = arr[i];
-		if (p_tmp)
-			printf("[");
-		while (arr[i])
-		{
-			if (p_tmp)
-				printf("  [ ");
-			root = arr[i];
-			while (root)
-			{
-				printf("(d: %s, t:%s) ", root->data,
-					_token_type_tostr(root->type));
-				root = root->next;
-			}
-			if (p_tmp)
-				printf("]");
-			i++;
-		}
-		if (p_tmp)
-			printf("  ]\n");
 		pipe_exec(arr, state);
 		i = 0;
 		while (arr[i])

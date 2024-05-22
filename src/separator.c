@@ -1,5 +1,6 @@
 #include "minishell.h"
 #include <stdlib.h>
+#include <string.h>
 
 int64_t	create_separated_node(t_token **root, char *prompt, int64_t start,
 		int64_t i)

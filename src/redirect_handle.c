@@ -52,7 +52,7 @@ int	handle_redll(t_token *token, t_cmd *cmd, int64_t i)
 	close(fd[1]);
 	if (cmd->heredoc[i] != -2)
 		close(cmd->heredoc[i]);
-	cmd->heredoc[i] = fd[0];
+	cmd->heredoc[i] = fd[0]; //todo(apancar): dup2(cmd->heredoc[i],fd[0])
 	if (cmd->in == -1)
 		return (print_err(temp->data, ERR_FILE_OPEN), FAILURE);
 	return (SUCCESS);
