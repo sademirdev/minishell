@@ -22,6 +22,8 @@ int64_t	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 		{
 			if (cmd->in != -2)
 				dup2(cmd->in, STDIN_FILENO);
+			if (cmd->out != -2)
+				dup2(cmd->out, STDOUT_FILENO);
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 				exit(1); // todo(sademir): handle error case
 		}

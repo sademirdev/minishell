@@ -2,7 +2,7 @@
 
 int64_t	handle_built_in(t_token *token)
 {
-	int64_t		result;
+	int64_t	result;
 
 	result = 0;
 	if ((ft_strncmp(token->data, "echo", 4) == 0)
@@ -42,8 +42,7 @@ bool	is_built_in(t_token *token)
 	else if ((ft_strncmp(token->data, "pwd", 3) == 0)
 		&& ft_strlen(token->data) == 3)
 		return (true);
-	else if ((ft_strncmp(token->data, "export", 6) == 0)
-		&& ft_strlen(token->data) == 6)
+	else if (ft_strncmp(token->data, "export", 6) == 0)
 		return (true);
 	else if ((ft_strncmp(token->data, "unset", 5) == 0)
 		&& ft_strlen(token->data) == 5)

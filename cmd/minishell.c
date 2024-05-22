@@ -28,11 +28,12 @@ char	*_token_type_tostr(t_token_type type)
 	}
 }
 
-static void _token_print(t_token *token)
+static void	_token_print(t_token *token)
 {
 	while (token)
 	{
-		printf("(data: %s, type: %s) ", token->data, _token_type_tostr(token->type));
+		printf("(data: %s, type: %s) ", token->data,
+			_token_type_tostr(token->type));
 		token = token->next;
 	}
 }
@@ -42,7 +43,8 @@ static void	token_print(t_token **token_arr)
 	int	i;
 
 	i = 0;
-	printf("[  ");
+	if (token_arr[i])
+		printf("[  ");
 	while (token_arr[i])
 	{
 		printf("[ ");
@@ -50,7 +52,8 @@ static void	token_print(t_token **token_arr)
 		printf(" ] : ");
 		i++;
 	}
-	printf("  ]\n");
+	if (token_arr[0])
+		printf("  ]\n");
 }
 
 static void	state_init(t_state *state, char **argv, char **env)
@@ -62,7 +65,7 @@ static void	state_init(t_state *state, char **argv, char **env)
 	state->cmd_ct = 0;
 }
 
-static t_token	*prepare_lexer(t_state *state, char *line,t_token *root)
+static t_token	*prepare_lexer(t_state *state, char *line, t_token *root)
 {
 	root = separate_prompt_by_space(line);
 	root = extract_meta_chars(&root);
@@ -73,29 +76,31 @@ static t_token	*prepare_lexer(t_state *state, char *line,t_token *root)
 
 int	main(int argc, char **argv, char **env)
 {
-	t_state		*state;
-	char		*line;
-	t_token		**arr;
-	t_token		*root;
-	int			i;
+	t_state	*state;
+	char	*line;
+	t_token	**arr;
+	t_token	*root;
+	int		i;
+	int32_t	err;
 
 	root = 0;
 	(void)argc;
 	state = malloc(sizeof(t_state));
 	if (!state)
 		return (1);
+	setenv("at", " -la", 1);
 	state_init(state, argv, env);
 	while (1)
 	{
-		line = readline("Minishell: ");
+		line = readline("minishell: ");
 		state->prompt = line;
 		if (!line)
 			break ;
-		int32_t err = syntax_check(state);
+		err = syntax_check(state);
 		if (err)
 		{
 			print_syntax_err(err);
-			continue;
+			continue ;
 		}
 		add_history(line);
 		root = prepare_lexer(state, line, root);
