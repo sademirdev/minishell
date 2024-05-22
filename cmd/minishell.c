@@ -28,6 +28,31 @@ char	*_token_type_tostr(t_token_type type)
 	}
 }
 
+static void _token_print(t_token *token)
+{
+	while (token)
+	{
+		printf("(data: %s, type: %s) ", token->data, _token_type_tostr(token->type));
+		token = token->next;
+	}
+}
+
+static void	token_print(t_token **token_arr)
+{
+	int	i;
+
+	i = 0;
+	printf("[  ");
+	while (token_arr[i])
+	{
+		printf("[ ");
+		_token_print(token_arr[i]);
+		printf(" ] : ");
+		i++;
+	}
+	printf("  ]\n");
+}
+
 static void	state_init(t_state *state, char **argv, char **env)
 {
 	state->status = 0;
@@ -76,6 +101,7 @@ int	main(int argc, char **argv, char **env)
 		root = prepare_lexer(state, line, root);
 		arr = token_separate_by_pipe(root);
 		assign_token_arr_types(arr);
+		token_print(arr);
 		pipe_exec(arr, state);
 		i = 0;
 		while (arr[i])

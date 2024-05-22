@@ -54,6 +54,8 @@ t_token	*separate_prompt_by_space(char *prompt)
 		// todo(sademir): add constants to header '0'
 		if (create_separated_node(&root, prompt, start, i) != 0)
 			return (NULL);
+		while (prompt[i] && prompt[i] == ' ')
+			i++;
 	}
 	return (root);
 }
