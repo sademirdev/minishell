@@ -67,8 +67,6 @@ void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar)
 	while ((*data)[i])
 	{
 		flag_single_quote = get_in_quote(flag_single_quote, (*data)[i]);
-		if ((*data)[i] && (*data)[i] == '$' && (*data)[i + 1] && (*data)[i + 1] == '$')
-			i++;
 		if (flag_single_quote != '\'' && is_valid_dollar(*data, i))
 		{
 			*has_dollar = true;
@@ -80,10 +78,7 @@ void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar)
 			else
 				i = handle_regular_dollar(data, start, i + 1);
 		}
-		if ((*data)[i] && flag_single_quote != '\'' && is_valid_dollar(*data, i))
-			continue ;
-		if ((*data)[i] && ((*data)[i] != '$' || flag_single_quote))
+		else
 			i++;
-		printf("at%c\n", (*data)[i]);
 	}
 }
