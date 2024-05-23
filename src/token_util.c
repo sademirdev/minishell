@@ -55,3 +55,15 @@ void	token_old_del(t_token **tmp, t_token *root)
 	*tmp = (*tmp)->next;
 	token_dispose(&old_node);
 }
+
+int64_t	token_arr_len(t_token **token_arr)
+{
+	int64_t	i;
+
+	if (!token_arr)
+		return (0);
+	i = 0;
+	while (token_arr[i])
+		i++;
+	return (i);
+}

@@ -34,8 +34,8 @@ Minishell supports the following features:
 - Command history and display prompts
 - Search and launch the appropriate executable based on the PATH variable or through relative/absolute paths
 - Manage environment variables and the exit status of the most recently executed foreground command
-- Shortcut keys (ctrl-C, ctrl-D, ctrl-)
-- Basic redirections and pipes
+- Shortcut keys (ctrl-C, ctrl-D, ctrl-\)
+- Basic redirections, heredoc and pipes
 - Proper handling of text and environment variables with single and double quotes
 - Built-in commands: echo, cd, pwd, export, unset, env, exit
 
@@ -62,3 +62,4 @@ This project is licensed under the [MIT License](./LICENSE).
 - Hülya Kızrak Yiğit
 - Ahmet Cemil Bostanoğlu
 - Kaan Karakuş
+- Ahmet Faruk Basaran

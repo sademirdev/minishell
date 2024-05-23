@@ -99,6 +99,6 @@ int64_t	handle_regular_dollar(char **data, int64_t start, int64_t i)
 	free(key);
 	value_len = ft_strlen(value);
 	if (value_len == 0)
-		return (free(value), start + value_len - 1);
-	return (free(value), start + value_len - 2);
+		return (free(value), start - 1);
+	return (free(value), start + value_len - 1);
 }

@@ -13,9 +13,9 @@ int64_t	ft_strlen(const char *s)
 	return (i);
 }
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+int64_t	ft_strncmp(const char *s1, const char *s2, int64_t n)
 {
-	size_t	i;
+	int64_t	i;
 
 	if (n == 0)
 		return (0);
@@ -26,6 +26,18 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 		i++;
 	}
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
+int64_t				ft_strcmp(char *s1, char *s2)
+{
+	int64_t	i;
+
+	if (!s1 || !s2)
+		return (-1);
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
@@ -158,4 +170,28 @@ char	*ft_itoa(int64_t n)
 	str[length] = '\0';
 	ft_strrev(str);
 	return (str);
+}
+
+char	*ft_strjoin(char const *s1, char const *s2, bool flag_free)
+{
+	char	*buf;
+	int64_t	i;
+	int64_t	j;
+
+	if (!s1 && !s2)
+		return (NULL);
+	buf = (char *) malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	if (!buf)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (s1[i])
+		buf[j++] = s1[i++];
+	i = 0;
+	while (s2[i])
+		buf[j++] = s2[i++];
+	buf[j] = '\0';
+	if (flag_free)
+		free((void *) s1);
+	return (buf);
 }
