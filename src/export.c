@@ -1,5 +1,6 @@
 #include "minishell.h"
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
@@ -29,7 +30,7 @@ int64_t	handle_export(t_token *token)
 {
 	int64_t		i;
 	char		**var;
-	t_token	*temp;
+	t_token		*temp;
 
 	if (!token)
 		return (1);
@@ -40,8 +41,11 @@ int64_t	handle_export(t_token *token)
 	}
 	var = NULL;
 	temp = token->next;
-	if (temp->data[0] == '=')
-		return (1);
+	if (temp->data[0] == '=' && temp->data[1] == '\0')
+	{
+		printf("minishell: export: `%s': not a valid identifier\n", temp->data);
+		exit (1);
+	}
 	var = ft_split(temp->data, '=');
 	if (!var)
 		return (1);

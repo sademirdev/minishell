@@ -80,6 +80,5 @@ void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar)
 		}
 		if ((*data)[i] && ((*data)[i] != '$' || flag_single_quote))
 			i++;
-		printf("at%c\n", (*data)[i]);
 	}
 }

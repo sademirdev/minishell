@@ -27,13 +27,13 @@ int64_t	handle_cd(t_token *token)
 			write(2, "cd: HOME not set\n", 17);
 			return (1);
 		}
-		return (0);
+		return (1);
 	}
 	if (is_relative_path(token->next->data))
 		return (handle_relative_path(token));
 	else if (is_absolute_path(token->next->data))
 		return (handle_absolute_path(token));
-	return (1);
+	return (0);
 }
 
 static bool	is_relative_path(const char *path)
@@ -78,17 +78,18 @@ static int64_t	handle_relative_path(t_token *token)
 	temp_path[len] = '\0';
 	if (chdir(temp_path) == -1)
 	{
-		printf("cd: %s: No such file or directory\n", token->next->data);
-		return (free(temp_path), 1);
+		write (2,"No such file or directory\n", 27);
+		free(temp_path);
+		exit (1);
 	}
-	return (free(temp_path), 0);
+	return (free(temp_path), 1);
 }
 
 static int64_t	handle_absolute_path(t_token *token)
 {
 	if (chdir(token->next->data) == -1)
 	{
-		printf("cd: %s: No such file or directory\n", token->next->data);
+		printf("No such file or directory\n");
 		return (1);
 	}
 	return (0);

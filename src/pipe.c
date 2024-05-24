@@ -97,7 +97,6 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 		dup2(cmd->out, STDOUT_FILENO);
 	if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 	{
-		printf("execve\n");
 		exit(1); // todo(sademir): handle error case
 	}
 }
