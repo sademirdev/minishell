@@ -1,6 +1,9 @@
 #include "minishell.h"
 #include "termios.h"
 #include "signal.h"
+#include "stdio.h"
+#include "unistd.h"
+#include "stdlib.h"
 
 void	set_termios(void)
 {
@@ -23,7 +26,7 @@ void	signal_handler_ctrl_c(int signo)
 {
 	if (signo == SIGINT)
 	{
-		ft_putstr_fd("\n", 1);
+		printf("\n");
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
@@ -32,18 +35,13 @@ void	signal_handler_ctrl_c(int signo)
 
 void	signal_handler_ctrl_d(int signo)
 {
-	if (signo == SIGTSTP)
-	{
-		ft_putstr_fd("\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
+	if (signo == SIGQUIT)
+		exit(0);
 }
 
 void signals(void)
 {
 	set_termios();
 	signal(SIGINT, signal_handler_ctrl_c);
-	signal(SIGTSTP, signal_handler_ctrl_d);
+	signal(SIGQUIT, signal_handler_ctrl_d);
 }

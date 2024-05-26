@@ -193,6 +193,8 @@ int					handle_redll(t_token *token, t_cmd *cmd, int64_t i);
 
 void				print_err(const char *file, int err_flag);
 void				set_heredoc_fds(t_token *token, t_cmd *cmd, int64_t i);
+void 				signals(void);
+
 
 // built_in
 int64_t				handle_built_in(t_token *token);

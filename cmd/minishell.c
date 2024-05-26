@@ -83,6 +83,7 @@ int	main(int argc, char **argv, char **env)
 	int		i;
 	int32_t	err;
 
+	signals();
 	root = 0;
 	(void)argc;
 	state = malloc(sizeof(t_state));
