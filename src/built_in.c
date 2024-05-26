@@ -14,8 +14,7 @@ int64_t	handle_built_in(t_token *token)
 	else if ((ft_strncmp(token->data, "pwd", 3) == 0)
 		&& ft_strlen(token->data) == 3)
 		result = handle_pwd();
-	else if ((ft_strncmp(token->data, "export", 6) == 0)
-		&& ft_strlen(token->data) == 7)
+	else if ((ft_strncmp(token->data, "export", 6) == 0))
 		result = handle_export(token);
 	else if ((ft_strncmp(token->data, "unset", 5) == 0)
 		&& ft_strlen(token->data) == 5)
