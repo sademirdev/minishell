@@ -24,7 +24,7 @@ int64_t	handle_env(t_token *token)
 		if (value == NULL)
 			printf("%s=(null)\n", *env);
 		else
-			printf("%s=%s\n", *env, value);
+			printf("%s\n", *env);
 		env++;
 	}
 	return (0);
