@@ -8,12 +8,20 @@ int64_t	handle_echo(t_token *token)
 	t_token	*temp;
 	char		*buffer;
 
+	temp = NULL;
 	buffer = ft_strdup("");
 	if (!buffer)
 		return (free(buffer), 1);
-	temp = token->next;
-	if (ft_strncmp(temp->data, "-n", 2) == 0)
-		temp = temp->next;
+	if (token->next)
+		temp = token->next;
+	else
+	{
+		printf("\n");
+		return (0);
+	}
+	if (temp)
+		if (ft_strncmp(temp->data, "-n", 2) == 0)
+			temp = temp->next;
 	while (temp && temp->type == ARG)
 	{
 		buffer = ft_strjoin(buffer, temp->data, 1);
