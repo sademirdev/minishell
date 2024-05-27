@@ -95,15 +95,7 @@ re: fclean
 	$(MAKE) all
 
 mt:
-	@mkdir -p bin
-	$(CC) $(CFLAGS) $(RLFLAGS) \
-		$(INC_DIR) \
-		-Itest/libs \
-		test/libs/tin/equal_primitive.c \
-		test/tests/asdsec_tests/meta_test.c \
-		test/main.c \
-		-D TEST=1 $(SRCS) -o bin/test
-	@./bin/test
+	clang test/handle_dollar_test.c src/*.c test/libs/tin/equal_primitive.c lib/readline/lib/libreadline.dylib lib/readline/lib/libhistory.dylib -I lib/murmur.eval-master/murmur_eval/incs/ -I inc/ -I lib/readline/include/ -L ./lib/readline/lib/ -lreadline lib/murmur.eval-master/murmur_eval/build/libmurmureval.a -D TEST=1 && ./a.out
 
 t:
 	@mkdir -p bin
