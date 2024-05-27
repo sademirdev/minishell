@@ -24,6 +24,7 @@ RLFLAGS			= -L./lib/readline/lib -I./lib/readline/include/readline -lreadline
 DIR				= $(shell echo $(PWD))
 READLINE		= ./lib/readline/lib/libreadline.a
 
+MURMUR_EVAL = $(LIB)/murmur.eval-master/murmur_eval/build/libmurmureval.a
 # os = ${shell uname -s}
 # ifeq '$(os)' 'Darwin'
 # NPROCS = $(shell sysctl -n hw.ncpu)
@@ -64,6 +65,12 @@ $(READLINE):
 	@cd readline-8.2-rc1 && ./configure --prefix=$(DIR)/lib/readline && make && make install
 	@$(RM) readline-8.2-rc1
 
+$(MURMUR_EVAL):
+	@curl -L -O https://github.com/murmurlab/murmur.eval/archive/refs/heads/master.zip
+	@unzip -d $(LIB) master.zip
+	@$(RM) master.zip
+	@make -C $(LIB)/murmur.eval-master/murmur_eval
+
 $(NAME): $(CMD) $(OBJS)
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) $(RLFLAGS) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
@@ -87,14 +94,25 @@ f: fclean
 re: fclean
 	$(MAKE) all
 
-t:
+mt:
 	@mkdir -p bin
-	$(CC) $(CFLAGS) \
+	$(CC) $(CFLAGS) $(RLFLAGS) \
 		$(INC_DIR) \
 		-Itest/libs \
-		test/libs/murmur_test/testing.c \
+		test/libs/tin/equal_primitive.c \
+		test/tests/asdsec_tests/meta_test.c \
 		test/main.c \
-		test/tests/murmur_tests/murmur_test.c \
+		-D TEST=1 $(SRCS) -o bin/test
+	@./bin/test
+
+t:
+	@mkdir -p bin
+	$(CC) $(CFLAGS) $(RLFLAGS) \
+		$(INC_DIR) \
+		-Itest/libs \
+		test/libs/tin/equal_primitive.c \
+		test/tests/asdsec_tests/separator_test.c \
+		test/main.c \
 		-D TEST=1 $(SRCS) -o bin/test
 	@./bin/test
 
