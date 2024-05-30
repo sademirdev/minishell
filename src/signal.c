@@ -1,9 +1,9 @@
 #include "minishell.h"
-#include "termios.h"
 #include "signal.h"
 #include "stdio.h"
-#include "unistd.h"
 #include "stdlib.h"
+#include "termios.h"
+#include "unistd.h"
 
 void	set_termios(void)
 {
@@ -27,7 +27,7 @@ void	signal_handler_ctrl_c(int signo)
 	}
 }
 
-void signals(void)
+void	handle_signals(void)
 {
 	set_termios();
 	signal(SIGINT, signal_handler_ctrl_c);

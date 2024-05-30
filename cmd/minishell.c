@@ -56,67 +56,84 @@ char	*_token_type_tostr(t_token_type type)
 // 		printf("  ]\n");
 // }
 
-static void	state_init(t_state *state, char **argv, char **env)
+static void	dispose_env_idx(char **copy_env, int i)
 {
-	state->status = 0;
-	state->argv = argv;
-	state->env = env;
-	state->prompt = 0;
-	state->cmd_ct = 0;
+	if (!copy_env)
+		return ;
+	if (i > 0)
+		while (i--)
+			free(copy_env[i]);
+	free(copy_env);
 }
 
-static t_token	*prepare_lexer(t_state *state, char *line, t_token *root)
+static char **copy_env(char **env)
 {
-	root = separate_prompt_by_space(line);
-	root = extract_meta_chars(&root);
-	handle_dollar(&root, state);
-	handle_unnecessary_quotes(root);
-	return (root);
+	char	**env_copy;
+	int		i;
+
+	if (!env)
+		return (NULL);
+	i = 0;
+	while (env[i])
+		i++;
+	env_copy = (char **) malloc(sizeof(char *) * (i + 1));
+	if (!env_copy)
+		return (NULL);
+	i = 0;
+	while (env[i])
+	{
+		env_copy[i] = ft_strdup(env[i]);
+		if (!env_copy[i])
+			return (dispose_env_idx(env_copy, i), NULL);
+		i++;
+	}
+	return (env_copy);
+}
+
+static t_state	*state_init(char **argv, char **env)
+{
+	t_state	*state;
+
+	state = malloc(sizeof(t_state));
+	if (!state)
+		return (NULL);
+	state->env = copy_env(env);
+	if (!state->env)
+		return (state_dispose(&state), NULL);
+	state->argv = argv;
+	state->token_arr = NULL;
+	state->prompt = NULL;
+	state->status = 0;
+	state->cmd_ct = 0;
+	state->err = 0;
+	return (state);
 }
 
 int	main(int argc, char **argv, char **env)
 {
 	t_state	*state;
-	char	*line;
-	t_token	**arr;
-	t_token	*root;
-	int		i;
-	int32_t	err;
 
-	signals();
-	root = 0;
-	(void)argc;
-	state = malloc(sizeof(t_state));
+	handle_signals();
+	state = state_init(argv, env);
 	if (!state)
-		return (1);
-	setenv("at", " -la", 1);
-	state_init(state, argv, env);
-	while (1)
+		return (argc);
+	while (true)
 	{
-		line = readline("minishell: ");
-		state->prompt = line;
-		if (!line)
+		state->prompt = readline(PROMPT);
+		if (!state->prompt)
 			break ;
-		err = syntax_check(state);
-		if (err)
+		state->err = syntax_check(state);
+		if (state->err)
 		{
-			print_syntax_err(err);
+			print_syntax_err(state->err);
+			dispose_prompt(state);
 			continue ;
 		}
-		add_history(line);
-		root = prepare_lexer(state, line, root);
-		arr = token_separate_by_pipe(root);
-		assign_token_arr_types(arr);
-		// token_print(arr);
-		pipe_exec(arr, state);
-		i = 0;
-		while (arr[i])
-			token_dispose_all(&arr[i++]);
-		free(line);
-		line = 0;
-		free(arr);
-		arr = 0;
+		add_history(state->prompt);
+		state->token_arr = run_lexer(state->prompt, state);
+		if (execute_prompt(state->token_arr, state) != SUCCESS)
+			return (state_dispose(&state), 1);
+		dispose_prompt(state);
 	}
-	free(state);
-	return (0);
+	return (state_dispose(&state), 1);
 }

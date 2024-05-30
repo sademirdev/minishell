@@ -15,7 +15,6 @@ int64_t	handle_unset(t_token *token)
 		{
 			if (ft_strncmp(environ[i], temp->data, ft_strlen(temp->data)) == 0)
 			{
-				
 				while (environ[i + 1])
 				{
 					environ[i] = environ[i + 1];

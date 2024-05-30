@@ -70,6 +70,7 @@ char	*find_path(char *command, char **env)
 		return (NULL);
 	paths = ft_split(path, ':');
 	if (!paths)
-		return (free(path), NULL);
+		return (NULL);
+	free(path);
 	return (join_path(paths, command));
 }

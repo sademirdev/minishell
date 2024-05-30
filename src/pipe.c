@@ -34,7 +34,7 @@ int64_t	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 	{
 		handle_built_in(token);
 	}
-	return (SUCCESS);
+	return (free(cmd->heredoc), free(cmd->argv[0]), free(cmd->argv), SUCCESS);
 }
 
 int64_t	pipe_init(int (*fd)[2], int64_t pipe_count)
@@ -156,7 +156,7 @@ int64_t	cmd_init(t_cmd *cmd, int64_t arr_len)
 	return (SUCCESS);
 }
 
-int64_t	pipe_exec(t_token **token_arr, t_state *state)
+int64_t	execute_prompt(t_token **token_arr, t_state *state)
 {
 	int64_t	arr_len;
 	t_cmd		cmd;

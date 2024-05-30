@@ -11,7 +11,6 @@ int main(void)
 	MURMURTEST
 }
 
-
 #include "libs/tin/testing.h"
 
 static int		ft_lstsize(struct s_link_list *lst);
@@ -50,16 +49,17 @@ void	test_main()
 			{
 				CASE = "$a $b",
 				EXPECTED = &(t_token *[]){
-					&(t_token){.data = strdup("000"), .type = NONE},
 					&(t_token){.data = strdup("AAAA"), .type = NONE},
+					&(t_token){.data = strdup("BBBB"), .type = NONE},
 					NULL
 				},
 			},
 			{
-				CASE = "$a $b$c$b",
+				CASE = "$a $b$c",
 				EXPECTED = &(t_token *[]){
-					&(t_token){.data = strdup("000"), .type = NONE},
 					&(t_token){.data = strdup("AAAA"), .type = NONE},
+					&(t_token){.data = strdup("BBBBCC"), .type = NONE},
+					&(t_token){.data = strdup("CC"), .type = NONE},
 					NULL
 				},
 			},
@@ -81,9 +81,9 @@ void	test_main()
 int		test_native_handle_dollar(t_test *test)
 {
 	extern char **environ;
-	setenv("a", "0000", 1);
-	setenv("b", "AAAA", 1);
-	setenv("c", "xx xx", 1);
+	setenv("a", "AAAA", 1);
+	setenv("b", "BBBB", 1);
+	setenv("c", "CC CC", 1);
 	((t_state *)(test->my_data))->env = environ;
 	t_token *root = NULL;
 	t_token *exp = NULL;

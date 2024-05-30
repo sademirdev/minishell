@@ -14,6 +14,8 @@
 # define ERR_FILE_PERMISSION_DENIED 2
 # define ERR_FILE_OPEN 3
 
+# define PROMPT "minishell: "
+
 typedef struct s_syntax
 {
 	unsigned char	duplex;
@@ -75,11 +77,13 @@ typedef struct s_token_separation_meta_data
 
 typedef struct s_state
 {
-	int				status;
-	char			**argv;
-	char			**env;
-	char			*prompt;
-	int64_t			cmd_ct;
+	int			status;
+	char		**argv;
+	char		**env;
+	char		*prompt;
+	t_token	**token_arr;
+	int64_t	cmd_ct;
+	int			err;
 }					t_state;
 
 typedef struct s_cmd
@@ -103,7 +107,7 @@ char				*ft_strdup(const char *src);
 char				*ft_substr(char const *s, unsigned int start, int64_t len);
 int64_t				ft_strlcpy(char *dst, const char *src, int64_t dst_size);
 char				*ft_itoa(int64_t n);
-int64_t				pipe_exec(t_token **token_arr, t_state *state);
+int64_t				execute_prompt(t_token **token_arr, t_state *state);
 t_token				*token_new(char *data, t_token_type type);
 t_token				*token_add_last(t_token *token, t_token *new);
 void				token_add_next(t_token *token, t_token *new);
@@ -169,7 +173,7 @@ void				assign_token_types(t_token *token);
 void				assign_token_arr_types(t_token **token_arr);
 
 void				error_print(t_error *err);
-t_token				**lexer(char *prompt, t_state *state);
+t_token				**run_lexer(char *prompt, t_state *state);
 
 void				handle_unnecessary_quotes(t_token *root);
 char				**ft_split(char const *str, char c);
@@ -193,7 +197,7 @@ int					handle_redll(t_token *token, t_cmd *cmd, int64_t i);
 
 void				print_err(const char *file, int err_flag);
 void				set_heredoc_fds(t_token *token, t_cmd *cmd, int64_t i);
-void 				signals(void);
+void 				handle_signals(void);
 
 
 // built_in
@@ -215,5 +219,9 @@ void	syntax_dquote(t_syntax *syntax);
 int	syntax_sarrow(t_syntax *syntax, size_t *_);
 int	syntax_pipe(t_state *shell, t_syntax *syntax, size_t *_);
 void	print_syntax_err(int errs);
+t_token	**run_lexer(char *prompt, t_state *state);
+void	token_arr_dispose(t_token ***token_arr);
+void	state_dispose(t_state **state);
+void	dispose_prompt(t_state *state);
 
 #endif

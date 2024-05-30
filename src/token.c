@@ -23,6 +23,22 @@ void	token_dispose_all(t_token **token)
 	token_dispose(token);
 }
 
+void	token_arr_dispose(t_token ***token_arr)
+{
+	int	i;
+
+	if (!token_arr || !*token_arr || !**token_arr)
+		return ;
+	i = 0;
+	while ((*token_arr)[i])
+	{
+		token_dispose_all(&(*token_arr)[i]);
+		i++;
+	}
+	free(*token_arr);
+	*token_arr = NULL;
+}
+
 int64_t	token_count_pipe(t_token *token)
 {
 	int64_t	count;

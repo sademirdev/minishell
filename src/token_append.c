@@ -107,12 +107,12 @@ int64_t	token_count_args(t_token *token)
 char	**token_to_arg(t_token *token, char *cmd_path)
 {
 	char	**argv;
-	int64_t	i;
+	int		i;
 	bool	on_arg;
 
 	if (!token || !cmd_path)
 		return (NULL);
-	argv = (char **)malloc(sizeof(char *) * (token_count_args(token) + 2));
+	argv = (char **) malloc(sizeof(char *) * (token_count_args(token) + 2));
 	if (!argv)
 		return (NULL);
 	argv[0] = cmd_path;
