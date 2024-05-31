@@ -9,7 +9,7 @@
 #include <string.h>
 
 bool equal_ptr(void *actual, void *expected);
-bool equal_int64(int64_t actual, int64_t expected);
+bool equal_int64(int actual, int expected);
 bool equal_int32(int32_t actual, int32_t expected);
 bool equal_bool(bool actual, bool expected);
 bool equal_str(char *actual, char *expected);

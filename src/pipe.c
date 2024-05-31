@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int64_t	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
+int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 {
 	int			pid;
 
@@ -37,9 +37,9 @@ int64_t	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 	return (free(cmd->heredoc), free(cmd->argv[0]), free(cmd->argv), SUCCESS);
 }
 
-int64_t	pipe_init(int (*fd)[2], int64_t pipe_count)
+int	pipe_init(int (*fd)[2], int pipe_count)
 {
-	int64_t	i;
+	int	i;
 
 	if (!fd)
 		return (FAILURE);
@@ -55,8 +55,8 @@ int64_t	pipe_init(int (*fd)[2], int64_t pipe_count)
 
 static void	handle_child_process(t_token **token_arr, t_state *state, int i, int (*fd)[2], t_cmd *cmd)
 {
-	int64_t	j;
-	int64_t	arr_len;
+	int	j;
+	int	arr_len;
 
 	arr_len = token_arr_len(token_arr);
 	if (!token_arr[i] || !state || arr_len < 1 || !cmd)
@@ -101,9 +101,9 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 	}
 }
 
-int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *state, t_cmd *cmd)
+int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_cmd *cmd)
 {
-	int64_t	i;
+	int	i;
 	pid_t	pid;
 
 	i = 0;
@@ -136,7 +136,7 @@ int64_t	fork_init(int (*fd)[2], int64_t arr_len, t_token **token_arr, t_state *s
 	return (SUCCESS);
 }
 
-int64_t	cmd_init(t_cmd *cmd, int64_t arr_len)
+int	cmd_init(t_cmd *cmd, int arr_len)
 {
 	int32_t	i;
 
@@ -156,27 +156,27 @@ int64_t	cmd_init(t_cmd *cmd, int64_t arr_len)
 	return (SUCCESS);
 }
 
-int64_t	execute_prompt(t_token **token_arr, t_state *state)
+int	execute_prompt(t_state *state)
 {
-	int64_t	arr_len;
+	int	arr_len;
 	t_cmd		cmd;
 	int		(*fd)[2];
 
-	if (!token_arr || !state)
+	if (!state || !state->token_arr)
 		return (FAILURE);
-	arr_len = token_arr_len(token_arr);
+	arr_len = token_arr_len(state->token_arr);
 	if (arr_len < 1)
 		return (FAILURE);
 	if (cmd_init(&cmd, arr_len) != SUCCESS)
 		return (FAILURE);
 	if (arr_len == 1)
-		return (pipe_single_exec(token_arr[0], state, &cmd));
+		return (pipe_single_exec(state->token_arr[0], state, &cmd));
 	fd = (int (*)[2]) malloc(sizeof(int [2]) * (arr_len - 1));
 	if (!fd)
 		return (free(cmd.heredoc), FAILURE);
 	if (pipe_init(fd, arr_len - 1) != SUCCESS)
 		return (free(fd), free(cmd.heredoc), FAILURE);
-	if (fork_init(fd, arr_len, token_arr, state, &cmd) != SUCCESS)
+	if (fork_init(fd, arr_len, state->token_arr, state, &cmd) != SUCCESS)
 		return (free(fd), free(cmd.heredoc), FAILURE);
 	return (SUCCESS);
 }

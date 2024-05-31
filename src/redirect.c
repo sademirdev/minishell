@@ -32,7 +32,7 @@ void	set_red_file_fds(t_token *token, t_cmd *cmd)
 	}
 }
 
-void	  set_heredoc_fds(t_token *token, t_cmd *cmd, int64_t i)
+void	  set_heredoc_fds(t_token *token, t_cmd *cmd, int i)
 {
 	if (!token)
 		return ;

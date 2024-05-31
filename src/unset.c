@@ -1,10 +1,10 @@
 #include "minishell.h"
 #include <stdlib.h>
 
-int64_t	handle_unset(t_token *token)
+int	handle_unset(t_token *token)
 {
 	extern char	**environ;
-	int64_t		i;
+	int		i;
 	t_token	*temp;
 
 	temp = token->next;

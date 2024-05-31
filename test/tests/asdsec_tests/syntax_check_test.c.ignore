@@ -23,8 +23,8 @@ void test_syntax_check() {
       },
   };
 
-  int64_t size = sizeof(test_cases) / sizeof(t_case);
-  int64_t i = 0;
+  int size = sizeof(test_cases) / sizeof(t_case);
+  int i = 0;
   while (i < size) {
     t_case tc = test_cases[i];
     token_dispose(&tc.token);
@@ -50,7 +50,7 @@ void test_token_count_pipe() {
   typedef struct s_case {
     char *name;
     t_token *token;
-    int64_t expected;
+    int expected;
   } t_case;
 
   t_token *t0_token_root = token_new(ft_strdup("test_root"), NONE);
@@ -93,13 +93,13 @@ void test_token_count_pipe() {
   {
         expect_equal_int64("asrt", check_syntax(test_cases[i].token), test_cases[i].expected);
   }
-  
+
 
   t_test_end();
 }
 
 void run_syntax_check_test() {
   t_group_run();
-  
+
   t_group_finish();
 }

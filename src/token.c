@@ -39,9 +39,9 @@ void	token_arr_dispose(t_token ***token_arr)
 	*token_arr = NULL;
 }
 
-int64_t	token_count_pipe(t_token *token)
+int	token_count_pipe(t_token *token)
 {
-	int64_t	count;
+	int	count;
 
 	count = 0;
 	while (token)

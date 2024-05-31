@@ -1,14 +1,14 @@
 #include "minishell.h"
 #include <stdlib.h>
 
-t_token	**run_lexer(char *prompt, t_state *state)
+t_token	**run_lexer(t_state *state)
 {
 	t_token	*root;
 	t_token	**token_arr;
 
-	if (!prompt || !state)
+	if (!state || !state->prompt)
 		return (NULL);
-	root = separate_prompt_by_space(prompt);
+	root = separate_prompt_by_space(state->prompt);
 	if (!root)
 		return (NULL);
 	root = extract_meta_chars(&root);

@@ -5,9 +5,9 @@
 static bool	ft_is_digit(char *c);
 static void	ft_putstr_fd(char *str, int fd);
 
-int64_t	handle_exit(t_token *token)
+int	handle_exit(t_token *token)
 {
-	int64_t		exit_code;
+	int		exit_code;
 
 	exit_code = 1;
 	if (!token)

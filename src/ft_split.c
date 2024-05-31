@@ -1,10 +1,10 @@
 #include "minishell.h"
 #include <stdlib.h>
 
-static int64_t	ft_count_words(char const *str, char c)
+static int	ft_count_words(char const *str, char c)
 {
-	int64_t	count;
-	int64_t	i;
+	int	count;
+	int	i;
 
 	count = 0;
 	i = 0;
@@ -20,7 +20,7 @@ static int64_t	ft_count_words(char const *str, char c)
 	return (count);
 }
 
-static char	**ft_dispose_arr(char **arr, int64_t i)
+static char	**ft_dispose_arr(char **arr, int i)
 {
 	while (i >= 0)
 	{
@@ -33,9 +33,9 @@ static char	**ft_dispose_arr(char **arr, int64_t i)
 
 static char	**ft_fill_arr(char **arr, char const *str, char c)
 {
-	int64_t	i;
-	int64_t	j;
-	int64_t	arr_i;
+	int	i;
+	int	j;
+	int	arr_i;
 
 	i = 0;
 	arr_i = 0;

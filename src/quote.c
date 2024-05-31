@@ -1,9 +1,9 @@
 #include "minishell.h"
 #include <stdlib.h>
 
-int64_t	pass_quoted_str(char *p, int64_t *oi)
+int	pass_quoted_str(char *p, int *oi)
 {
-	int64_t	i;
+	int	i;
 
 	i = *oi;
 	if (p[i] == '"')
@@ -40,7 +40,7 @@ char	get_in_quote(char old, char data)
 	return (old);
 }
 
-bool	is_unnecessary_quote(int64_t *quote, char data)
+bool	is_unnecessary_quote(int *quote, char data)
 {
 	if (*quote)
 	{
@@ -66,11 +66,11 @@ bool	is_unnecessary_quote(int64_t *quote, char data)
 	return (false);
 }
 
-int64_t	count_unnecessary_quotes(char *data)
+int	count_unnecessary_quotes(char *data)
 {
-	int64_t	quote;
-	int64_t	i;
-	int64_t	counter;
+	int	quote;
+	int	i;
+	int	counter;
 
 	i = 0;
 	counter = 0;
@@ -86,8 +86,8 @@ int64_t	count_unnecessary_quotes(char *data)
 
 bool	has_unnecessary_quotes(char *data)
 {
-	int64_t	quote;
-	int64_t	i;
+	int	quote;
+	int	i;
 
 	i = 0;
 	quote = 0;
@@ -103,9 +103,9 @@ bool	has_unnecessary_quotes(char *data)
 
 void	delete_unnecessary_quotes(char **data)
 {
-	int64_t i;
-	int64_t j;
-	int64_t quote;
+	int i;
+	int j;
+	int quote;
 	char		*new_data;
 
 	new_data = (char *) malloc(sizeof(char) * (ft_strlen(*data) - count_unnecessary_quotes(*data) + 1));

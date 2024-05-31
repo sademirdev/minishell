@@ -23,8 +23,8 @@ void test_token_dispose() {
       },
   };
 
-  int64_t size = sizeof(test_cases) / sizeof(t_case);
-  int64_t i = 0;
+  int size = sizeof(test_cases) / sizeof(t_case);
+  int i = 0;
   while (i < size) {
     t_case tc = test_cases[i];
     token_dispose(&tc.token);
@@ -50,7 +50,7 @@ void test_token_count_pipe() {
   typedef struct s_case {
     char *name;
     t_token *token;
-    int64_t expected;
+    int expected;
   } t_case;
 
   t_token *t0_token_root = token_new(ft_strdup("test_root"), NONE);
@@ -89,12 +89,12 @@ void test_token_count_pipe() {
       },
   };
 
-  int64_t size = sizeof(test_cases) / sizeof(t_case);
-  int64_t i = 0;
+  int size = sizeof(test_cases) / sizeof(t_case);
+  int i = 0;
   while (i < size) {
     t_case tc = test_cases[i];
-    int64_t actual = token_count_pipe(tc.token);
-    expect_equal_int64(tc.name, (int64_t)actual, (int64_t)tc.expected);
+    int actual = token_count_pipe(tc.token);
+    expect_equal_int64(tc.name, (int)actual, (int)tc.expected);
     token_dispose_all(&tc.token);
     i++;
   }
@@ -109,7 +109,7 @@ void test_token_count_pipe() {
 //     char *name;
 //     t_token *token;
 //     t_token **expected;
-//     int64_t _size;
+//     int _size;
 //   } t_case;
 
 //   t_token *t0_token_root = token_new(ft_strdup("test_root"), NONE);
@@ -145,12 +145,12 @@ void test_token_count_pipe() {
 //       },
 //   };
 
-//   int64_t size = sizeof(test_cases) / sizeof(t_case);
-//   int64_t i = 0;
+//   int size = sizeof(test_cases) / sizeof(t_case);
+//   int i = 0;
 //   while (i < size) {
 //     t_case tc = test_cases[i];
 //     t_token **actual = token_separate_by_pipe(tc.token);
-//     for (int64_t j = 0; j < tc._size; j++) {
+//     for (int j = 0; j < tc._size; j++) {
 //       t_token *a = (t_token *)(*actual);
 //       t_token *e = (t_token *)(*tc.expected);
 //       expect_equal_token_list(tc.name, a, e);

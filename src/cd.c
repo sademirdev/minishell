@@ -5,10 +5,10 @@
 
 static bool		is_relative_path(const char *path);
 static bool		is_absolute_path(const char *path);
-static int64_t	handle_relative_path(t_token *token);
-static int64_t	handle_absolute_path(t_token *token);
+static int	handle_relative_path(t_token *token);
+static int	handle_absolute_path(t_token *token);
 
-int64_t	handle_cd(t_token *token)
+int	handle_cd(t_token *token)
 {
 	const char	*home_path;
 
@@ -55,7 +55,7 @@ static bool	is_absolute_path(const char *path)
 	return (path[0] == '/');
 }
 
-static int64_t	handle_relative_path(t_token *token)
+static int	handle_relative_path(t_token *token)
 {
 	char		*temp_path;
 	char		cwd[PATH_MAX];
@@ -85,7 +85,7 @@ static int64_t	handle_relative_path(t_token *token)
 	return (free(temp_path), 1);
 }
 
-static int64_t	handle_absolute_path(t_token *token)
+static int	handle_absolute_path(t_token *token)
 {
 	if (chdir(token->next->data) == -1)
 	{

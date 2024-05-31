@@ -108,8 +108,8 @@ extern int err_in;
 #define p_diff_str(test, a, e)                                                 \
   printf(_RED _ERR_T _NOT_E _E_STR _A_STR _T_END _RESET, __FILE__, e, a, test)
 #define p_diff_int64(test, a, e)                                               \
-  printf(_RED _ERR_T _NOT_E _E_I64 _A_I64 _T_END _RESET, __FILE__, (int64_t)a, \
-         (int64_t)e, test)
+  printf(_RED _ERR_T _NOT_E _E_I64 _A_I64 _T_END _RESET, __FILE__, (int)a, \
+         (int)e, test)
 #define p_diff_int32(test, a, e)                                               \
   printf(_RED _ERR_T _NOT_E _E_I32 _A_I32 _T_END _RESET, __FILE__, a, e, test)
 #define p_diff_bool(test, a, e)                                                \
@@ -177,8 +177,8 @@ extern int err_in;
 
 #define expect_equal_int64(test, actual, expected)                             \
   {                                                                            \
-    int64_t a = (int64_t)actual;                                               \
-    int64_t e = (int64_t)expected;                                             \
+    int a = (int)actual;                                               \
+    int e = (int)expected;                                             \
     if (equal_int64(actual, expected)) {                                       \
       /*pass*/                                                                 \
     } else {                                                                   \

@@ -35,7 +35,7 @@ bool	is_meta(t_token_type type)
 		|| type == RED_RR);
 }
 
-bool	is_meta_char(char *data, int64_t i)
+bool	is_meta_char(char *data, int i)
 {
 	if (!data)
 		return (false);
@@ -46,7 +46,7 @@ bool	is_meta_char(char *data, int64_t i)
 	return (data[i] == '|' || data[i] == '>' || data[i] == '<');
 }
 
-bool	has_meta_char(char *data, int64_t i)
+bool	has_meta_char(char *data, int i)
 {
 	while (data[i])
 	{
@@ -57,7 +57,7 @@ bool	has_meta_char(char *data, int64_t i)
 	return (false);
 }
 
-t_token_type	get_meta_type(char *data, int64_t i)
+t_token_type	get_meta_type(char *data, int i)
 {
 	if (data[i] == '|')
 		return (PIPE);

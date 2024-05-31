@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int64_t	handle_env(t_token *token)
+int	handle_env(t_token *token)
 {
 	extern char	**environ;
 	char		**env;

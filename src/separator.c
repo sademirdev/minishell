@@ -2,8 +2,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-int64_t	create_separated_node(t_token **root, char *prompt, int64_t start,
-		int64_t i)
+t_token	*separate_prompt_by_space(char *prompt)
+{
+	t_token	*root;
+	int		start;
+	int		i;
+
+	if (!prompt)
+		return (NULL);
+	i = 0;
+	start = 0;
+	root = NULL;
+	while (prompt[i])
+	{
+		while (prompt[i] && prompt[i] == ' ')
+			i++;
+		start = i;
+		while (prompt[i] && prompt[i] != ' ')
+			if (pass_data(prompt, &i) != SUCCESS)
+				return (0);
+		if (create_separated_node(&root, prompt, start, i) != SUCCESS)
+			return (NULL);
+		while (prompt[i] && prompt[i] == ' ')
+			i++;
+	}
+	return (root);
+}
+
+int	create_separated_node(t_token **root, char *prompt, int start, int i)
 {
 	char	*data;
 	t_token	*new;
@@ -20,7 +46,7 @@ int64_t	create_separated_node(t_token **root, char *prompt, int64_t start,
 	return (0);
 }
 
-int64_t	pass_data(char *prompt, int64_t *i)
+int	pass_data(char *prompt, int *i)
 {
 	if (prompt[*i] && (prompt[*i] == '\'' || prompt[*i] == '"'))
 		if (pass_quoted_str(prompt, i) == -42)
@@ -29,35 +55,6 @@ int64_t	pass_data(char *prompt, int64_t *i)
 		&& prompt[*i] != '"')
 		(*i)++;
 	return (0);
-}
-
-// todo(apancar): handle if return NULL, (syntax error)
-t_token	*separate_prompt_by_space(char *prompt)
-{
-	int64_t	i;
-	int64_t	start;
-	t_token	*root;
-
-	if (!prompt)
-		return (NULL);
-	i = 0;
-	start = 0;
-	root = NULL;
-	while (prompt[i])
-	{
-		while (prompt[i] && prompt[i] == ' ')
-			i++;
-		start = i;
-		while (prompt[i] && prompt[i] != ' ')
-			if (pass_data(prompt, &i) != 0)
-				return (0);
-		// todo(sademir): add constants to header '0'
-		if (create_separated_node(&root, prompt, start, i) != 0)
-			return (NULL);
-		while (prompt[i] && prompt[i] == ' ')
-			i++;
-	}
-	return (root);
 }
 
 void	token_insert_dollar_nodes(t_token **token)
@@ -85,28 +82,3 @@ void	token_insert_dollar_nodes(t_token **token)
 		temp->next->prev = sub_last;
 	token_dispose(&temp);
 }
-
-// bool	has_syntax_errs(t_token **root)
-// {
-// 	t_token *tmp;
-
-// 	if (!root || !*root)
-// 		return (true);
-// 	tmp = *root;
-// 	int	i = 0;
-// 	while (tmp->prev)
-// 	{
-// 		i++;
-// 		tmp = tmp->prev;
-// 	}
-// 	if (tmp->type == PIPE)
-// 		return (true);
-// 	tmp = tmp->next;
-// 	while (tmp)
-// 	{
-// 		if (tmp->type != NONE && tmp->prev->type != NONE)
-// 			return (true);
-// 		tmp = tmp->next;
-// 	}
-// 	return (false);
-// }

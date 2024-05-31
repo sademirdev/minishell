@@ -1,9 +1,9 @@
 #include "minishell.h"
 #include <stdlib.h>
 
-int64_t	ft_strlen(const char *s)
+size_t	ft_strlen(const char *s)
 {
-	int64_t	i;
+	int	i;
 
 	if (!s)
 		return (0);
@@ -13,9 +13,9 @@ int64_t	ft_strlen(const char *s)
 	return (i);
 }
 
-int64_t	ft_strncmp(const char *s1, const char *s2, int64_t n)
+int	ft_strncmp(const char *s1, const char *s2, int n)
 {
-	int64_t	i;
+	int	i;
 
 	if (n == 0)
 		return (0);
@@ -29,9 +29,9 @@ int64_t	ft_strncmp(const char *s1, const char *s2, int64_t n)
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-int64_t				ft_strcmp(char *s1, char *s2)
+int	ft_strcmp(char *s1, char *s2)
 {
-	int64_t	i;
+	int	i;
 
 	if (!s1 || !s2)
 		return (-1);
@@ -44,8 +44,8 @@ int64_t				ft_strcmp(char *s1, char *s2)
 char	*ft_strdup(const char *src)
 {
 	char	*str;
-	int64_t	len;
-	int64_t	i;
+	size_t	len;
+	int		i;
 
 	if (!src)
 		return (NULL);
@@ -63,11 +63,11 @@ char	*ft_strdup(const char *src)
 	return (str);
 }
 
-char	*ft_substr(char const *s, unsigned int start, int64_t len)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	char	*buf;
-	int64_t	i;
-	int64_t	slen;
+	size_t	i;
+	size_t	slen;
 
 	if (!s)
 		return (NULL);
@@ -89,9 +89,9 @@ char	*ft_substr(char const *s, unsigned int start, int64_t len)
 	return (buf);
 }
 
-int64_t	ft_strlcpy(char *dst, const char *src, int64_t dst_size)
+int	ft_strlcpy(char *dst, const char *src, int dst_size)
 {
-	int64_t	i;
+	int	i;
 
 	if (dst_size == 0)
 		return (ft_strlen(src));
@@ -129,8 +129,8 @@ static int	ft_abs(int nbr)
 
 static void	ft_strrev(char *str)
 {
-	int64_t	length;
-	int64_t	i;
+	int		length;
+	int		i;
 	char	tmp;
 
 	length = ft_strlen(str);
@@ -144,11 +144,11 @@ static void	ft_strrev(char *str)
 	}
 }
 
-char	*ft_itoa(int64_t n)
+char	*ft_itoa(int n)
 {
 	char	*str;
-	int64_t	is_neg;
-	int64_t	length;
+	int		is_neg;
+	int		length;
 
 	is_neg = (n < 0);
 	str = (char *)malloc((ft_count_digit(n) + is_neg + 1) * sizeof(char));
@@ -175,12 +175,12 @@ char	*ft_itoa(int64_t n)
 char	*ft_strjoin(char const *s1, char const *s2, bool flag_free)
 {
 	char	*buf;
-	int64_t	i;
-	int64_t	j;
+	int		i;
+	int		j;
 
 	if (!s1 && !s2)
 		return (NULL);
-	buf = (char *) malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	buf = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
 	i = 0;
@@ -192,6 +192,6 @@ char	*ft_strjoin(char const *s1, char const *s2, bool flag_free)
 		buf[j++] = s2[i++];
 	buf[j] = '\0';
 	if (flag_free)
-		free((void *) s1);
+		free((void *)s1);
 	return (buf);
 }

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-bool	is_valid_dollar(char *data, int64_t i)
+bool	is_valid_dollar(char *data, int i)
 {
 	return (data[i] == '$' && (is_alpha(data[i + 1]) || data[i + 1] == '_'
 			|| is_digit(data[i + 1]) || data[i + 1] == '?'));

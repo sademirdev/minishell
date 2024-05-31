@@ -2,7 +2,7 @@
 
 void	assign_token_arr_types(t_token **token_arr)
 {
-	int64_t	i;
+	int	i;
 
 	i = 0;
 	if (!token_arr || !(*token_arr))

@@ -7,7 +7,7 @@
 
 bool equal_ptr(void *actual, void *expected) { return (actual == expected); }
 
-bool equal_int64(int64_t actual, int64_t expected) {
+bool equal_int64(int actual, int expected) {
   return (actual == expected);
 }
 

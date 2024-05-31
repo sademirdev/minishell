@@ -29,7 +29,7 @@ int	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc)
 	return (SUCCESS);
 }
 
-int	handle_redll(t_token *token, t_cmd *cmd, int64_t i)
+int	handle_redll(t_token *token, t_cmd *cmd, int i)
 {
 	t_token	*temp;
 	char	*buf;

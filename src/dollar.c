@@ -4,8 +4,8 @@
 char	*get_dollar_value(char *key)
 {
 	extern char	**environ;
-	int64_t		i;
-	int64_t		key_len;
+	int		i;
+	int		key_len;
 	char		*value;
 
 	// todo(sademir): use state.env instead
@@ -26,13 +26,13 @@ char	*get_dollar_value(char *key)
 	return (value);
 }
 
-char	*create_data_from_dollar(char *data, char *value, int64_t start,
-		int64_t index)
+char	*create_data_from_dollar(char *data, char *value, int start,
+		int index)
 {
 	char	*new_data;
-	int64_t	i;
-	int64_t	j;
-	int64_t	value_len;
+	int	i;
+	int	j;
+	int	value_len;
 
 	if (!data)
 		return (NULL);
@@ -56,9 +56,9 @@ char	*create_data_from_dollar(char *data, char *value, int64_t start,
 
 void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar)
 {
-	int64_t	flag_single_quote;
-	int64_t	i;
-	int64_t	start;
+	int	flag_single_quote;
+	int	i;
+	int	start;
 
 	if (!data || !*data)
 		return ;

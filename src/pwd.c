@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-int64_t	handle_pwd(void)
+int	handle_pwd(void)
 {
 	char	cwd[1024];
 
@@ -14,6 +14,6 @@ int64_t	handle_pwd(void)
 		return (0);
 	}
 	else
-		return (1);	
+		return (1);
 	//todo(apancar) : handle error
 }

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-int64_t	handle_echo(t_token *token)
+int	handle_echo(t_token *token)
 {
 	t_token	*temp;
 	char		*buffer;

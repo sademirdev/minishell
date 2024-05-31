@@ -4,7 +4,7 @@
 
 char	*get_env_path(char **env)
 {
-	int64_t	i;
+	int	i;
 
 	if (!env)
 		return (NULL);
@@ -20,7 +20,7 @@ char	*get_env_path(char **env)
 
 void	dispose_paths(char **paths)
 {
-	int64_t	i;
+	int	i;
 
 	if (!paths)
 		return ;
@@ -37,7 +37,7 @@ char *join_path(char **paths, char *command)
 {
 	char	*cmd_path;
 	char	*tmp;
-	int64_t		i;
+	int		i;
 
 	if (!paths || !command)
 		return (NULL);

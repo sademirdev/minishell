@@ -1,8 +1,8 @@
 #include "minishell.h"
 
-int64_t	handle_built_in(t_token *token)
+int	handle_built_in(t_token *token)
 {
-	int64_t	result;
+	int	result;
 
 	result = 0;
 	if ((ft_strncmp(token->data, "echo", 4) == 0)

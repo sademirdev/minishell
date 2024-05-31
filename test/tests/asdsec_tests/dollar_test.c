@@ -99,8 +99,8 @@ void	test_extract_dollar_key_values(t_state* state)
 		},
 	};
 
-  int64_t size = sizeof(test_cases) / sizeof(t_case);
-  int64_t i = 0;
+  int size = sizeof(test_cases) / sizeof(t_case);
+  int i = 0;
   while (i < size) {
     t_case tc = test_cases[i];
 	bool has_dollar = false;

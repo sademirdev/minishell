@@ -31,7 +31,7 @@ bool	token_append_meta(t_token **token)
 	return (md.has_meta);
 }
 
-void	token_append_all(t_token **token, int64_t start, int64_t i,
+void	token_append_all(t_token **token, int start, int i,
 		t_token_type type)
 {
 	if (start != -1)
@@ -66,24 +66,27 @@ void	token_append_meta_data_init(t_token_append_meta_data *md,
 	md->in_quote = 0;
 }
 
-void	token_append_str(t_token **token, int64_t start, int64_t i)
+int	token_append_str(t_token **token, int start, int i)
 {
 	t_token	*new;
 	char	*data;
 
+	if (!token || !*token)
+		return (FAILURE);
 	data = ft_substr((*token)->data, start, i - start);
 	if (!data)
-		return ; // todo(sademir): handle error
+		return (FAILURE);
 	new = token_new(data, NONE);
 	if (!new)
-		return ; // todo(sademir): handle error
+		return (free(data), FAILURE);
 	token_add_prev(token, new);
+	return (SUCCESS);
 }
 
-int64_t	token_count_args(t_token *token)
+int	token_count_args(t_token *token)
 {
 	t_token	*tmp;
-	int64_t	len;
+	int	len;
 	bool	on_arg;
 
 	if (!token)

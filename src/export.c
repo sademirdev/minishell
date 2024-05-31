@@ -7,13 +7,13 @@
 
 static void		export_var(void);
 static void		export_var(void);
-static int64_t	env_add(char *var, char *temp);
+static int	env_add(char *var, char *temp);
 
-int64_t var_exist(char *var)
+int var_exist(char *var)
 {
 	extern char	**environ;
-	int64_t		i;
-	int64_t		len;
+	int		i;
+	int		len;
 
 	i = 0;
 	len = strlen(var);
@@ -26,9 +26,9 @@ int64_t var_exist(char *var)
 	return (1);
 }
 
-int64_t	handle_export(t_token *token)
+int	handle_export(t_token *token)
 {
-	int64_t		i;
+	int		i;
 	char		**var;
 	t_token		*temp;
 
@@ -78,7 +78,7 @@ static void	export_var(void)
 	}
 }
 
-char	**get_env(char *new_var, char *temp, int64_t i)
+char	**get_env(char *new_var, char *temp, int i)
 {
 	extern char	**environ;
 	char		**env;
@@ -100,11 +100,11 @@ char	**get_env(char *new_var, char *temp, int64_t i)
 	return (env);
 }
 
-static int64_t	env_add(char *var, char *temp)
+static int	env_add(char *var, char *temp)
 {
 	extern char	**environ;
 	char		*new_var;
-	int64_t		i;
+	int		i;
 
 	new_var = ft_strdup("");
 	if (!new_var)

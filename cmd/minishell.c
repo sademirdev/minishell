@@ -130,8 +130,8 @@ int	main(int argc, char **argv, char **env)
 			continue ;
 		}
 		add_history(state->prompt);
-		state->token_arr = run_lexer(state->prompt, state);
-		if (execute_prompt(state->token_arr, state) != SUCCESS)
+		state->token_arr = run_lexer(state);
+		if (!state->token_arr && execute_prompt(state) != SUCCESS)
 			return (state_dispose(&state), 1);
 		dispose_prompt(state);
 	}

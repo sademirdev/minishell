@@ -26,7 +26,7 @@ void	handle_dollar(t_token **root, t_state *state)
 	}
 }
 
-int64_t	handle_special_dollar(char **data, int64_t start, int64_t i,
+int	handle_special_dollar(char **data, int start, int i,
 		t_state *state)
 {
 	char	*new_data;
@@ -56,7 +56,7 @@ int64_t	handle_special_dollar(char **data, int64_t start, int64_t i,
 	return (i);
 }
 
-void	handle_number_dollar(char **data, int64_t start, int64_t i)
+void	handle_number_dollar(char **data, int start, int i)
 {
 	char	*new_data;
 	char	*tmp;
@@ -74,13 +74,13 @@ void	handle_number_dollar(char **data, int64_t start, int64_t i)
 	free(tmp);
 }
 
-int64_t	handle_regular_dollar(char **data, int64_t start, int64_t i)
+int	handle_regular_dollar(char **data, int start, int i)
 {
 	char	*value;
 	char	*new_data;
 	char	*tmp;
 	char	*key;
-	int64_t	value_len;
+	int	value_len;
 
 	while (is_alnum_underscore((*data)[i]))
 		i++;
