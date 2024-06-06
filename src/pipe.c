@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+static int	w_exit_status(int status)
+{
+	return ((status >> 8) & 0x000000ff);
+}
+
 int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 {
 	int			pid;
@@ -24,17 +29,33 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 				dup2(cmd->in, STDIN_FILENO);
 			if (cmd->out != -2)
 				dup2(cmd->out, STDOUT_FILENO);
+			printf("cmd: %s\n", cmd->argv[0]);
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 				exit(1); // todo(sademir): handle error case
 		}
 		if (pid != 0)
-			wait(NULL);
+		{
+			waitpid(pid, &state->status, 0);
+			state->status = w_exit_status(state->status);
+		}
 	}
 	else
-	{
 		handle_built_in(token);
+	if (cmd)
+	{
+		if (cmd->argv)
+		{
+			free(cmd->heredoc);
+			cmd->heredoc = NULL;
+			free(cmd->argv[0]);
+			cmd->argv[0] = NULL;
+			free(cmd->argv);
+			cmd->argv = NULL;
+			return (SUCCESS);
+		}
+		return (free(cmd->heredoc), SUCCESS);
 	}
-	return (free(cmd->heredoc), free(cmd->argv[0]), free(cmd->argv), SUCCESS);
+	return (SUCCESS);
 }
 
 int	pipe_init(int (*fd)[2], int pipe_count)
@@ -105,16 +126,21 @@ int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_
 {
 	int	i;
 	pid_t	pid;
+	pid_t	*pids;
 
 	i = 0;
 	if (!fd || arr_len < 0)
+		return (FAILURE);
+	pids = (int *) malloc(sizeof(int) * (arr_len + 1));
+	if (!pids)
 		return (FAILURE);
 	while (i < arr_len)
 	{
 		set_heredoc_fds(token_arr[i], cmd, i);
 		pid = fork();
+		pids[i] = pid;
 		if (pid == -1)
-			return (FAILURE); // todo(kkarakus): handle close;
+			return (free(pids), FAILURE); // todo(kkarakus): handle close;
 		if (pid == 0)
 			handle_child_process(token_arr, state, i, fd, cmd);
 		else
@@ -127,13 +153,14 @@ int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_
 		}
 		i++;
 	}
-	i = 0;
-	while (i < arr_len)
+	i = arr_len - 1;
+	while (i >= 0)
 	{
-		wait(NULL);
-		i++;
+		waitpid(pids[i], &state->status, 0);
+		state->status = w_exit_status(state->status);
+		i--;
 	}
-	return (SUCCESS);
+	return (free(pids), SUCCESS);
 }
 
 int	cmd_init(t_cmd *cmd, int arr_len)

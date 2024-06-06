@@ -44,7 +44,7 @@ ifeq '$(debug)' '1'
 CFLAGS += -g
 endif
 
-asan = 0
+asan = 1
 ifeq '$(asan)' '1'
 CFLAGS += -fsanitize=address
 # CFLAGS += -fsanitize=thread
@@ -95,7 +95,7 @@ f: fclean
 re: fclean
 	$(MAKE) all
 
-mt:
+mt: $(MURMUR_EVAL)
 	clang test/handle_dollar_test.c src/*.c test/libs/tin/equal_primitive.c lib/readline/lib/libreadline.dylib lib/readline/lib/libhistory.dylib -I lib/murmur.eval-master/murmur_eval/incs/ -I inc/ -I lib/readline/include/ -L ./lib/readline/lib/ -lreadline lib/murmur.eval-master/murmur_eval/build/libmurmureval.a -D TEST=1 && ./a.out
 
 t:

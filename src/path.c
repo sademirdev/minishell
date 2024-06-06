@@ -47,7 +47,7 @@ char *join_path(char **paths, char *command)
 		tmp = ft_strjoin(paths[i], "/", false);
 		if (!tmp)
 			return (dispose_paths(paths), NULL);
-		cmd_path = ft_strjoin(tmp, command, true);
+		cmd_path = ft_strjoin(tmp, command, false);
 		if (!cmd_path)
 			return (dispose_paths(paths), NULL);
 		if (access(cmd_path, X_OK) == 0)
@@ -55,7 +55,7 @@ char *join_path(char **paths, char *command)
 		free(cmd_path);
 		i++;
 	}
-	return (NULL);
+	return (command);
 }
 
 char	*find_path(char *command, char **env)

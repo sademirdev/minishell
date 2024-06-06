@@ -109,7 +109,7 @@ static t_state	*state_init(char **argv, char **env)
 	return (state);
 }
 
-int	main(int argc, char **argv, char **env)
+int	main(int argc, char ** argv, char **env)
 {
 	t_state	*state;
 
@@ -131,7 +131,7 @@ int	main(int argc, char **argv, char **env)
 		}
 		add_history(state->prompt);
 		state->token_arr = run_lexer(state);
-		if (!state->token_arr && execute_prompt(state) != SUCCESS)
+		if (state->token_arr && execute_prompt(state) != SUCCESS)
 			return (state_dispose(&state), 1);
 		dispose_prompt(state);
 	}
