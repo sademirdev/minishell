@@ -29,7 +29,6 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 				dup2(cmd->in, STDIN_FILENO);
 			if (cmd->out != -2)
 				dup2(cmd->out, STDOUT_FILENO);
-			printf("cmd: %s\n", cmd->argv[0]);
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 				exit(1); // todo(sademir): handle error case
 		}
@@ -47,8 +46,8 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 		{
 			free(cmd->heredoc);
 			cmd->heredoc = NULL;
-			free(cmd->argv[0]);
-			cmd->argv[0] = NULL;
+			// free(cmd->argv[0]); //todo(sademir): if it is open, it gives double free error (prompt = ca)
+			// cmd->argv[0] = NULL;
 			free(cmd->argv);
 			cmd->argv = NULL;
 			return (SUCCESS);

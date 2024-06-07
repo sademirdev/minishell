@@ -26,7 +26,7 @@ void	syntax_dquote(t_syntax *syntax)
 		syntax->duplex = 2;
 }
 
-int	syntax_pipe(t_state *shell, t_syntax *syntax, size_t *_)
+int	syntax_pipe(t_state *shell, t_syntax *syntax, int *i)
 {
 	shell->cmd_ct++;
 	if (!syntax->zero_pipe)
@@ -37,11 +37,11 @@ int	syntax_pipe(t_state *shell, t_syntax *syntax, size_t *_)
 		syntax->simplex = 3;
 	else
 		return (2);
-	++(*_);
+	++(*i);
 	return (0);
 }
 
-int	syntax_sarrow(t_syntax *syntax, size_t *_)
+int	syntax_sarrow(t_syntax *syntax, int *i)
 {
 	if (!syntax->simplex)
 		syntax->simplex = 1;
@@ -49,11 +49,11 @@ int	syntax_sarrow(t_syntax *syntax, size_t *_)
 		syntax->simplex = 1;
 	else
 		return (2);
-	++*_;
+	++*i;
 	return (0);
 }
 
-int	syntax_darrow(t_syntax *syntax, size_t *_)
+int	syntax_darrow(t_syntax *syntax, int *i)
 {
 	if (!syntax->simplex)
 		syntax->simplex = 2;
@@ -63,6 +63,6 @@ int	syntax_darrow(t_syntax *syntax, size_t *_)
 	}
 	else
 		return (2);
-	*_ += 2;
+	*i += 2;
 	return (0);
 }

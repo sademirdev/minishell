@@ -10,13 +10,13 @@ int	handle_exit(t_token *token)
 	int		exit_code;
 
 	exit_code = 1;
-	if (!token)
+	if (!token )
 	{
 		ft_putstr_fd("exit\n", 1);
 		exit (1);
 	}
 	ft_putstr_fd("exit\n", 1);
-	if (!ft_is_digit(token->next->data))
+ 	if (token->next && !ft_is_digit(token->next->data))
 	{
 		ft_putstr_fd("minishell: exit: ", 2);
 		ft_putstr_fd(token->next->data, 2);
@@ -25,7 +25,7 @@ int	handle_exit(t_token *token)
 		exit (exit_code);
 	}
 	exit_code = atoi(token->next->data); // ft_atoi yaz
-	if (token->next->next)
+	if (token && token->next && token->next->next)
 	{
 		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 		exit_code = 1;

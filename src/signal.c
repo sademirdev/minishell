@@ -9,6 +9,8 @@ void	set_termios(void)
 {
 	struct termios	term;
 
+	if (!isatty(STDIN_FILENO))
+		exit((perror("error"), -1));
 	if (tcgetattr(STDIN_FILENO, &term) != 0)
 		exit((perror("error"), -1));
 	term.c_cc[VQUIT] = _POSIX_VDISABLE;
