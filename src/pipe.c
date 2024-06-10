@@ -39,7 +39,7 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 		}
 	}
 	else
-		handle_built_in(token);
+		handle_built_in(token, state);
 	if (cmd)
 	{
 		if (cmd->argv)
@@ -187,7 +187,7 @@ int	execute_prompt(t_state *state)
 	int	arr_len;
 	t_cmd		cmd;
 	int		(*fd)[2];
-
+	
 	if (!state || !state->token_arr)
 		return (FAILURE);
 	arr_len = token_arr_len(state->token_arr);

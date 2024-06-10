@@ -197,7 +197,7 @@ void				print_err(const char *file, int err_flag);
 void				set_heredoc_fds(t_token *token, t_cmd *cmd, int i);
 void				handle_signals(void);
 
-int					handle_built_in(t_token *token);
+int					handle_built_in(t_token *token, t_state *state);
 bool				is_built_in(t_token *token);
 int					handle_unset(t_token *token);
 int					handle_pwd(void);
@@ -205,7 +205,7 @@ int					var_exist(char *var);
 int					handle_export(t_token *token);
 char				**get_env(char *new_var, char *temp, int i);
 int					handle_exit(t_token *token);
-int					handle_env(t_token *token);
+int					handle_env(t_token *token, t_state *state);
 int					handle_echo(t_token *token);
 int					handle_cd(t_token *token);
 int32_t				syntax_check(t_state *shell);
@@ -219,5 +219,5 @@ void				token_arr_dispose(t_token ***token_arr);
 void				state_dispose(t_state **state);
 void				dispose_prompt(t_state *state);
 int					pass_data(char *prompt, int *i);
-
+char				**copy_env(char **env);
 #endif

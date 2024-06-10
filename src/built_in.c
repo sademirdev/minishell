@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	handle_built_in(t_token *token)
+int	handle_built_in(t_token *token, t_state *state)
 {
 	int	result;
 
@@ -21,7 +21,7 @@ int	handle_built_in(t_token *token)
 		result = handle_unset(token);
 	else if ((ft_strncmp(token->data, "env", 3) == 0)
 		&& ft_strlen(token->data) == 3)
-		result = handle_env(token);
+		result = handle_env(token, state);
 	else if ((ft_strncmp(token->data, "exit", 4) == 0)
 		&& ft_strlen(token->data) == 4)
 		result = handle_exit(token);

@@ -10,7 +10,7 @@ void	state_dispose(t_state **state)
 	free((*state)->prompt);
 	(*state)->prompt = NULL;
 	token_arr_dispose(&(*state)->token_arr);
-	free(state);
+	// free(state); //todo(sademir): it gives double free error
 	*state = NULL;
 }
 

@@ -48,7 +48,7 @@ int	choose(t_state *shell, t_syntax *syntax, int *i)
 	return (0);
 }
 
-int syntax_check(t_state *shell)
+int	syntax_check(t_state *shell)
 {
 	int			i;
 	t_syntax	syntax;

@@ -66,7 +66,7 @@ static void	dispose_env_idx(char **copy_env, int i)
 	free(copy_env);
 }
 
-static char **copy_env(char **env)
+char	**copy_env(char **env)
 {
 	char	**env_copy;
 	int		i;
@@ -87,6 +87,7 @@ static char **copy_env(char **env)
 			return (dispose_env_idx(env_copy, i), NULL);
 		i++;
 	}
+	env_copy[i] = NULL;
 	return (env_copy);
 }
 
