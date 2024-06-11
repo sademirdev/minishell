@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-static bool		is_relative_path(const char *path);
-static bool		is_absolute_path(const char *path);
+static bool	is_relative_path(const char *path);
+static bool	is_absolute_path(const char *path);
 static int	handle_relative_path(t_token *token);
 static int	handle_absolute_path(t_token *token);
 
@@ -57,9 +57,9 @@ static bool	is_absolute_path(const char *path)
 
 static int	handle_relative_path(t_token *token)
 {
-	char		*temp_path;
-	char		cwd[PATH_MAX];
-	size_t		len;
+	char	*temp_path;
+	char	cwd[PATH_MAX];
+	int		len;
 
 	len = 0;
 	if (!getcwd(cwd, PATH_MAX))
@@ -77,12 +77,9 @@ static int	handle_relative_path(t_token *token)
 	ft_strlcpy(temp_path + ft_strlen(cwd) + 1, token->next->data, len);
 	temp_path[len] = '\0';
 	if (chdir(temp_path) == -1)
-	{
-		write (2,"No such file or directory\n", 27);
-		free(temp_path);
-		exit (1);
-	}
-	return (free(temp_path), 1);
+		return (write (2, "No such file or directory\n", 27),
+			free(temp_path), 1);
+	return (free(temp_path), 0);
 }
 
 static int	handle_absolute_path(t_token *token)
