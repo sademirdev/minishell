@@ -7,37 +7,55 @@ int	handle_env(t_token *token, t_state *state)
 	int		i;
 
 	if (!token || !state)
-		return (1);
+	{
+		state->err = 1;
+		return (state->err);
+	}
 	if (token->next && token->next->type == CMD)
-		return (1);
+	{
+		state->err = 1;
+		return (state->err);
+	}
 	i = 0;
 	while (state->env[i])
 		printf("%s\n", state->env[i++]);
-	return (0);
+	state->err = 0;
+	return (state->err);
 }
 
-static char	*get_buffer(t_token *temp)
+static char	*get_buffer(t_token *temp, t_state *state)
 {
 	char	*buffer;
 
 	buffer = ft_strdup("");
+	if (!buffer)
+	{
+		state->err = 1;
+		return (free(buffer), NULL);
+	}
 	while (temp && temp->type == ARG)
 	{
 		buffer = ft_strjoin(buffer, temp->data, 1);
 		if (!buffer)
+		{
+			state->err = 1;
 			return (free(buffer), NULL);
+		}
 		if (temp->next && temp->next->type == ARG)
 		{
 			buffer = ft_strjoin(buffer, " ", NULL);
 			if (!buffer)
+			{
+				state->err = 1;
 				return (free(buffer), NULL);
+			}
 		}
 		temp = temp->next;
 	}
 	return (buffer);
 }
 
-int	handle_echo(t_token *token)
+int	handle_echo(t_token *token, t_state *state)
 {
 	t_token	*temp;
 	char	*buffer;
@@ -47,15 +65,22 @@ int	handle_echo(t_token *token)
 	if (token->next)
 		temp = token->next;
 	else
-		return (printf("\n"), 0);
+	{
+		state->err = 0;
+		return (free(buffer), state->err);
+	}
 	if (temp)
 		if (ft_strncmp(temp->data, "-n", 2) == 0)
 			temp = temp->next;
-	buffer = get_buffer(temp);
+	buffer = get_buffer(temp, state);
 	if (!buffer)
-		return (1);
+	{
+		state->err = 1;
+		return (state->err);
+	}
 	printf("%s", buffer);
 	if (token->next && ft_strncmp(token->next->data, "-n", 2) != 0)
 		printf("\n");
-	return (0);
+	state->err = 0;
+	return (state->err);
 }

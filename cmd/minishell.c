@@ -114,7 +114,7 @@ int	main(int argc, char ** argv, char **env)
 {
 	t_state	*state;
 
-	handle_signals();
+	// handle_signals();
 	state = state_init(argv, env);
 	if (!state)
 		return (argc);
@@ -136,5 +136,5 @@ int	main(int argc, char ** argv, char **env)
 			return (state_dispose(&state), 1);
 		dispose_prompt(state);
 	}
-	return (state_dispose(&state), 1);
+	return (state_dispose(&state), 0);
 }

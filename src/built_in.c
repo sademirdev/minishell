@@ -7,7 +7,7 @@ int	handle_built_in(t_token *token, t_state *state)
 	result = 0;
 	if ((ft_strncmp(token->data, "echo", 4) == 0)
 		&& ft_strlen(token->data) == 4)
-		result = handle_echo(token);
+		result = handle_echo(token, state);
 	else if ((ft_strncmp(token->data, "cd", 2) == 0)
 		&& ft_strlen(token->data) == 2)
 		result = handle_cd(token);
