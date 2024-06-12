@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	set_red_file_fds(t_token *token, t_cmd *cmd)
+int	set_red_file_fds(t_token *token, t_cmd *cmd, t_state *state)
 {
 	bool	has_last_heredoc;
 	t_token	*tmp;
 
 	if (!token)
-		return ;
+		return (FAILURE);
 	has_last_heredoc = false;
 	tmp = token;
 	while (tmp)
@@ -23,13 +23,14 @@ void	set_red_file_fds(t_token *token, t_cmd *cmd)
 	while (token)
 	{
 		if (token->type == RED_L)
-			handle_redl(token, cmd, has_last_heredoc);
+			handle_redl(token, cmd, has_last_heredoc, state);
 		else if (token->type == RED_R)
-			handle_redr(token, cmd);
+			handle_redr(token, cmd, state);
 		else if (token->type == RED_RR)
-			handle_redrr(token, cmd);
+			handle_redrr(token, cmd, state);
 		token = token->next;
 	}
+	return (SUCCESS);
 }
 
 void	  set_heredoc_fds(t_token *token, t_cmd *cmd, int i)

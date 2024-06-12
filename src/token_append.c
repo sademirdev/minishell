@@ -115,6 +115,7 @@ char	**token_to_arg(t_token *token, char *cmd_path)
 
 	if (!token || !cmd_path)
 		return (NULL);
+	// todo (sademir): check return values of malloc 
 	argv = (char **) malloc(sizeof(char *) * (token_count_args(token) + 3)); // todo(sademir): when it is (+2) it throws "Heap buffer overflow" in token_to_arg
 	if (!argv)
 		return (NULL);

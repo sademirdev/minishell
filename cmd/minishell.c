@@ -123,6 +123,7 @@ int	main(int argc, char ** argv, char **env)
 		state->prompt = readline(PROMPT);
 		if (!state->prompt)
 			break ;
+		add_history(state->prompt);
 		state->err = syntax_check(state);
 		if (state->err)
 		{
@@ -130,7 +131,6 @@ int	main(int argc, char ** argv, char **env)
 			dispose_prompt(state);
 			continue ;
 		}
-		add_history(state->prompt);
 		state->token_arr = run_lexer(state);
 		if (state->token_arr && execute_prompt(state) != SUCCESS)
 			return (state_dispose(&state), 1);

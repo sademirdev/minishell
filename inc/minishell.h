@@ -184,13 +184,13 @@ int					fork_init(int (*fd)[2], int arr_len, t_token **token_arr,
 int					pipe_single_exec(t_token *token, t_state *state,
 						t_cmd *cmd);
 int					pipe_init(int (*fd)[2], int pipe_count);
-void				set_red_file_fds(t_token *token, t_cmd *cmd);
+int					set_red_file_fds(t_token *token, t_cmd *cmd, t_state *state);
 void				set_cmd_arg_and_path(t_token *token, t_state *state,
 						t_cmd *cmd);
 int					handle_redl(t_token *token, t_cmd *cmd,
-						bool has_last_heredoc);
-void				handle_redr(t_token *token, t_cmd *cmd);
-void				handle_redrr(t_token *token, t_cmd *cmd);
+						bool has_last_heredoc, t_state *state);
+int					handle_redr(t_token *token, t_cmd *cmd, t_state *state);
+int					handle_redrr(t_token *token, t_cmd *cmd, t_state *state);
 int					handle_redll(t_token *token, t_cmd *cmd, int i);
 
 void				print_err(const char *file, int err_flag);
@@ -203,10 +203,10 @@ int					handle_unset(t_token *token, t_state *state);
 int					handle_pwd(void);
 int					handle_export(t_token *token, t_state *state);
 char				**get_env(char *new_var, char *temp, int i, t_state *state);
-int					handle_exit(t_token *token);
+int					handle_exit(t_token *token, t_state *state);
 int					handle_env(t_token *token, t_state *state);
 int					handle_echo(t_token *token, t_state *state);
-int					handle_cd(t_token *token);
+int					handle_cd(t_token *token, t_state *state);
 int					syntax_check(t_state *shell);
 void				syntax_squote(t_syntax *syntax);
 int					syntax_darrow(t_syntax *syntax, int *i);

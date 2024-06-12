@@ -5,8 +5,10 @@
 static bool	ft_is_digit(char *c);
 static void	ft_putstr_fd(char *str, int fd);
 
-int	handle_exit(t_token *token)
+int	handle_exit(t_token *token, t_state *state)
 {
+
+	exit(state->status);
 	int		exit_code;
 
 	exit_code = 1;

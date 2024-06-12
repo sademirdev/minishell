@@ -83,6 +83,5 @@ void	token_insert_dollar_nodes(t_token **token)
 		sub_last->next = temp->next;
 	if (temp->next)
 		temp->next->prev = sub_last;
-	printf("%s\n", temp->data);
 	token_dispose(&temp);
 }

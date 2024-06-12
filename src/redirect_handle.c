@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc)
+int	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc, t_state *state)
 {
 	t_token	*temp;
 
@@ -12,10 +12,16 @@ int	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc)
 	temp = token->next;
 	if (temp && !temp->next && temp->prev && !temp->prev->prev)
 		return (FAILURE);
-	if (access(temp->data, F_OK) == -1) // todo(apancar): check access()
+	if (access(temp->data, F_OK) == -1)
+	{
+		state->status = 1;
 		return (print_err(temp->data, ERR_FILE_NOT_FOUND), FAILURE);
+	}
 	if (access(temp->data, R_OK) == -1) // todo(apancar): check access()
+	{
+		state->status = 2;
 		return (print_err(temp->data, ERR_FILE_PERMISSION_DENIED), FAILURE);
+	}
 	if (has_last_heredoc)
 		close(open(temp->data, O_RDONLY));
 	else
@@ -58,46 +64,52 @@ int	handle_redll(t_token *token, t_cmd *cmd, int i)
 	return (SUCCESS);
 }
 
-void	handle_redr(t_token *token, t_cmd *cmd)
+int	handle_redr(t_token *token, t_cmd *cmd, t_state *state)
 {
 	t_token	*temp;
 
 	if (!token)
-		return ;
+		return (FAILURE);
 	temp = token->next;
 	if (!temp)
-		return ;
+		return (FAILURE);
 	if (access(temp->data, F_OK) == 0 && access(temp->data, W_OK) == -1)
 	{
+		state->status = 2;
 		print_err(temp->data, ERR_FILE_PERMISSION_DENIED);
-		return ;
+		return (FAILURE);
 	}
 	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (cmd->out == -1)
 	{
+		state->status = 1;
 		print_err(temp->data, ERR_FILE_OPEN);
-		return ;
+		return (FAILURE);
 	}
+	return (SUCCESS);
 }
 
-void	handle_redrr(t_token *token, t_cmd *cmd)
+int	handle_redrr(t_token *token, t_cmd *cmd, t_state *state)
 {
 	t_token	*temp;
 
 	if (!token)
-		return ;
+		return (FAILURE);
 	temp = token->next;
 	if (!temp)
-		return ;
+		return (FAILURE);
 	if (access(temp->data, F_OK) == 0 && access(temp->data, W_OK) == -1)
 	{
+		state->status = 2;
 		print_err(temp->data, ERR_FILE_PERMISSION_DENIED);
-		return ;
+		return (FAILURE);
 	}
 	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (cmd->out == -1)
 	{
+		state->status = 1;
 		print_err(temp->data, ERR_FILE_OPEN);
-		return ;
+		return (FAILURE);
 	}
+	return (SUCCESS);
 }

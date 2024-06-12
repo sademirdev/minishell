@@ -14,7 +14,8 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 	if (!token || !state || !cmd)
 		return (FAILURE);
 	set_heredoc_fds(token, cmd, 0);
-	set_red_file_fds(token, cmd);
+	if (set_red_file_fds(token, cmd, state) == FAILURE)
+		return (FAILURE);
 	set_cmd_arg_and_path(token, state, cmd);
 	if (cmd->in == -2)
 		cmd->in = cmd->heredoc[0];
@@ -29,6 +30,7 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 				dup2(cmd->in, STDIN_FILENO);
 			if (cmd->out != -2)
 				dup2(cmd->out, STDOUT_FILENO);
+			// printf("cmd->argv[0]: %s\n", cmd->argv[0]);
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 				exit(1); // todo(sademir): handle error case
 		}
@@ -81,9 +83,9 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 	arr_len = token_arr_len(token_arr);
 	if (!token_arr[i] || !state || arr_len < 1 || !cmd)
 		exit(1); // todo(sademir): handle error case
-	set_red_file_fds(token_arr[i], cmd);
+	set_red_file_fds(token_arr[i], cmd, state);
 	set_cmd_arg_and_path(token_arr[i], state, cmd);
-	j = 0;
+	j = 0; 
 	while (j < arr_len - 1)
 	{
 		if (j != i - 1 && j != i)
@@ -184,8 +186,8 @@ int	cmd_init(t_cmd *cmd, int arr_len)
 
 int	execute_prompt(t_state *state)
 {
-	int	arr_len;
-	t_cmd		cmd;
+	int		arr_len;
+	t_cmd	cmd;
 	int		(*fd)[2];
 	
 	if (!state || !state->token_arr)

@@ -33,21 +33,24 @@ static char	*get_buffer(t_token *temp, t_state *state)
 		state->err = 1;
 		return (free(buffer), NULL);
 	}
-	while (temp && temp->type == ARG)
+	while (temp)
 	{
-		buffer = ft_strjoin(buffer, temp->data, 1);
-		if (!buffer)
+		if (temp->type == ARG)
 		{
-			state->err = 1;
-			return (free(buffer), NULL);
-		}
-		if (temp->next && temp->next->type == ARG)
-		{
-			buffer = ft_strjoin(buffer, " ", NULL);
+			buffer = ft_strjoin(buffer, temp->data, 1);
 			if (!buffer)
 			{
 				state->err = 1;
 				return (free(buffer), NULL);
+			}
+			if (temp->next)
+			{
+				buffer = ft_strjoin(buffer, " ", NULL);
+				if (!buffer)
+				{
+					state->err = 1;
+					return (free(buffer), NULL);
+				}
 			}
 		}
 		temp = temp->next;
@@ -65,10 +68,7 @@ int	handle_echo(t_token *token, t_state *state)
 	if (token->next)
 		temp = token->next;
 	else
-	{
-		state->err = 0;
-		return (free(buffer), state->err);
-	}
+		return (free(buffer), 0);
 	if (temp)
 		if (ft_strncmp(temp->data, "-n", 2) == 0)
 			temp = temp->next;
@@ -81,6 +81,5 @@ int	handle_echo(t_token *token, t_state *state)
 	printf("%s", buffer);
 	if (token->next && ft_strncmp(token->next->data, "-n", 2) != 0)
 		printf("\n");
-	state->err = 0;
-	return (state->err);
+	return (0);
 }

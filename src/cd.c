@@ -5,10 +5,10 @@
 
 static bool	is_relative_path(const char *path);
 static bool	is_absolute_path(const char *path);
-static int	handle_relative_path(t_token *token);
+static int	handle_relative_path(t_token *token, t_state *state);
 static int	handle_absolute_path(t_token *token);
 
-int	handle_cd(t_token *token)
+int	handle_cd(t_token *token, t_state *state)
 {
 	const char	*home_path;
 
@@ -17,20 +17,21 @@ int	handle_cd(t_token *token)
 	home_path = getenv("HOME");
 	if (!home_path)
 	{
-		write(2, "cd: HOME not set\n", 17);
+		// write(2, "cd: HOME not set\n", 17);
 		return (1);
 	}
 	if (!token->next)
 	{
 		if (chdir(home_path) == -1)
 		{
-			write(2, "cd: HOME not set\n", 17);
+			perror("cd");
+			// write(2, "cd: cannot change directory\n", 17);
 			return (1);
 		}
 		return (1);
 	}
 	if (is_relative_path(token->next->data))
-		return (handle_relative_path(token));
+		return (handle_relative_path(token, state));
 	else if (is_absolute_path(token->next->data))
 		return (handle_absolute_path(token));
 	return (0);
@@ -55,7 +56,7 @@ static bool	is_absolute_path(const char *path)
 	return (path[0] == '/');
 }
 
-static int	handle_relative_path(t_token *token)
+static int	handle_relative_path(t_token *token, t_state *state)
 {
 	char	*temp_path;
 	char	cwd[PATH_MAX];
@@ -77,8 +78,11 @@ static int	handle_relative_path(t_token *token)
 	ft_strlcpy(temp_path + ft_strlen(cwd) + 1, token->next->data, len);
 	temp_path[len] = '\0';
 	if (chdir(temp_path) == -1)
-		return (write (2, "No such file or directory\n", 27),
-			free(temp_path), 1);
+	{
+		dprintf(2, "cd: %s: aNo such file or directory\n", token->next->data);
+		state->status = 1;
+		return (free(temp_path), 1);
+	}
 	return (free(temp_path), 0);
 }
 
@@ -86,7 +90,7 @@ static int	handle_absolute_path(t_token *token)
 {
 	if (chdir(token->next->data) == -1)
 	{
-		printf("No such file or directory\n");
+		perror("cd");
 		return (1);
 	}
 	return (0);

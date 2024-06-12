@@ -7,6 +7,22 @@
 static void	export_var(t_state *state);
 static int	env_add(char *var, char *temp, t_state *state);
 
+static int has_alnum_underscore_str(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (!is_alnum_underscore(str[i]))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+
+
 int	handle_export(t_token *token, t_state *state)
 {
 	int		i;
@@ -21,15 +37,26 @@ int	handle_export(t_token *token, t_state *state)
 	temp = token->next;
 	if (temp->data[0] == '=' && temp->data[1] == '\0')
 	{
-		printf("minishell: export: `%s': not a valid identifier\n", temp->data);
-		exit (1);
+		state->status = 1;
+		return(1);
 	}
 	var = ft_split(temp->data, '=');
-	if (!var)
-		return (1);
+	if (has_alnum_underscore_str(var[0]) != 0)
+	{
+		state->status = 1;
+		return (free(var), 1);
+	}
+	// if (has_equal(var[1]) != 0)
+	// {
+	// 	state->status = 1;
+	// 	return (free(var), 1);
+	// }
 	i = 0;
 	if (env_add(var[0], temp->data, state) == 1)
+	{
+		state->status = 1;
 		return (free(var), 1);
+	}
 	return (0);
 }
 
