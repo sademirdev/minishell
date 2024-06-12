@@ -102,9 +102,9 @@ typedef struct s_error
 	bool			fatal;
 }					t_error;
 
-size_t				ft_strlen(const char *s);
+int					ft_strlen(const char *s);
 char				*ft_strdup(const char *src);
-char				*ft_substr(char const *s, unsigned int start, size_t len);
+char				*ft_substr(char const *s, int start, int len);
 int					ft_strlcpy(char *dst, const char *src, int dst_size);
 char				*ft_itoa(int n);
 int					execute_prompt(t_state *state);

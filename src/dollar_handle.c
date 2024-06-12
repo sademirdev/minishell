@@ -37,23 +37,27 @@ int	handle_special_dollar(char **data, int start, int i,
 	if ((*data)[i] == '?')
 	{
 		value = ft_itoa(state->status);
-		if (!value)
-			(void)value; // todo(fekiz): handle error
+		if (value < 0)
+			return (i); // todo(fekiz): handle error
 	}
 	else
 	{
 		value = ft_strdup(state->argv[0]);
 		if (!value)
-			(void)value; // todo(fekiz): handle error
+			return (i - 1); // todo(fekiz): handle error
 	}
 	i++;
 	new_data = create_data_from_dollar(*data, value, start, i);
 	if (!new_data)
-		(void)i; // todo(hkizrak-): handle
+	{
+		free(value);
+		return (i); // todo(hkizrak-): handle
+	}
 	tmp = *data;
 	*data = new_data;
 	free(tmp);
-	return (i);
+	free(value);
+	return (i - 1);
 }
 
 void	handle_number_dollar(char **data, int start, int i)
@@ -64,14 +68,15 @@ void	handle_number_dollar(char **data, int start, int i)
 
 	empty_value = ft_strdup("");
 	if (!empty_value)
-		(void)i; // todo(hkizrak-): handle
+		return ; // todo(hkizrak-): handle
 	i++;
 	new_data = create_data_from_dollar(*data, empty_value, start, i);
 	if (!new_data)
-		(void)i; // todo(hkizrak-): handle
+		return ; // todo(hkizrak-): handle
 	tmp = *data;
 	*data = new_data;
 	free(tmp);
+	free(empty_value);
 }
 
 int	handle_regular_dollar(char **data, int start, int i)
@@ -80,7 +85,7 @@ int	handle_regular_dollar(char **data, int start, int i)
 	char	*new_data;
 	char	*tmp;
 	char	*key;
-	int	value_len;
+	int		value_len;
 
 	while (is_alnum_underscore((*data)[i]))
 		i++;

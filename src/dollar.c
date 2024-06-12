@@ -4,8 +4,8 @@
 char	*get_dollar_value(char *key)
 {
 	extern char	**environ;
-	int		i;
-	int		key_len;
+	int			i;
+	int			key_len;
 	char		*value;
 
 	// todo(sademir): use state.env instead
@@ -30,14 +30,14 @@ char	*create_data_from_dollar(char *data, char *value, int start,
 		int index)
 {
 	char	*new_data;
-	int	i;
-	int	j;
-	int	value_len;
+	int		i;
+	int		j;
+	int		value_len;
 
 	if (!data)
 		return (NULL);
 	value_len = ft_strlen(value);
-	new_data = (char *)malloc((start + value_len + ft_strlen(data + index))
+	new_data = (char *)malloc((start + value_len + ft_strlen(data + index - 1))
 			* sizeof(char));
 	if (!new_data)
 		(void)index; // todo(apancar): handle
@@ -74,7 +74,7 @@ void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar)
 			if ((*data)[i + 1] == '0' || (*data)[i + 1] == '?')
 				i = handle_special_dollar(data, start, i, state);
 			else if ((*data)[i + 1] > '0' && (*data)[i + 1] <= '9')
-				handle_number_dollar(data, start, ++i);
+				handle_number_dollar(data, start, i + 1);
 			else
 				i = handle_regular_dollar(data, start, i + 1);
 		}

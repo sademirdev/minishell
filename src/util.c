@@ -1,7 +1,7 @@
 #include "minishell.h"
 #include <stdlib.h>
 
-size_t	ft_strlen(const char *s)
+int	ft_strlen(const char *s)
 {
 	int	i;
 
@@ -63,11 +63,11 @@ char	*ft_strdup(const char *src)
 	return (str);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substr(char const *s, int start, int len)
 {
 	char	*buf;
-	size_t	i;
-	size_t	slen;
+	int		i;
+	int		slen;
 
 	if (!s)
 		return (NULL);
