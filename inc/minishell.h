@@ -219,4 +219,6 @@ void				state_dispose(t_state **state);
 void				dispose_prompt(t_state *state);
 int					pass_data(char *prompt, int *i);
 char				**copy_env(char **env);
+int					has_equal(char *str);
+
 #endif

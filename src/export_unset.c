@@ -7,6 +7,20 @@
 static void	export_var(t_state *state);
 static int	env_add(char *var, char *temp, t_state *state);
 
+int has_equal(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '=')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 static int has_alnum_underscore_str(char *str)
 {
 	int i;
@@ -20,9 +34,20 @@ static int has_alnum_underscore_str(char *str)
 	}
 	return (0);
 }
+static int has_only_num(char *str)
+{
+	int i;
 
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] <= '0' || str[i] >= '9')
+			return (1);
+		i++;
+	}
+	return (0);
 
-
+}
 int	handle_export(t_token *token, t_state *state)
 {
 	int		i;
@@ -41,16 +66,20 @@ int	handle_export(t_token *token, t_state *state)
 		return(1);
 	}
 	var = ft_split(temp->data, '=');
-	if (has_alnum_underscore_str(var[0]) != 0)
+	if (!var)
+		return (1);
+	if (has_equal(var[0]) != 0 && has_only_num(var[0]) == 0)
 	{
+		printf("export: `%s': not a valid identifier\n", var[0]);
 		state->status = 1;
 		return (free(var), 1);
 	}
-	// if (has_equal(var[1]) != 0)
-	// {
-	// 	state->status = 1;
-	// 	return (free(var), 1);
-	// }
+		if (has_alnum_underscore_str(var[0]) != 0)
+	{
+		printf("export: `%s': not a valid identifier\n", var[0]);
+		state->status = 1;
+		return (free(var), 1);
+	}
 	i = 0;
 	if (env_add(var[0], temp->data, state) == 1)
 	{

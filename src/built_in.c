@@ -1,19 +1,5 @@
 #include "minishell.h"
 
-static int has_equal(char *str)
-{
-	int i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '=')
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
 int	handle_built_in(t_token *token, t_state *state)
 {
 	int	result;
@@ -28,8 +14,7 @@ int	handle_built_in(t_token *token, t_state *state)
 	else if ((ft_strncmp(token->data, "pwd", 3) == 0)
 		&& ft_strlen(token->data) == 3)
 		result = handle_pwd();
-	else if ((ft_strncmp(token->data, "export", 6) == 0)
-		&& has_equal(token->next->data) == 0)
+	else if ((ft_strncmp(token->data, "export", 6) == 0))
 		result = handle_export(token, state);
 	else if ((ft_strncmp(token->data, "unset", 5) == 0)
 		&& ft_strlen(token->data) == 5)
