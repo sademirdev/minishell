@@ -1,6 +1,7 @@
 #include "minishell.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 int	handle_env(t_token *token, t_state *state)
 {
@@ -58,7 +59,7 @@ static char	*get_buffer(t_token *temp, t_state *state)
 	return (buffer);
 }
 
-int	handle_echo(t_token *token, t_state *state)
+int	handle_echo(t_token *token, t_state *state, t_cmd *cmd)
 {
 	t_token	*temp;
 	char	*buffer;
@@ -78,8 +79,13 @@ int	handle_echo(t_token *token, t_state *state)
 		state->err = 1;
 		return (state->err);
 	}
-	printf("%s", buffer);
 	if (token->next && ft_strncmp(token->next->data, "-n", 2) != 0)
-		printf("\n");
+		buffer = ft_strjoin(buffer, "\n", 0);
+	if (temp->next && (temp->next->type == RED_R || temp->next->type == RED_RR ||
+			temp->next->type == PIPE))
+		write (cmd->out, buffer, ft_strlen(buffer));
+	else
+		write (1, buffer, ft_strlen(buffer));
+	free(buffer);
 	return (0);
 }

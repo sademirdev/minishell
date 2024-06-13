@@ -13,6 +13,8 @@
 # define ERR_FILE_NOT_FOUND 1
 # define ERR_FILE_PERMISSION_DENIED 2
 # define ERR_FILE_OPEN 3
+# define ERR_FILE_NOT_VALID 4
+
 
 # define PROMPT "minishell: "
 
@@ -197,7 +199,7 @@ void				print_err(const char *file, int err_flag);
 void				set_heredoc_fds(t_token *token, t_cmd *cmd, int i);
 void				handle_signals(void);
 
-int					handle_built_in(t_token *token, t_state *state);
+int					handle_built_in(t_token *token, t_state *state, t_cmd *cmd);
 bool				is_built_in(t_token *token);
 int					handle_unset(t_token *token, t_state *state);
 int					handle_pwd(void);
@@ -205,7 +207,7 @@ int					handle_export(t_token *token, t_state *state);
 char				**get_env(char *new_var, char *temp, int i, t_state *state);
 int					handle_exit(t_token *token, t_state *state);
 int					handle_env(t_token *token, t_state *state);
-int					handle_echo(t_token *token, t_state *state);
+int					handle_echo(t_token *token, t_state *state, t_cmd *cmd);
 int					handle_cd(t_token *token, t_state *state);
 int					syntax_check(t_state *shell);
 void				syntax_squote(t_syntax *syntax);

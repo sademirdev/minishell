@@ -86,13 +86,14 @@ int	token_append_str(t_token **token, int start, int i)
 int	token_count_args(t_token *token)
 {
 	t_token	*tmp;
-	int	len;
+	int		len;
 	bool	on_arg;
 
 	if (!token)
 		return (FAILURE);
 	tmp = token;
 	len = 0;
+	on_arg = false;
 	while (tmp)
 	{
 		if (tmp->type == ARG)

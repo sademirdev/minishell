@@ -132,8 +132,9 @@ int	main(int argc, char ** argv, char **env)
 			continue ;
 		}
 		state->token_arr = run_lexer(state);
-		if (state->token_arr && execute_prompt(state) != SUCCESS)
-			return (state_dispose(&state), 1);
+		if (state->token_arr && execute_prompt(state) != 0)
+			continue ;
+		// return (state_dispose(&state), 1); // todo(sademir): i remove this, because it quits the shell
 		dispose_prompt(state);
 	}
 	return (state_dispose(&state), 0);

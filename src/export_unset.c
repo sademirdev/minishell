@@ -70,13 +70,13 @@ int	handle_export(t_token *token, t_state *state)
 		return (1);
 	if (has_equal(var[0]) != 0 && has_only_num(var[0]) == 0)
 	{
-		printf("export: `%s': not a valid identifier\n", var[0]);
+		print_err(var[0], ERR_FILE_NOT_VALID);
 		state->status = 1;
 		return (free(var), 1);
 	}
 		if (has_alnum_underscore_str(var[0]) != 0)
 	{
-		printf("export: `%s': not a valid identifier\n", var[0]);
+		print_err(var[0], ERR_FILE_NOT_VALID);
 		state->status = 1;
 		return (free(var), 1);
 	}

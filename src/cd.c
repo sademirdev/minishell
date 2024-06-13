@@ -79,7 +79,7 @@ static int	handle_relative_path(t_token *token, t_state *state)
 	temp_path[len] = '\0';
 	if (chdir(temp_path) == -1)
 	{
-		dprintf(2, "cd: %s: aNo such file or directory\n", token->next->data);
+		print_err(token->next->data, 1);
 		state->status = 1;
 		return (free(temp_path), 1);
 	}
