@@ -62,7 +62,7 @@ void	token_insert_dollar_nodes(t_token **token)
 	t_token	*sub_nodes;
 	t_token	*temp;
 	t_token	*sub_last;
-
+	
 	if (!token || !*token)
 		return ; // todo(apancar): handle error
 	temp = *token;

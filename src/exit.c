@@ -4,6 +4,7 @@
 
 static bool	ft_is_digit(char *c);
 static void	ft_putstr_fd(char *str, int fd);
+static int	ft_atoi(const char *str);
 
 int	handle_exit(t_token *token, t_state *state)
 {
@@ -28,7 +29,7 @@ int	handle_exit(t_token *token, t_state *state)
 		state->status = 255;
 		return (1);
 	}
-	state->status = atoi(token->next->data); // ft_atoi yaz
+	state->status = ft_atoi(token->next->data); // ft_atoi yaz
 	// free all the malloced memory
 	return (0);
 }
@@ -53,4 +54,29 @@ static void	ft_putstr_fd(char *str, int fd)
 {
 	if (str)
 		write(fd, str, ft_strlen(str));
+}
+
+static int	ft_atoi(const char *str)
+{
+	int		i;
+	int		sign;
+	int		result;
+
+	i = 0;
+	sign = 1;
+	result = 0;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		result = result * 10 + str[i] - '0';
+		i++;
+	}
+	return (result * sign);
 }

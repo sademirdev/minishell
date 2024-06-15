@@ -60,6 +60,21 @@ int	handle_special_dollar(char **data, int start, int i,
 	return (i - 1);
 }
 
+// static int check_key_existence(char *key, t_state *state)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (state->env[i])
+// 	{
+// 		if (ft_strncmp(state->env[i], key, ft_strlen(key)) == 0
+// 			&& state->env[i][ft_strlen(key)] == '=')
+// 			return (0);
+// 		i++;
+// 	}
+// 	return (1);
+// }
+
 void	handle_number_dollar(char **data, int start, int i)
 {
 	char	*new_data;
@@ -79,7 +94,7 @@ void	handle_number_dollar(char **data, int start, int i)
 	free(empty_value);
 }
 
-int	handle_regular_dollar(char **data, int start, int i)
+int	handle_regular_dollar(char **data, int start, int i, t_state *state)
 {
 	char	*value;
 	char	*new_data;
@@ -92,7 +107,7 @@ int	handle_regular_dollar(char **data, int start, int i)
 	key = ft_substr(*data, start, i - start);
 	if (!key)
 		(void)i; // todo(hkizrak-): handle
-	value = get_dollar_value(key);
+	value = get_dollar_value(key, state);
 	if (!value)
 		(void)i; // todo(hkizrak-): handle
 	new_data = create_data_from_dollar(*data, value, start, i);

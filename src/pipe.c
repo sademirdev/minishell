@@ -32,7 +32,7 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 				dup2(cmd->out, STDOUT_FILENO);
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 			{
-				print_err(cmd->cmd, ERR_FILE_NOT_FOUND);
+				print_err(cmd->cmd, ERR_CMD_NOT_FOUND);
 				exit(127); // todo(sademir): handle error case
 			}
 		}
@@ -87,7 +87,6 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 		exit(1); // todo(sademir): handle error case
 	if (set_red_file_fds(token_arr[i], cmd, state) == 1)
 	{
-		printf("child\n");
 		state->status = 1;
 		exit (1);
 	}

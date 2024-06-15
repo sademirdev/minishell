@@ -14,6 +14,7 @@
 # define ERR_FILE_PERMISSION_DENIED 2
 # define ERR_FILE_OPEN 3
 # define ERR_FILE_NOT_VALID 4
+# define ERR_CMD_NOT_FOUND 5
 
 
 # define PROMPT "minishell: "
@@ -151,12 +152,13 @@ void				handle_dollar(t_token **root, t_state *state);
 int					handle_special_dollar(char **data, int start, int i,
 						t_state *state);
 void				handle_number_dollar(char **data, int start, int i);
-int					handle_regular_dollar(char **data, int start, int i);
+int	handle_regular_dollar(char **data, int start, int i, t_state *state);
 char				*create_data_from_dollar(char *data, char *value, int start,
 						int index);
 void				extract_dollar_key_values(char **data, t_state *state,
 						bool *has_dollar);
-char				*get_dollar_value(char *key);
+char				*get_dollar_value(char *key, t_state *state);
+
 
 int					ft_strcmp(char *s1, char *s2);
 int					ft_strncmp(const char *s1, const char *s2, int n);
@@ -203,10 +205,10 @@ int					handle_built_in(t_token *token, t_state *state, t_cmd *cmd);
 bool				is_built_in(t_token *token);
 int					handle_unset(t_token *token, t_state *state);
 int					handle_pwd(void);
-int					handle_export(t_token *token, t_state *state);
+int					handle_export(t_token *token, t_state *state, t_cmd *cmd);
 char				**get_env(char *new_var, char *temp, int i, t_state *state);
 int					handle_exit(t_token *token, t_state *state);
-int					handle_env(t_token *token, t_state *state);
+int					handle_env(t_token *token, t_state *state, t_cmd *cmd);
 int					handle_echo(t_token *token, t_state *state, t_cmd *cmd);
 int					handle_cd(t_token *token, t_state *state);
 int					syntax_check(t_state *shell);

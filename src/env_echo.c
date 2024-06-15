@@ -3,26 +3,41 @@
 #include <stdio.h>
 #include <unistd.h>
 
-int	handle_env(t_token *token, t_state *state)
+int	handle_env(t_token *token, t_state *state, t_cmd *cmd)
 {
 	int		i;
 
 	if (!token || !state)
 	{
-		state->err = 1;
-		return (state->err);
+		state->status = 1;
+		return (1);
 	}
 	if (token->next && token->next->type == CMD)
 	{
-		state->err = 1;
-		return (state->err);
+		state->status = 1;
+		return (print_err(token->next->data, ERR_FILE_NOT_VALID), 1);
 	}
 	i = 0;
 	while (state->env[i])
-		printf("%s\n", state->env[i++]);
-	state->err = 0;
-	return (state->err);
+	{
+		if (state->env[i] && token && token->next && (token->next->type == RED_R || token->next->type == RED_RR ||
+				token->next->type == PIPE))
+		{
+			write (cmd->out, state->env[i], ft_strlen(state->env[i]));
+			write (cmd->out, "\n", 1);
+		}
+		else
+		{
+			write (2, state->env[i], ft_strlen(state->env[i]));
+			write (2, "\n", 1);
+		}
+		i++;
+	}
+	state->status = 0;
+	return (1);
 }
+
+
 
 static char	*get_buffer(t_token *temp, t_state *state)
 {
@@ -31,7 +46,7 @@ static char	*get_buffer(t_token *temp, t_state *state)
 	buffer = ft_strdup("");
 	if (!buffer)
 	{
-		state->err = 1;
+		state->status = 1;
 		return (free(buffer), NULL);
 	}
 	while (temp)
@@ -41,7 +56,7 @@ static char	*get_buffer(t_token *temp, t_state *state)
 			buffer = ft_strjoin(buffer, temp->data, 1);
 			if (!buffer)
 			{
-				state->err = 1;
+				state->status = 1;
 				return (free(buffer), NULL);
 			}
 			if (temp->next)
@@ -49,7 +64,7 @@ static char	*get_buffer(t_token *temp, t_state *state)
 				buffer = ft_strjoin(buffer, " ", NULL);
 				if (!buffer)
 				{
-					state->err = 1;
+					state->status = 1;
 					return (free(buffer), NULL);
 				}
 			}
@@ -76,8 +91,8 @@ int	handle_echo(t_token *token, t_state *state, t_cmd *cmd)
 	buffer = get_buffer(temp, state);
 	if (!buffer)
 	{
-		state->err = 1;
-		return (state->err);
+		state->status = 1;
+		return (state->status);
 	}
 	if (token->next && ft_strncmp(token->next->data, "-n", 2) != 0)
 		buffer = ft_strjoin(buffer, "\n", 0);
@@ -85,7 +100,7 @@ int	handle_echo(t_token *token, t_state *state, t_cmd *cmd)
 			temp->next->type == PIPE))
 		write (cmd->out, buffer, ft_strlen(buffer));
 	else
-		write (1, buffer, ft_strlen(buffer));
+		write (2, buffer, ft_strlen(buffer));
 	free(buffer);
 	return (0);
 }

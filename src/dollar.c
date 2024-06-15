@@ -1,23 +1,21 @@
 #include "minishell.h"
 #include <stdlib.h>
 
-char	*get_dollar_value(char *key)
+char	*get_dollar_value(char *key, t_state *state)
 {
-	extern char	**environ;
 	int			i;
 	int			key_len;
 	char		*value;
 
-	// todo(sademir): use state.env instead
 	i = 0;
 	value = NULL;
-	while (environ[i])
+	while (state->env[i])
 	{
 		key_len = ft_strlen(key);
-		if (ft_strncmp(environ[i], key, key_len) == 0
-			&& environ[i][key_len] == '=')
+		if (ft_strncmp(state->env[i], key, key_len) == 0
+			&& state->env[i][key_len] == '=')
 		{
-			value = ft_strdup(&environ[i][key_len + 1]);
+			value = ft_strdup(&state->env[i][key_len + 1]);
 			if (!value)
 				(void)i; // todo(hkizrak-): handle
 		}
@@ -64,6 +62,7 @@ void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar)
 		return ;
 	i = 0;
 	flag_single_quote = 0;
+
 	while ((*data)[i])
 	{
 		flag_single_quote = get_in_quote(flag_single_quote, (*data)[i]);
@@ -76,7 +75,7 @@ void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar)
 			else if ((*data)[i + 1] > '0' && (*data)[i + 1] <= '9')
 				handle_number_dollar(data, start, i + 1);
 			else
-				i = handle_regular_dollar(data, start, i + 1);
+				i = handle_regular_dollar(data, start, i + 1, state);
 		}
 		else
 			i++;

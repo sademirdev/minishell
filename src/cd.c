@@ -16,20 +16,10 @@ int	handle_cd(t_token *token, t_state *state)
 		return (1);
 	home_path = getenv("HOME");
 	if (!home_path)
-	{
-		// write(2, "cd: HOME not set\n", 17);
-		return (1);
-	}
+		return (write(2, "cd: HOME not set\n", 17), 1);
 	if (!token->next)
-	{
 		if (chdir(home_path) == -1)
-		{
-			perror("cd");
-			// write(2, "cd: cannot change directory\n", 17);
-			return (1);
-		}
-		return (1);
-	}
+			return (write(2, "cd: cannot change directory\n", 17), 1);
 	if (is_relative_path(token->next->data))
 		return (handle_relative_path(token, state));
 	else if (is_absolute_path(token->next->data))
@@ -65,14 +55,12 @@ static int	handle_relative_path(t_token *token, t_state *state)
 	len = 0;
 	if (!getcwd(cwd, PATH_MAX))
 		return (1);
-	if (chdir(cwd) == -1)
-		return (1);
 	len = ft_strlen(cwd) + ft_strlen(token->next->data) + 1;
-	if (len > PATH_MAX)
+	if (len >= PATH_MAX)
 		return (1);
 	temp_path = malloc(sizeof(char) * (len + 1));
 	if (!temp_path)
-		return (free(temp_path), 1);
+		return (1);
 	ft_strlcpy(temp_path, cwd, ft_strlen(cwd) + 1);
 	temp_path[ft_strlen(cwd)] = '/';
 	ft_strlcpy(temp_path + ft_strlen(cwd) + 1, token->next->data, len);
@@ -89,9 +77,6 @@ static int	handle_relative_path(t_token *token, t_state *state)
 static int	handle_absolute_path(t_token *token)
 {
 	if (chdir(token->next->data) == -1)
-	{
-		perror("cd");
-		return (1);
-	}
+		return (print_err(token->next->data, 1), 1);
 	return (0);
 }

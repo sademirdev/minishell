@@ -21,7 +21,7 @@ int	handle_built_in(t_token *token, t_state *state, t_cmd *cmd)
 		result = handle_unset(token, state);
 	else if ((ft_strncmp(token->data, "env", 3) == 0)
 		&& ft_strlen(token->data) == 3)
-		result = handle_env(token, state);
+		result = handle_env(token, state, cmd);
 	else if ((ft_strncmp(token->data, "exit", 4) == 0)
 		&& ft_strlen(token->data) == 4)
 		result = handle_exit(token, state);

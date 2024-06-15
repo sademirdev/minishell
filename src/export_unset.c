@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-static void	export_var(t_state *state);
+static void	export_var(t_state *state, t_token *token, t_cmd *cmd);
 static int	env_add(char *var, char *temp, t_state *state);
 
 int has_equal(char *str)
@@ -48,16 +48,16 @@ static int has_only_num(char *str)
 	return (0);
 
 }
-int	handle_export(t_token *token, t_state *state)
+int	handle_export(t_token *token, t_state *state, t_cmd *cmd)
 {
-	int		i;
 	char	**var;
 	t_token	*temp;
 
 	if (!token)
 		return (1);
-	if (!token->next)
-		return (export_var(state), 0);
+	if (!token->next | (token && token->next && (token->next->type == PIPE
+		|| token->next->type == RED_R || token->next->type == RED_RR)))
+		return (export_var(state, token, cmd), 0);
 	var = NULL;
 	temp = token->next;
 	if (temp->data[0] == '=' && temp->data[1] == '\0')
@@ -80,7 +80,6 @@ int	handle_export(t_token *token, t_state *state)
 		state->status = 1;
 		return (free(var), 1);
 	}
-	i = 0;
 	if (env_add(var[0], temp->data, state) == 1)
 	{
 		state->status = 1;
@@ -89,13 +88,27 @@ int	handle_export(t_token *token, t_state *state)
 	return (0);
 }
 
-static void	export_var(t_state *state)
+static void	export_var(t_state *state, t_token *token, t_cmd *cmd)
 {
 	int		i;
 
 	i = 0;
 	while (state->env[i])
-		printf("declare -x %s\n", state->env[i++]);
+	{
+		if (!token->next)
+		{
+			write (2, "declare -x ", 12);
+			write (2, state->env[i], ft_strlen(state->env[i]));
+			write (2, "\n", 2);
+		}
+		else
+		{
+			write (cmd->out, "declare -x ", 12);
+			write (cmd->out, state->env[i], ft_strlen(state->env[i]));
+			write (cmd->out, "\n", 2);
+		}
+		i++;
+	}
 }
 
 static int	env_add(char *var, char *temp, t_state *state)
@@ -107,7 +120,7 @@ static int	env_add(char *var, char *temp, t_state *state)
 	len = ft_strlen(var);
 	while (!state->env[i])
 	{
-		if (strncmp(state->env[i], var, len) == 0
+		if (ft_strncmp(state->env[i], var, len) == 0
 			&& state->env[i][ft_strlen(var)] == '=')
 			free(state->env[i]);
 		i++;
