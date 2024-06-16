@@ -6,6 +6,7 @@ t_token	**run_lexer(t_state *state)
 	t_token	*root;
 	t_token	**token_arr;
 
+
 	if (!state || !state->prompt)
 		return (NULL);
 	root = separate_prompt_by_space(state->prompt);

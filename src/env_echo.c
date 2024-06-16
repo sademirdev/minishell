@@ -28,8 +28,8 @@ int	handle_env(t_token *token, t_state *state, t_cmd *cmd)
 		}
 		else
 		{
-			write (2, state->env[i], ft_strlen(state->env[i]));
-			write (2, "\n", 1);
+			write (1, state->env[i], ft_strlen(state->env[i]));
+			write (1, "\n", 1);
 		}
 		i++;
 	}
@@ -96,11 +96,11 @@ int	handle_echo(t_token *token, t_state *state, t_cmd *cmd)
 	}
 	if (token->next && ft_strncmp(token->next->data, "-n", 2) != 0)
 		buffer = ft_strjoin(buffer, "\n", 0);
-	if (temp->next && (temp->next->type == RED_R || temp->next->type == RED_RR ||
+	if (temp && temp->next && (temp->next->type == RED_R || temp->next->type == RED_RR ||
 			temp->next->type == PIPE))
 		write (cmd->out, buffer, ft_strlen(buffer));
 	else
-		write (2, buffer, ft_strlen(buffer));
+		write (1, buffer, ft_strlen(buffer));
 	free(buffer);
 	return (0);
 }

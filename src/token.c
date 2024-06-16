@@ -60,7 +60,7 @@ bool	token_separation_meta_data_init(t_token_separation_meta_data *md, t_token *
 	if (!(*md).token_arr)
 		return (true);
 	(*md).iter = token;
-	(*md).tmp_root = token;
+	(*md).temp_root = token;
 	(*md).i = 0;
 	return (false);
 }
@@ -75,21 +75,21 @@ t_token	**token_separate_by_pipe(t_token *token)
 	{
 		if (md.iter->type == PIPE)
 		{
-			md.tmp = md.iter;
-			md.token_arr[md.i] = md.tmp_root;
-			md.tmp_root = md.iter->next;
+			md.temp = md.iter;
+			md.token_arr[md.i] = md.temp_root;
+			md.temp_root = md.iter->next;
 			md.iter->prev->next = NULL; // note: segfault when prev NULL.
 			md.iter = md.iter->next;
-			if (md.tmp)
-				token_dispose(&md.tmp);
-			if (md.tmp_root && md.tmp_root->type == PIPE)
+			if (md.temp)
+				token_dispose(&md.temp);
+			if (md.temp_root && md.temp_root->type == PIPE)
 				return (NULL); // todo(sademir): give syntax error
 			md.i++;
 		}
 		else
 			md.iter = md.iter->next;
 	}
-	md.token_arr[md.i++] = md.tmp_root;
+	md.token_arr[md.i++] = md.temp_root;
 	md.token_arr[md.i] = NULL;
 	return (md.token_arr);
 }

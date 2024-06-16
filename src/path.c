@@ -36,7 +36,7 @@ void	dispose_paths(char **paths)
 char *join_path(char **paths, char *command)
 {
 	char	*cmd_path;
-	char	*tmp;
+	char	*temp;
 	int		i;
 
 	if (!paths || !command)
@@ -44,10 +44,10 @@ char *join_path(char **paths, char *command)
 	i = 0;
 	while (paths[i])
 	{
-		tmp = ft_strjoin(paths[i], "/", false);
-		if (!tmp)
+		temp = ft_strjoin(paths[i], "/", false);
+		if (!temp)
 			return (dispose_paths(paths), NULL);
-		cmd_path = ft_strjoin(tmp, command, false);
+		cmd_path = ft_strjoin(temp, command, false);
 		if (!cmd_path)
 			return (dispose_paths(paths), NULL);
 		if (access(cmd_path, X_OK) == 0)
@@ -63,7 +63,7 @@ char	*find_path(char *command, char **env)
 	char	**paths;
 	char	*path;
 
-	if (!command)
+	if (!command || command[0] == '\0')
 		return (NULL);
 	path = get_env_path(env);
 	if (!path)

@@ -13,4 +13,6 @@ void	print_err(const char *file, int err_flag)
 		write(2, ": \n", 3); // todo(hkizrak-): errno
 	else if (err_flag == ERR_FILE_NOT_VALID)
 		write(2, ": not a valid identifier\n", 25);
+	else if (err_flag == ERR_CMD_NOT_FOUND)
+		write(2, ": command not found\n", 21);
 }

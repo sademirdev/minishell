@@ -131,15 +131,15 @@ static void	ft_strrev(char *str)
 {
 	int		length;
 	int		i;
-	char	tmp;
+	char	temp;
 
 	length = ft_strlen(str);
 	i = 0;
 	while (i < length / 2)
 	{
-		tmp = str[i];
+		temp = str[i];
 		str[i] = str[length - i - 1];
-		str[length - i - 1] = tmp;
+		str[length - i - 1] = temp;
 		i++;
 	}
 }

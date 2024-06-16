@@ -2,30 +2,30 @@
 
 t_token	*extract_meta_chars(t_token **root)
 {
-	t_token	*tmp;
+	t_token	*temp;
 	t_token	*last;
-	t_token	*tmp_prev;
+	t_token	*temp_prev;
 
-	tmp = *root;
-	last = tmp;
-	tmp_prev = NULL;
-	while (tmp)
+	temp = *root;
+	last = temp;
+	temp_prev = NULL;
+	while (temp)
 	{
-		if (!tmp->next)
-			last = tmp;
-		if (token_is_just_meta(&tmp))
-			tmp = tmp->next;
-		else if (token_append_meta(&tmp))
+		if (!temp->next)
+			last = temp;
+		if (token_is_just_meta(&temp))
+			temp = temp->next;
+		else if (token_append_meta(&temp))
 		{
-			if ((*tmp).prev)
-				tmp_prev = (*tmp).prev;
-			token_old_del(&tmp, *root);
+			if ((*temp).prev)
+				temp_prev = (*temp).prev;
+			token_old_del(&temp, *root);
 		}
 		else
-			tmp = tmp->next;
+			temp = temp->next;
 	}
-	if (tmp_prev)
-		return (token_get_root(tmp_prev));
+	if (temp_prev)
+		return (token_get_root(temp_prev));
 	return (token_get_root(last));
 }
 

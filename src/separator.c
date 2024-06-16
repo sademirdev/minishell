@@ -15,10 +15,10 @@ t_token	*separate_prompt_by_space(char *prompt)
 	root = NULL;
 	while (prompt[i])
 	{
-		while (prompt[i] && prompt[i] == ' ')
+		while (prompt[i] && (prompt[i] == ' ' || prompt[i] == '\t'))
 			i++;
 		start = i;
-		while (prompt[i] && prompt[i] != ' ')
+		while (prompt[i] && (prompt[i] != ' ' && prompt[i] != '\t'))
 			if (pass_data(prompt, &i) != SUCCESS)
 				return (0);
 		if (create_separated_node(&root, prompt, start, i) != SUCCESS)

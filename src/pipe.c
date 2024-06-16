@@ -17,6 +17,8 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 	if (set_red_file_fds(token, cmd, state) == 1)
 		return (1);	
 	set_cmd_arg_and_path(token, state, cmd);
+	if (!cmd->cmd)
+		return (1);
 	if (cmd->in == -2)
 		cmd->in = cmd->heredoc[0];
 	if (!is_built_in(token))

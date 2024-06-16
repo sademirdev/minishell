@@ -16,30 +16,30 @@ void	assign_token_arr_types(t_token **token_arr)
 
 static void	assign_token_types_file(t_token *token)
 {
-	t_token	*tmp;
+	t_token	*temp;
 
 	if (!token)
 		return ;
-	tmp = token;
-	while (tmp)
+	temp = token;
+	while (temp)
 	{
-		if (tmp->type == RED_L || tmp->type == RED_R || tmp->type == RED_RR)
+		if (temp->type == RED_L || temp->type == RED_R || temp->type == RED_RR)
 		{
-			tmp = tmp->next;
-			if (tmp)
-				tmp->type = RED_FILE;
+			temp = temp->next;
+			if (temp)
+				temp->type = RED_FILE;
 			else
 				break ;
 		}
-		else if (tmp->type == RED_LL)
+		else if (temp->type == RED_LL)
 		{
-			tmp = tmp->next;
-			if (tmp)
-				tmp->type = RED_HEREDOC;
+			temp = temp->next;
+			if (temp)
+				temp->type = RED_HEREDOC;
 			else
 				break ;
 		}
-		tmp = tmp->next;
+		temp = temp->next;
 	}
 }
 

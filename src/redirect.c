@@ -6,21 +6,21 @@
 int	set_red_file_fds(t_token *token, t_cmd *cmd, t_state *state)
 {
 	bool	has_last_heredoc;
-	t_token	*tmp;
+	t_token	*temp;
 	int		exit_code;
 
 	exit_code = 0;
 	if (!token)
 		return (1);
 	has_last_heredoc = false;
-	tmp = token;
-	while (tmp)
+	temp = token;
+	while (temp)
 	{
-		if (tmp->type == RED_LL)
+		if (temp->type == RED_LL)
 			has_last_heredoc = true;
-		else if (tmp->type == RED_L)
+		else if (temp->type == RED_L)
 			has_last_heredoc = false;
-		tmp = tmp->next;
+		temp = temp->next;
 	}
 	while (token)
 	{

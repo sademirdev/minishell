@@ -31,7 +31,7 @@ int	handle_special_dollar(char **data, int start, int i,
 {
 	char	*new_data;
 	char	*value;
-	char	*tmp;
+	char	*temp;
 
 	i++;
 	if ((*data)[i] == '?')
@@ -53,9 +53,9 @@ int	handle_special_dollar(char **data, int start, int i,
 		free(value);
 		return (i); // todo(hkizrak-): handle
 	}
-	tmp = *data;
+	temp = *data;
 	*data = new_data;
-	free(tmp);
+	free(temp);
 	free(value);
 	return (i - 1);
 }
@@ -78,7 +78,7 @@ int	handle_special_dollar(char **data, int start, int i,
 void	handle_number_dollar(char **data, int start, int i)
 {
 	char	*new_data;
-	char	*tmp;
+	char	*temp;
 	char	*empty_value;
 
 	empty_value = ft_strdup("");
@@ -88,9 +88,9 @@ void	handle_number_dollar(char **data, int start, int i)
 	new_data = create_data_from_dollar(*data, empty_value, start, i);
 	if (!new_data)
 		return ; // todo(hkizrak-): handle
-	tmp = *data;
+	temp = *data;
 	*data = new_data;
-	free(tmp);
+	free(temp);
 	free(empty_value);
 }
 
@@ -98,7 +98,7 @@ int	handle_regular_dollar(char **data, int start, int i, t_state *state)
 {
 	char	*value;
 	char	*new_data;
-	char	*tmp;
+	char	*temp;
 	char	*key;
 	int		value_len;
 
@@ -113,9 +113,9 @@ int	handle_regular_dollar(char **data, int start, int i, t_state *state)
 	new_data = create_data_from_dollar(*data, value, start, i);
 	if (!new_data)
 		(void)i; // todo(hkizrak-): handle
-	tmp = *data;
+	temp = *data;
 	*data = new_data;
-	free(tmp);
+	free(temp);
 	free(key);
 	value_len = ft_strlen(value);
 	if (value_len == 0)

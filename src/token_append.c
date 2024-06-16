@@ -1,5 +1,6 @@
 #include "minishell.h"
 #include "stdlib.h"
+#include "unistd.h"
 
 // todo(hkizrak-): check possible errors for side by side metas (throw syntax
 // error)  a<b
@@ -85,25 +86,25 @@ int	token_append_str(t_token **token, int start, int i)
 
 int	token_count_args(t_token *token)
 {
-	t_token	*tmp;
+	t_token	*temp;
 	int		len;
 	bool	on_arg;
 
 	if (!token)
 		return (FAILURE);
-	tmp = token;
+	temp = token;
 	len = 0;
 	on_arg = false;
-	while (tmp)
+	while (temp)
 	{
-		if (tmp->type == ARG)
+		if (temp->type == ARG)
 		{
 			len++;
 			on_arg = true;
 		}
 		else if (on_arg)
 			break ;
-		tmp = tmp->next;
+		temp = temp->next;
 	}
 	return (len);
 }

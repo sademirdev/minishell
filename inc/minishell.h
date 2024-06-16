@@ -73,8 +73,8 @@ typedef struct s_token_separation_meta_data
 {
 	t_token			**token_arr;
 	t_token			*iter;
-	t_token			*tmp;
-	t_token			*tmp_root;
+	t_token			*temp;
+	t_token			*temp_root;
 	int				i;
 }					t_token_separation_meta_data;
 
@@ -143,7 +143,7 @@ void				extract_dollar_key_values(char **data, t_state *state,
 						bool *has_dollar);
 bool				token_separation_meta_data_init(t_token_separation_meta_data *md,
 						t_token *token);
-void				token_old_del(t_token **tmp, t_token *root);
+void				token_old_del(t_token **temp, t_token *root);
 bool				is_valid_dollar(char *data, int i);
 bool				is_digit(char c);
 bool				is_alpha(char c);

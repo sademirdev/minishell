@@ -127,15 +127,15 @@ void	delete_unnecessary_quotes(char **data)
 
 void	handle_unnecessary_quotes(t_token *root)
 {
-	t_token	*tmp;
+	t_token	*temp;
 
 	if (!root)
 		return ;
-	tmp = root;
-	while (tmp)
+	temp = root;
+	while (temp)
 	{
-		if (has_unnecessary_quotes(tmp->data))
-			delete_unnecessary_quotes(&tmp->data);
-		tmp = tmp->next;
+		if (has_unnecessary_quotes(temp->data))
+			delete_unnecessary_quotes(&temp->data);
+		temp = temp->next;
 	}
 }

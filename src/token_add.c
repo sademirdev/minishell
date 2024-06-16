@@ -37,36 +37,36 @@ t_token	*token_add_last(t_token *token, t_token *new)
 
 void	token_add_next(t_token *token, t_token *new)
 {
-	t_token	*tmp;
+	t_token	*temp;
 
 	if (!token || !new)
 		return ;
-	tmp = token->next;
+	temp = token->next;
 	token->next = new;
 	new->prev = token;
-	new->next = tmp;
-	tmp->prev = new;
+	new->next = temp;
+	temp->prev = new;
 }
 
 void	token_add_prev(t_token **token, t_token *new)
 {
-	t_token	*tmp;
+	t_token	*temp;
 
 	if (!token || !*token || !new)
 		return ;
 	if (!(*token)->prev)
 	{
-		tmp = *token;
+		temp = *token;
 		*token = new;
-		new->next = tmp;
-		tmp->prev = new;
+		new->next = temp;
+		temp->prev = new;
 		new->prev = NULL;
 		*token = (*token)->next;
 		return ;
 	}
-	tmp = (*token)->prev;
+	temp = (*token)->prev;
 	(*token)->prev = new;
 	new->next = *token;
-	tmp->next = new;
-	new->prev = tmp;
+	temp->next = new;
+	new->prev = temp;
 }

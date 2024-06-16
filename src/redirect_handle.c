@@ -96,8 +96,6 @@ int	handle_redrr(t_token *token, t_cmd *cmd, t_state *state)
 	if (!token)
 		return (1);
 	temp = token->next;
-	if (!temp)
-		return (1);
 	if (access(temp->data, F_OK) == 0 && access(temp->data, W_OK) == -1)
 	{
 		state->status = 2;

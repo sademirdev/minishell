@@ -39,20 +39,20 @@ bool	token_is_just_meta(t_token **token)
 	return (true);
 }
 
-void	token_old_del(t_token **tmp, t_token *root)
+void	token_old_del(t_token **temp, t_token *root)
 {
 	t_token	*old_node;
 
-	if (!tmp || !*tmp || !root)
+	if (!temp || !*temp || !root)
 		return ;
-	old_node = *tmp;
-	if ((*tmp)->prev)
-		(*tmp)->prev->next = (*tmp)->next;
-	if ((*tmp)->next)
-		(*tmp)->next->prev = (*tmp)->prev;
-	// if (root == *tmp)
-	// 	root = (*tmp)->next; // todo(apancar): check again unnecessary assignment
-	*tmp = (*tmp)->next;
+	old_node = *temp;
+	if ((*temp)->prev)
+		(*temp)->prev->next = (*temp)->next;
+	if ((*temp)->next)
+		(*temp)->next->prev = (*temp)->prev;
+	// if (root == *temp)
+	// 	root = (*temp)->next; // todo(apancar): check again unnecessary assignment
+	*temp = (*temp)->next;
 	token_dispose(&old_node);
 }
 
