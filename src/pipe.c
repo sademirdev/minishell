@@ -13,9 +13,12 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 
 	if (!token || !state || !cmd)
 		return (FAILURE);
+	printf("cmd->cmd1:\n");
 	set_heredoc_fds(token, cmd, 0);
+	printf("cmd->cmd2:\n");
 	if (set_red_file_fds(token, cmd, state) == 1)
 		return (1);	
+	printf("cmd->cmd:\n");
 	set_cmd_arg_and_path(token, state, cmd);
 	if (!cmd->cmd)
 		return (1);

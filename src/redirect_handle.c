@@ -14,7 +14,7 @@ int	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc, t_state *stat
 		return (1);
 	if (access(temp->data, F_OK) == -1)
 	{
-		state->status = 1;
+		state->status = 0;
 		return (print_err(temp->data, ERR_FILE_NOT_FOUND), 1);
 	}
 	if (access(temp->data, R_OK) == -1) // todo(apancar): check access()

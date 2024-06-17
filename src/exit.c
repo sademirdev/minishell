@@ -29,7 +29,7 @@ int	handle_exit(t_token *token, t_state *state)
 		state->status = 255;
 		return (1);
 	}
-	// state->status = atoi(token->next->data); // ft_atoi yaz
+	state->status = atoi(token->next->data); // write ft_atoi
 	// free all the malloced memory
 	return (0);
 }

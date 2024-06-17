@@ -63,6 +63,7 @@ int	handle_export(t_token *token, t_state *state, t_cmd *cmd)
 	if (temp->data[0] == '=' && temp->data[1] == '\0')
 	{
 		state->status = 1;
+		print_err(temp->data, ERR_FILE_NOT_VALID);
 		return(1);
 	}
 	var = ft_split(temp->data, '=');
@@ -74,16 +75,30 @@ int	handle_export(t_token *token, t_state *state, t_cmd *cmd)
 		state->status = 1;
 		return (free(var), 1);
 	}
-		if (has_alnum_underscore_str(var[0]) != 0)
+	if (has_alnum_underscore_str(var[0]) != 0)
 	{
 		print_err(var[0], ERR_FILE_NOT_VALID);
 		state->status = 1;
 		return (free(var), 1);
 	}
-	if (env_add(var[0], temp->data, state) == 1)
+	printf("temp.data: %s\n", temp->data);
+	printf("temp.ndata: %s\n", temp->next->data);
+	printf("temp.next.type: %d\n", temp->next->type);
+	if ((temp && temp->next && (temp->next->type == PIPE ||
+		temp->next->type == RED_R || temp->next->type == RED_RR)))
 	{
-		state->status = 1;
-		return (free(var), 1);
+		printf("export: pipe error\n");
+		return (0);
+	}
+	else
+	{
+		printf("export\n");
+		if (env_add(var[0], temp->data, state) != 0)
+		{
+		printf("exports\n");
+			state->status = 1;
+			return (free(var), 1);
+		}
 	}
 	return (0);
 }
@@ -150,16 +165,18 @@ int	handle_unset(t_token *token, t_state *state)
 		if (strncmp(state->env[i], var[0], len) == 0
 			&& state->env[i][len] == '=')
 		{
+			free(state->env[i]);
 			while (state->env[i])
 			{
 				state->env[i] = state->env[i + 1];
 				i++;
 			}
-			free (state->env[i]);
 			break ;
 		}
 		i++;
 	}
-	state->env[i] = NULL;
+	if (state->env[i] != NULL)
+		state->env[i] = NULL;
+	state->status = 0;
 	return (free(var), 0);
 }
