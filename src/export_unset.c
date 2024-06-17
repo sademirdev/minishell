@@ -81,21 +81,13 @@ int	handle_export(t_token *token, t_state *state, t_cmd *cmd)
 		state->status = 1;
 		return (free(var), 1);
 	}
-	printf("temp.data: %s\n", temp->data);
-	printf("temp.ndata: %s\n", temp->next->data);
-	printf("temp.next.type: %d\n", temp->next->type);
 	if ((temp && temp->next && (temp->next->type == PIPE ||
-		temp->next->type == RED_R || temp->next->type == RED_RR)))
-	{
-		printf("export: pipe error\n");
+		temp->next->type == RED_R || temp->next->type == RED_RR))) // todo(apancar): check it
 		return (0);
-	}
 	else
 	{
-		printf("export\n");
 		if (env_add(var[0], temp->data, state) != 0)
 		{
-		printf("exports\n");
 			state->status = 1;
 			return (free(var), 1);
 		}
