@@ -109,7 +109,7 @@ int	handle_regular_dollar(char **data, int start, int i, t_state *state)
 		(void)i; // todo(hkizrak-): handle
 	value = get_dollar_value(key, state);
 	if (!value)
-		(void)i; // todo(hkizrak-): handle
+		return (i); // todo(hkizrak-): handle
 	new_data = create_data_from_dollar(*data, value, start, i);
 	if (!new_data)
 		(void)i; // todo(hkizrak-): handle

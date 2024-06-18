@@ -4,8 +4,8 @@
 # include <stdbool.h>
 # include <stdint.h>
 # include <stdio.h>
-# include <readline/history.h>
-# include <readline/readline.h>
+# include "readline/history.h"
+# include "readline/readline.h"
 
 # define SUCCESS 0
 # define FAILURE -1

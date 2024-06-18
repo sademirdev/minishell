@@ -145,16 +145,22 @@ int	handle_unset(t_token *token, t_state *state)
 	char	**var;
 
 	if (!token || !state || !token->next)
+	{
+		state->status = 0;
 		return (1);
+	}
 	var = NULL;
 	var = ft_split(token->next->data, '=');
 	if (!var)
+	{
+		state->status = 1;
 		return (1);
+	}
 	len = ft_strlen(var[0]);
 	i = 0;
 	while (state->env[i])
 	{
-		if (strncmp(state->env[i], var[0], len) == 0
+		if (strncmp(state->env[i], var[0], len) == 0 // change to ft_strncmp
 			&& state->env[i][len] == '=')
 		{
 			free(state->env[i]);

@@ -51,7 +51,7 @@ int	pass_data(char *prompt, int *i)
 	if (prompt[*i] && (prompt[*i] == '\'' || prompt[*i] == '"'))
 		if (pass_quoted_str(prompt, i) == -42)
 			return (1);
-	while (prompt[*i] && prompt[*i] != ' ' && prompt[*i] != '\''
+	while (prompt[*i] && prompt[*i] != ' ' && prompt[*i] != '\t' && prompt[*i] != '\''
 		&& prompt[*i] != '"')
 		(*i)++;
 	return (0);

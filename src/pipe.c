@@ -1,11 +1,23 @@
 #include "minishell.h"
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
+#include <sys/wait.h>
+// #include <sys/stat.h> // Permission check
 
 static int	w_exit_status(int status)
 {
 	return ((status >> 8) & 0x000000ff);
 }
+
+// static int	is_directory(const char *path)
+// {
+// 	struct stat path_stat;
+
+// 	if (stat(path, &path_stat) == -1)
+// 		return (0);
+// 	return (S_ISDIR(path_stat.st_mode));
+// }
 
 int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 {
@@ -15,18 +27,27 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 		return (FAILURE);
 	set_heredoc_fds(token, cmd, 0);
 	if (set_red_file_fds(token, cmd, state) == 1)
+	{
+		state->status = 1;
 		return (1);	
+	}
 	set_cmd_arg_and_path(token, state, cmd);
 	if (!cmd->cmd)
 		return (1);
 	if (cmd->in == -2)
 		cmd->in = cmd->heredoc[0];
+	// if (is_directory(cmd->cmd))
+	// {
+	// 	print_err(cmd->cmd, EISDIR);
+	// 	state->status = 126;
+	// 	return (1);
+	// }
 	if (!is_built_in(token))
 	{
 		pid = fork();
 		if (pid == -1)
-			return (FAILURE); // todo(kkarakus): handle close;
-		if (pid == 0)
+			return (perror("fork"), FAILURE); // todo(kkarakus): handle close;
+		else if (pid == 0)
 		{
 			if (cmd->in != -2)
 				dup2(cmd->in, STDIN_FILENO);
@@ -34,8 +55,16 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 				dup2(cmd->out, STDOUT_FILENO);
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 			{
-				print_err(cmd->cmd, ERR_CMD_NOT_FOUND);
-				exit(127); // todo(sademir): handle error case
+				if (errno == ENOENT )
+				{
+					print_err(cmd->cmd, ENOENT);
+					exit(127);
+				}
+				else
+				{
+					print_err(cmd->cmd, errno);
+					exit(126);
+				}
 			}
 		}
 		if (pid != 0)
@@ -56,11 +85,11 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 			// cmd->argv[0] = NULL;
 			free(cmd->argv);
 			cmd->argv = NULL;
-			return (SUCCESS);
+			return (0);
 		}
-		return (free(cmd->heredoc), SUCCESS);
+		return (free(cmd->heredoc), 0);
 	}
-	return (SUCCESS);
+	return (0);
 }
 
 int	pipe_init(int (*fd)[2], int pipe_count)
@@ -127,7 +156,7 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 		dup2(cmd->out, STDOUT_FILENO);
 	if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 	{
-		print_err(cmd->cmd, ERR_FILE_NOT_FOUND);
+		print_err(cmd->cmd, errno);
 		exit(127); // todo(sademir): handle error case
 	}
 }
@@ -150,9 +179,12 @@ int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_
 		pid = fork();
 		pids[i] = pid;
 		if (pid == -1)
-			return (free(pids), FAILURE); // todo(kkarakus): handle close;
+			return (perror("fork"), free(pids), FAILURE); // todo(kkarakus): handle close;
 		if (pid == 0)
+		{
 			handle_child_process(token_arr, state, i, fd, cmd);
+			exit (1);
+		}
 		else
 		{
 			if (i != 0)
@@ -163,12 +195,19 @@ int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_
 		}
 		i++;
 	}
-	i = arr_len - 1;
-	while (i >= 0)
+	// i = arr_len - 1;
+	// while (i >= 0)
+	// {
+	// 	waitpid(pids[i], &state->status, 0);
+	// 	state->status = w_exit_status(state->status);
+	// 	i--;
+	// }
+	i = 0;
+	while (i < arr_len)
 	{
 		waitpid(pids[i], &state->status, 0);
 		state->status = w_exit_status(state->status);
-		i--;
+		i++;
 	}
 	return (free(pids), SUCCESS);
 }

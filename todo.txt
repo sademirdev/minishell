@@ -1,0 +1,8 @@
+-> #include <sys/stat.h> Permission check
+-> print_err function check. I've changed function but did not change the parameter of some funcs.
+-> do not forget to open signals
+
+
+-> /bin/echo test1		test2
+	it prints -> "test1		test2"
+	should be -> "test1 test2"

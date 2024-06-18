@@ -62,7 +62,6 @@ void	extract_dollar_key_values(char **data, t_state *state, bool *has_dollar)
 		return ;
 	i = 0;
 	flag_single_quote = 0;
-
 	while ((*data)[i])
 	{
 		flag_single_quote = get_in_quote(flag_single_quote, (*data)[i]);

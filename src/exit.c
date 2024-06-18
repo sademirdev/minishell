@@ -1,35 +1,46 @@
 #include "minishell.h"
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
 
 static bool	ft_is_digit(char *c);
-static void	ft_putstr_fd(char *str, int fd);
 // static int	ft_atoi(const char *str);
 
 int	handle_exit(t_token *token, t_state *state)
 {
+	long	exit_code; // todo(sademir): is it ok 
+
 	if (!token)
 	{
-		ft_putstr_fd("exit\n", 1);
+		print_err("exit", EINVAL);
 		state->status = 1;
 		return (1);
 	}
 	if (token && token->next && token->next->next)
 	{
-		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+		print_err("exit", EINVAL);
 		state->status = 1;
 		return (1);
 	}
-	ft_putstr_fd("exit\n", 1);
+	write (2, "exit\n", 5);
  	if (token->next && !ft_is_digit(token->next->data))
 	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(token->next->data, 2);
-		ft_putstr_fd(": numeric argument required\n", 2);
+		print_err("exit", errno);
 		state->status = 255;
 		return (1);
 	}
-	state->status = atoi(token->next->data); // write ft_atoi
+	if (token->next)
+	{
+		exit_code = atoi(token->next->data); // write ft_atoi
+		if (exit_code < 0)
+		{
+			return (state->status = (int)(256 + (exit_code % 256)), 1);
+		}
+		state->status = (int)(exit_code % 256);
+		return (1);
+	}
+	else
+		state->status = 0;
 	// free all the malloced memory
 	return (0);
 }
@@ -48,12 +59,6 @@ static bool	ft_is_digit(char *c)
 		i++;
 	}
 	return (true);
-}
-
-static void	ft_putstr_fd(char *str, int fd)
-{
-	if (str)
-		write(fd, str, ft_strlen(str));
 }
 
 // static int	ft_atoi(const char *str)

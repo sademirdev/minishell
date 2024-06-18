@@ -83,7 +83,7 @@ int	handle_redr(t_token *token, t_cmd *cmd, t_state *state)
 	if (cmd->out == -1)
 	{
 		state->status = 1;
-		print_err(temp->data, ERR_FILE_OPEN);
+		print_err(temp->data, ERR_FILE_NOT_FOUND);
 		return (1);
 	}
 	return (0);
