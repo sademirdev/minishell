@@ -3,21 +3,21 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/wait.h>
-// #include <sys/stat.h> // Permission check
+#include <sys/stat.h> // Permission check
 
 static int	w_exit_status(int status)
 {
 	return ((status >> 8) & 0x000000ff);
 }
 
-// static int	is_directory(const char *path)
-// {
-// 	struct stat path_stat;
+static int	is_directory(const char *path)
+{
+	struct stat path_stat;
 
-// 	if (stat(path, &path_stat) == -1)
-// 		return (0);
-// 	return (S_ISDIR(path_stat.st_mode));
-// }
+	if (stat(path, &path_stat) == -1)
+		return (0);
+	return (S_ISDIR(path_stat.st_mode));
+}
 
 int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 {
@@ -36,12 +36,6 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 		return (1);
 	if (cmd->in == -2)
 		cmd->in = cmd->heredoc[0];
-	// if (is_directory(cmd->cmd))
-	// {
-	// 	print_err(cmd->cmd, EISDIR);
-	// 	state->status = 126;
-	// 	return (1);
-	// }
 	if (!is_built_in(token))
 	{
 		pid = fork();
@@ -55,15 +49,20 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 				dup2(cmd->out, STDOUT_FILENO);
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 			{
-				if (errno == ENOENT )
+				if (errno == ENOENT)
+				{
+					print_err(cmd->cmd, errno);
+					exit(127);
+				}
+				else if (errno == EACCES)
 				{
 					print_err(cmd->cmd, ENOENT);
-					exit(127);
+					exit(126);
 				}
 				else
 				{
 					print_err(cmd->cmd, errno);
-					exit(126);
+					exit(127);
 				}
 			}
 		}
@@ -154,10 +153,28 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 	}
 	else
 		dup2(cmd->out, STDOUT_FILENO);
+	if (is_directory(cmd->cmd))
+	{
+		print_err(cmd->cmd, EISDIR);
+		exit(126); // todo(sademir): handle error case
+	}
 	if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 	{
-		print_err(cmd->cmd, errno);
-		exit(127); // todo(sademir): handle error case
+		if (errno == ENOENT)
+		{
+			print_err(cmd->cmd, errno);
+			exit(127);
+		}
+		else if (errno == EACCES)
+		{
+			print_err(cmd->cmd, errno);
+			exit(126);
+		}
+		else
+		{
+			print_err(cmd->cmd, ENOENT);
+			exit(127);
+		}
 	}
 }
 

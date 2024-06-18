@@ -160,9 +160,14 @@ int	handle_unset(t_token *token, t_state *state)
 	i = 0;
 	while (state->env[i])
 	{
-		if (strncmp(state->env[i], var[0], len) == 0 // change to ft_strncmp
+		if (ft_strncmp(state->env[i], var[0], len) == 0 
 			&& state->env[i][len] == '=')
 		{
+			if (var[0] && ft_strncmp(var[0], "PATH", 4) == 0)
+			{
+				state->status = 0;
+				return (free(var), 0);
+			}
 			free(state->env[i]);
 			while (state->env[i])
 			{

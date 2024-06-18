@@ -44,7 +44,7 @@ int	ft_strcmp(char *s1, char *s2)
 char	*ft_strdup(const char *src)
 {
 	char	*str;
-	size_t	len;
+	int		len;
 	int		i;
 
 	if (!src)
@@ -76,7 +76,7 @@ char	*ft_substr(char const *s, int start, int len)
 		return (ft_strdup(""));
 	if (len > slen - start)
 		len = slen - start;
-	buf = (char *)malloc((len + 1) * sizeof(char));
+	buf = (char *) malloc ((len + 1) * sizeof(char));
 	if (buf == NULL)
 		return (NULL);
 	i = 0;

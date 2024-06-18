@@ -139,8 +139,6 @@ t_token				*token_get_root(t_token *node);
 bool				token_is_just_meta(t_token **token);
 t_token				*extract_meta_chars(t_token **root);
 bool				has_syntax_errs(t_token **root);
-void				extract_dollar_key_values(char **data, t_state *state,
-						bool *has_dollar);
 bool				token_separation_meta_data_init(t_token_separation_meta_data *md,
 						t_token *token);
 void				token_old_del(t_token **temp, t_token *root);
