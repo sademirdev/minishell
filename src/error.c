@@ -18,25 +18,25 @@
 // 		write(2, ": command not found\n", 21);
 // }
 
+void	err_at(const char *cmd)
+{
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, " \n", 2);
+}
+
 void	print_err(const char *cmd, int err)
 {
-	const char *error_prefix;
-	const char *command_not_found;
-	const char *is_directory;
-
-	error_prefix = "minishell: ";
-	command_not_found = ": command not found\n";
-	is_directory = ": is a directory\n";
-	write(STDERR_FILENO, error_prefix, strlen(error_prefix));
-	write(STDERR_FILENO, cmd, strlen(cmd));
-	if (err == ENOENT)
-		write(STDERR_FILENO, command_not_found, strlen(command_not_found));
+	// err_at(ERR_STR_PREFIX);
+	// err_at(cmd);
+	(void)cmd;
+	if (err == EACCES)
+		err_at(strerror(EACCES));
+	else if (err == ENOENT)
+		err_at(strerror(ENOENT));
 	else if (err == EISDIR)
-		write(STDERR_FILENO, is_directory, strlen(is_directory));
+		err_at(strerror(EISDIR));
+	else if (err == ERR_CMD_NOT_FOUND)
+		err_at(ERR_STR_CMD_NOT_FOUND);
 	else
-	{
-		write(STDERR_FILENO, ": ", 2);
-		write(STDERR_FILENO, strerror(err), strlen(strerror(err)));
-		write(STDERR_FILENO, "\n", 1);
-	}
+		err_at(ERR_STR_UNKNOWN);
 }

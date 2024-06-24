@@ -3,20 +3,38 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/wait.h>
-#include <sys/stat.h> // Permission check
+#include <sys/stat.h>
 
 static int	w_exit_status(int status)
 {
 	return ((status >> 8) & 0x000000ff);
 }
 
-static int	is_directory(const char *path)
+void	handle_exec_error(t_token *token, t_cmd *cmd)
 {
-	struct stat path_stat;
+	struct stat	buf;
 
-	if (stat(path, &path_stat) == -1)
-		return (0);
-	return (S_ISDIR(path_stat.st_mode));
+	stat(token->data, &buf);
+ 	if (S_ISDIR(buf.st_mode))
+	{
+		print_err(cmd->cmd, EISDIR);
+		exit(126);
+	}
+	else if (errno == EACCES || access(token->data, X_OK))
+	{
+		print_err(cmd->cmd, EACCES);
+		exit(126);
+	}
+	else if (access(token->data, F_OK))
+	{
+		print_err(cmd->cmd, ENOENT);
+		exit(127);
+	}
+	else
+	{
+		print_err(cmd->cmd, errno);
+		exit(127);
+	}
 }
 
 int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
@@ -29,14 +47,16 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 	if (set_red_file_fds(token, cmd, state) == 1)
 	{
 		state->status = 1;
-		return (1);	
+		return (1);
 	}
 	set_cmd_arg_and_path(token, state, cmd);
 	if (!cmd->cmd)
 		return (1);
 	if (cmd->in == -2)
 		cmd->in = cmd->heredoc[0];
-	if (!is_built_in(token))
+	if (token_is_built_in(token))
+		handle_built_in(token, state, cmd);
+	else
 	{
 		pid = fork();
 		if (pid == -1)
@@ -47,24 +67,13 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 				dup2(cmd->in, STDIN_FILENO);
 			if (cmd->out != -2)
 				dup2(cmd->out, STDOUT_FILENO);
-			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
+			if (ft_strncmp(cmd->cmd, token->data, ft_strlen(cmd->cmd) + 1) == 0)
 			{
-				if (errno == ENOENT)
-				{
-					print_err(cmd->cmd, errno);
-					exit(127);
-				}
-				else if (errno == EACCES)
-				{
-					print_err(cmd->cmd, ENOENT);
-					exit(126);
-				}
-				else
-				{
-					print_err(cmd->cmd, errno);
-					exit(127);
-				}
+				print_err(cmd->cmd, ERR_CMD_NOT_FOUND);
+				exit(127);
 			}
+			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
+				handle_exec_error(token, cmd);
 		}
 		if (pid != 0)
 		{
@@ -72,8 +81,6 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 			state->status = w_exit_status(state->status);
 		}
 	}
-	else
-		handle_built_in(token, state, cmd);
 	if (cmd)
 	{
 		if (cmd->argv)
@@ -121,7 +128,7 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 		exit (1);
 	}
 	set_cmd_arg_and_path(token_arr[i], state, cmd);
-	j = 0; 
+	j = 0;
 	while (j < arr_len - 1)
 	{
 		if (j != i - 1 && j != i)
@@ -153,12 +160,9 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 	}
 	else
 		dup2(cmd->out, STDOUT_FILENO);
-	if (is_directory(cmd->cmd))
-	{
-		print_err(cmd->cmd, EISDIR);
-		exit(126); // todo(sademir): handle error case
-	}
-	if (execve(cmd->cmd, cmd->argv, state->env) == -1)
+	if (cmd_is_str_built_in(cmd))
+		handle_built_in(token_arr[i], state, cmd);
+	else if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 	{
 		if (errno == ENOENT)
 		{
@@ -168,7 +172,7 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 		else if (errno == EACCES)
 		{
 			print_err(cmd->cmd, errno);
-			exit(126);
+			exit(127);
 		}
 		else
 		{
@@ -212,13 +216,6 @@ int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_
 		}
 		i++;
 	}
-	// i = arr_len - 1;
-	// while (i >= 0)
-	// {
-	// 	waitpid(pids[i], &state->status, 0);
-	// 	state->status = w_exit_status(state->status);
-	// 	i--;
-	// }
 	i = 0;
 	while (i < arr_len)
 	{
@@ -254,7 +251,7 @@ int	execute_prompt(t_state *state)
 	int		arr_len;
 	t_cmd	cmd;
 	int		(*fd)[2];
-	
+
 	if (!state || !state->token_arr)
 		return (1);
 	arr_len = token_arr_len(state->token_arr);
@@ -271,5 +268,5 @@ int	execute_prompt(t_state *state)
 		return (free(fd), free(cmd.heredoc), 1);
 	if (fork_init(fd, arr_len, state->token_arr, state, &cmd) != 0)
 		return (free(fd), free(cmd.heredoc), 1);
-	return (0);
+	return (SUCCESS);
 }

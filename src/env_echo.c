@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+// ha çenesuyu eski stadyum 250
 int	handle_env(t_token *token, t_state *state, t_cmd *cmd)
 {
 	int		i;
@@ -15,7 +16,7 @@ int	handle_env(t_token *token, t_state *state, t_cmd *cmd)
 	if (token->next && token->next->type == CMD)
 	{
 		state->status = 1;
-		return (print_err(token->next->data, ERR_FILE_NOT_VALID), 1);
+		return (print_err(token->next->data, 1), 1);
 	}
 	i = 0;
 	while (state->env[i])

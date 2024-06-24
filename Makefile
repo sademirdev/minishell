@@ -25,6 +25,8 @@ RLFLAGS			= -L./lib/readline/lib -I./lib/readline/include/readline -lreadline
 DIR				= $(shell echo $(PWD))
 READLINE		= ./lib/readline/lib/libreadline.a
 
+F_INFO_LIB_LINUX = -ltinfo
+
 MURMUR_EVAL = $(LIB)/murmur.eval-master/murmur_eval/build/libmurmureval.a
 # os = ${shell uname -s}
 # ifeq '$(os)' 'Darwin'
@@ -44,11 +46,11 @@ ifeq '$(debug)' '1'
 CFLAGS += -g
 endif
 
-asan = 1
-ifeq '$(asan)' '1'
-CFLAGS += -fsanitize=address
-# CFLAGS += -fsanitize=thread
-endif
+# asan = 0
+# ifeq '$(asan)' '1'
+# CFLAGS += -fsanitize=address
+# # CFLAGS += -fsanitize=thread
+# endif
 
 test = 0
 ifeq '$(test)' '1'
@@ -74,7 +76,7 @@ $(MURMUR_EVAL):
 
 $(NAME): $(CMD) $(OBJS)
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(RLFLAGS) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(RLFLAGS) $(F_INFO_LIB_LINUX) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)

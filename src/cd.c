@@ -16,10 +16,13 @@ int	handle_cd(t_token *token, t_state *state)
 		return (1);
 	home_path = getenv("HOME");
 	if (!home_path)
-		return (write(2, "cd: HOME not set\n", 17), 1);
+		return (write(2, "cd: HOME not set\n", 17), 1); // todo: use print_err instead
 	if (!token->next)
+	{
 		if (chdir(home_path) == -1)
 			return (write(2, "cd: cannot change directory\n", 17), 1);
+		return (0);
+	}
 	if (is_relative_path(token->next->data))
 		return (handle_relative_path(token, state));
 	else if (is_absolute_path(token->next->data))

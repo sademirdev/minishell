@@ -62,13 +62,24 @@ void	token_insert_dollar_nodes(t_token **token)
 	t_token	*sub_nodes;
 	t_token	*temp;
 	t_token	*sub_last;
-	
+
 	if (!token || !*token)
 		return ; // todo(apancar): handle error
 	temp = *token;
 	sub_nodes = separate_prompt_by_space(temp->data);
 	if (!sub_nodes)
+	{
+		if (temp->prev)
+		{
+			temp->prev->next = temp->next;
+			if (temp->next)
+				temp->next->prev = temp->prev;
+		}
+		else
+			*token = temp->next;
+		token_dispose(&temp);
 		return ; // todo(apancar): handle error
+	}
 	if (temp->prev)
 	{
 		temp->prev->next = sub_nodes;

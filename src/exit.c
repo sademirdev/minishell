@@ -4,11 +4,17 @@
 #include <errno.h>
 
 static bool	ft_is_digit(char *c);
-// static int	ft_atoi(const char *str);
+
+// static int print_err_with_status(const int err, t_state *state, int status)
+// {
+// 		print_err("exit", err);
+// 		state->status = status;
+// 		return (status);
+// }
 
 int	handle_exit(t_token *token, t_state *state)
 {
-	long	exit_code; // todo(sademir): is it ok 
+	long	exit_code; // todo(sademir): is it ok
 
 	if (!token)
 	{
@@ -25,13 +31,13 @@ int	handle_exit(t_token *token, t_state *state)
 	write (2, "exit\n", 5);
  	if (token->next && !ft_is_digit(token->next->data))
 	{
-		print_err("exit", errno);
-		state->status = 255;
+		print_err("exit", ENOENT);
+		state->status = ENOENT;
 		return (1);
 	}
 	if (token->next)
 	{
-		exit_code = atoi(token->next->data); // write ft_atoi
+		exit_code = ft_atoi(token->next->data);
 		if (exit_code < 0)
 		{
 			return (state->status = (int)(256 + (exit_code % 256)), 1);
@@ -60,28 +66,3 @@ static bool	ft_is_digit(char *c)
 	}
 	return (true);
 }
-
-// static int	ft_atoi(const char *str)
-// {
-// 	int		i;
-// 	int		sign;
-// 	int		result;
-
-// 	i = 0;
-// 	sign = 1;
-// 	result = 0;
-// 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-// 		i++;
-// 	if (str[i] == '-' || str[i] == '+')
-// 	{
-// 		if (str[i] == '-')
-// 			sign = -1;
-// 		i++;
-// 	}
-// 	while (str[i] >= '0' && str[i] <= '9')
-// 	{
-// 		result = result * 10 + str[i] - '0';
-// 		i++;
-// 	}
-// 	return (result * sign);
-// }

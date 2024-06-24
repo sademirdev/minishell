@@ -6,16 +6,18 @@
 # include <stdio.h>
 # include "readline/history.h"
 # include "readline/readline.h"
+# include <errno.h>
+
+# define PATH_MAX 2048
 
 # define SUCCESS 0
 # define FAILURE -1
 
-# define ERR_FILE_NOT_FOUND 1
-# define ERR_FILE_PERMISSION_DENIED 2
-# define ERR_FILE_OPEN 3
-# define ERR_FILE_NOT_VALID 4
-# define ERR_CMD_NOT_FOUND 5
+// # define ERR_STR_PREFIX	"minishell: "
+# define ERR_STR_UNKNOWN "unknown error\n"
 
+# define ERR_CMD_NOT_FOUND 127
+# define ERR_STR_CMD_NOT_FOUND "command not found\n"
 
 # define PROMPT "minishell: "
 
@@ -104,6 +106,9 @@ typedef struct s_error
 	char			*message;
 	bool			fatal;
 }					t_error;
+
+char				*_token_type_tostr(t_token_type type);
+
 
 int					ft_strlen(const char *s);
 char				*ft_strdup(const char *src);
@@ -200,7 +205,8 @@ void				set_heredoc_fds(t_token *token, t_cmd *cmd, int i);
 void				handle_signals(void);
 
 int					handle_built_in(t_token *token, t_state *state, t_cmd *cmd);
-bool				is_built_in(t_token *token);
+bool				token_is_built_in(t_token *token);
+bool				cmd_is_str_built_in(t_cmd *cmd);
 int					handle_unset(t_token *token, t_state *state);
 int					handle_pwd(void);
 int					handle_export(t_token *token, t_state *state, t_cmd *cmd);
@@ -222,5 +228,6 @@ void				dispose_prompt(t_state *state);
 int					pass_data(char *prompt, int *i);
 char				**copy_env(char **env);
 int					has_equal(char *str);
+int					ft_atoi(const char *str);
 
 #endif
