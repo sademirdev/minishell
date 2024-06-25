@@ -13,7 +13,7 @@
 # define SUCCESS 0
 # define FAILURE -1
 
-# define NONE -2
+# define NAFD -2
 
 // # define ERR_STR_PREFIX	"minishell: "
 # define ERR_STR_UNKNOWN "unknown error\n"

@@ -56,7 +56,7 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 		return (FAILURE);
 	if (!cmd->cmd)
 		return (FAILURE);
-	if (cmd->in == NONE)
+	if (cmd->in == NAFD)
 		cmd->in = cmd->heredoc[0];
 	if (token_is_built_in(token))
 	{
@@ -136,12 +136,12 @@ static int	handle_child_process(t_token **token_arr, t_state *state, int i, int 
 		}
 		j++;
 	}
-	if (cmd->in == NONE)
+	if (cmd->in == NAFD)
 		cmd->in = cmd->heredoc[i];
 	if (i != 0)
 	{
 		close(fd[i - 1][1]);
-		if (cmd->in != NONE)
+		if (cmd->in != NAFD)
 			dup2(cmd->in, STDIN_FILENO);
 		else
 			dup2(fd[i - 1][0], STDIN_FILENO);
@@ -151,7 +151,7 @@ static int	handle_child_process(t_token **token_arr, t_state *state, int i, int 
 	if (i != arr_len - 1)
 	{
 		close(fd[i][0]);
-		if (cmd->out != NONE)
+		if (cmd->out != NAFD)
 			dup2(cmd->out, STDOUT_FILENO);
 		else
 			dup2(fd[i][1], STDOUT_FILENO);
@@ -217,15 +217,15 @@ int	cmd_init(t_cmd *cmd, int arr_len)
 
 	cmd->argv = NULL;
 	cmd->cmd = NULL;
-	cmd->in = NONE;
-	cmd->out = NONE;
+	cmd->in = NAFD;
+	cmd->out = NAFD;
 	cmd->heredoc = (int *) malloc(sizeof(int) * arr_len);
 	if (!cmd->heredoc)
 		return (FAILURE);
 	i = 0;
 	while (i < arr_len)
 	{
-		cmd->heredoc[i] = NONE;
+		cmd->heredoc[i] = NAFD;
 		i++;
 	}
 	return (SUCCESS);
