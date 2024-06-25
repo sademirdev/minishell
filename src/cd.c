@@ -70,7 +70,7 @@ static int	handle_relative_path(t_token *token, t_state *state)
 	temp_path[len] = '\0';
 	if (chdir(temp_path) == -1)
 	{
-		print_err(token->next->data, 1);
+		print_err("##handle_relative_path.if##", 1);
 		state->status = 1;
 		return (free(temp_path), 1);
 	}
@@ -80,6 +80,6 @@ static int	handle_relative_path(t_token *token, t_state *state)
 static int	handle_absolute_path(t_token *token)
 {
 	if (chdir(token->next->data) == -1)
-		return (print_err(token->next->data, 1), 1);
+		return (print_err("##handle_absolute_path.if##", 1), 1);
 	return (0);
 }

@@ -9,9 +9,3 @@
 -> `cd` with multiple arguments error, it gives error on linux but not on macos
 	cd $PWD hi
 	bash: cd: too many arguments
-
-Test 140: ❌ test_files
-mini exit code = 126
-bash exit code = 127
-mini error = (test_files No such file or directory )
-bash error = ( command not found)

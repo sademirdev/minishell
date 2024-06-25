@@ -5,35 +5,27 @@
 
 static bool	ft_is_digit(char *c);
 
-// static int print_err_with_status(const int err, t_state *state, int status)
-// {
-// 		print_err("exit", err);
-// 		state->status = status;
-// 		return (status);
-// }
-
 int	handle_exit(t_token *token, t_state *state)
 {
 	long	exit_code; // todo(sademir): is it ok
 
 	if (!token)
 	{
-		print_err("exit", EINVAL);
-		state->status = 1;
-		return (1);
+		print_err("invalid argument", state, 1);
+		exit(2); // dispose minishell before exit
 	}
 	if (token && token->next && token->next->next)
 	{
-		print_err("exit", EINVAL);
+		print_err("##handle_exit.if2##", EINVAL);
 		state->status = 1;
-		return (1);
+		return (FAILURE);
 	}
 	write (2, "exit\n", 5);
  	if (token->next && !ft_is_digit(token->next->data))
 	{
-		print_err("exit", ENOENT);
+		print_err("##handle_exit.if3##", ENOENT);
 		state->status = ENOENT;
-		return (1);
+		return (FAILURE);
 	}
 	if (token->next)
 	{
@@ -43,7 +35,7 @@ int	handle_exit(t_token *token, t_state *state)
 			return (state->status = (int)(256 + (exit_code % 256)), 1);
 		}
 		state->status = (int)(exit_code % 256);
-		return (1);
+		return (FAILURE);
 	}
 	else
 		state->status = 0;

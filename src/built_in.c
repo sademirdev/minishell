@@ -4,7 +4,7 @@ int	handle_built_in(t_token *token, t_state *state, t_cmd *cmd)
 {
 	int	result;
 
-	result = 0;
+	result = SUCCESS;
 	if (ft_strncmp(token->data, "echo", 5) == 0)
 		result = handle_echo(token, state, cmd);
 	else if (ft_strncmp(token->data, "cd", 3) == 0)

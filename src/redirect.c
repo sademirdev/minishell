@@ -7,11 +7,9 @@ int	set_red_file_fds(t_token *token, t_cmd *cmd, t_state *state)
 {
 	bool	has_last_heredoc;
 	t_token	*temp;
-	int		exit_code;
 
-	exit_code = 0;
 	if (!token)
-		return (1);
+		return (FAILURE);
 	has_last_heredoc = false;
 	temp = token;
 	while (temp)
@@ -25,38 +23,31 @@ int	set_red_file_fds(t_token *token, t_cmd *cmd, t_state *state)
 	while (token)
 	{
 		if (token->type == RED_L)
-		{
-			exit_code = handle_redl(token, cmd, has_last_heredoc, state);
-			if (exit_code != 0)
-				return (1);
-		}
+			if (handle_redl(token, cmd, has_last_heredoc, state) != SUCCESS)
+				return (FAILURE);
 		else if (token->type == RED_R)
-		{
-			exit_code = handle_redr(token, cmd, state);
-			if (exit_code != 0)
-				return (1);
-		}
+			if (handle_redr(token, cmd, state) != SUCCESS)
+				return (FAILURE);
 		else if (token->type == RED_RR)
-		{
-			exit_code = handle_redrr(token, cmd, state);
-			if (exit_code != 0)
-				return (1);
-		}
+			if (handle_redrr(token, cmd, state) != SUCCESS)
+				return (FAILURE);
 		token = token->next;
 		if (!token)
 			break ;
 	}
-	return (exit_code);
+	return (SUCCESS);
 }
 
-void	  set_heredoc_fds(t_token *token, t_cmd *cmd, int i)
+int	set_heredoc_fds(t_token *token, t_cmd *cmd, int i)
 {
 	if (!token)
-		return ;
+		return (FAILURE);
 	while (token)
 	{
 		if (token->type == RED_LL)
-			handle_redll(token, cmd, i);
+			if (handle_redll(token, cmd, i) != SUCCESS)
+				return (FAILURE);
 		token = token->next;
 	}
+	return (SUCCESS);
 }

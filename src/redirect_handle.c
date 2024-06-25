@@ -11,17 +11,11 @@ int	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc, t_state *stat
 		return (FAILURE);
 	temp = token->next;
 	if (temp && !temp->next && temp->prev && !temp->prev->prev)
-		return (1);
+		return (FAILURE);
 	if (access(temp->data, F_OK) == -1)
-	{
-		state->status = 0;
-		return (print_err(temp->data, ERR_FILE_NOT_FOUND), 1);
-	}
-	if (access(temp->data, R_OK) == -1) // todo(apancar): check access()
-	{
-		state->status = 2;
-		return (print_err(temp->data, ERR_FILE_PERMISSION_DENIED),1);
-	}
+		return (print_err("##handle_redl.if1##", state, 0), FAILURE);
+	if (access(temp->data, R_OK) == -1)
+		return (print_err("##handle_redl.if2##", state, 2), FAILURE);
 	if (has_last_heredoc)
 		close(open(temp->data, O_RDONLY));
 	else
@@ -30,9 +24,7 @@ int	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc, t_state *stat
 			close(cmd->in);
 		cmd->in = open(temp->data, O_RDONLY);
 	}
-	if (cmd->in == -1)
-		return (print_err(temp->data, ERR_FILE_OPEN), 1);
-	return (0);
+	return (SUCCESS);
 }
 
 int	handle_redll(t_token *token, t_cmd *cmd, int i)
@@ -42,10 +34,10 @@ int	handle_redll(t_token *token, t_cmd *cmd, int i)
 	int		fd[2];
 
 	if (!token || !token->next)
-		return (1);
+		return (FAILURE);
 	temp = token->next;
 	if (pipe(fd) == -1)
-		return (1);
+		return (FAILURE);
 	while (true)
 	{
 		buf = readline("> ");
@@ -58,10 +50,8 @@ int	handle_redll(t_token *token, t_cmd *cmd, int i)
 	close(fd[1]);
 	if (cmd->heredoc[i] != -2)
 		close(cmd->heredoc[i]);
-	cmd->heredoc[i] = fd[0]; //todo(apancar): dup2(cmd->heredoc[i],fd[0])
-	if (cmd->in == -1)
-		print_err(temp->data, ERR_FILE_OPEN);
-	return (0);
+	cmd->heredoc[i] = fd[0];
+	return (SUCCESS);
 }
 
 int	handle_redr(t_token *token, t_cmd *cmd, t_state *state)
@@ -69,24 +59,16 @@ int	handle_redr(t_token *token, t_cmd *cmd, t_state *state)
 	t_token	*temp;
 
 	if (!token)
-		return (1);
+		return (FAILURE);
 	temp = token->next;
 	if (!temp)
-		return (1);
+		return (FAILURE);
 	if (access(temp->data, F_OK) == 0 && access(temp->data, W_OK) == -1)
-	{
-		state->status = 2;
-		print_err(temp->data, ERR_FILE_PERMISSION_DENIED);
-		return (1);
-	}
+		return (print_err("##handle_redr.if1##", state, 2), FAILURE);
 	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (cmd->out == -1)
-	{
-		state->status = 1;
-		print_err(temp->data, ERR_FILE_NOT_FOUND);
-		return (1);
-	}
-	return (0);
+		return (print_err("##handle_redr.if2##", state, 1), FAILURE);
+	return (SUCCESS);
 }
 
 int	handle_redrr(t_token *token, t_cmd *cmd, t_state *state)
@@ -94,20 +76,12 @@ int	handle_redrr(t_token *token, t_cmd *cmd, t_state *state)
 	t_token	*temp;
 
 	if (!token)
-		return (1);
+		return (FAILURE);
 	temp = token->next;
 	if (access(temp->data, F_OK) == 0 && access(temp->data, W_OK) == -1)
-	{
-		state->status = 2;
-		print_err(temp->data, ERR_FILE_PERMISSION_DENIED);
-		return (1);
-	}
+		return (print_err("##handle_redrr.if1##", state, 2), FAILURE);
 	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (cmd->out == -1)
-	{
-		state->status = 1;
-		print_err(temp->data, ERR_FILE_OPEN);
-		return (1);
-	}
-	return (0);
+		return (print_err("##handle_redrr.if2##", state, 1), FAILURE);
+	return (SUCCESS);
 }

@@ -132,10 +132,12 @@ int	main(int argc, char ** argv, char **env)
 			continue ;
 		}
 		state->token_arr = run_lexer(state);
-		// token_print(state->token_arr);
 		if (state->token_arr && execute_prompt(state) != SUCCESS)
+		{
+			state->status = 1;
+			print_err("unknown error", state, state->status);
 			continue ;
-		// return (state_dispose(&state), 1); // todo(sademir): i remove this, because it quits the shell
+		}
 		dispose_prompt(state);
 	}
 	return (state_dispose(&state), 0);

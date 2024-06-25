@@ -63,7 +63,7 @@ int	handle_export(t_token *token, t_state *state, t_cmd *cmd)
 	if (temp->data[0] == '=' && temp->data[1] == '\0')
 	{
 		state->status = 1;
-		print_err(temp->data, ERR_FILE_NOT_VALID);
+		print_err("##handle_export.if1##", 1);
 		return(1);
 	}
 	var = ft_split(temp->data, '=');
@@ -71,13 +71,13 @@ int	handle_export(t_token *token, t_state *state, t_cmd *cmd)
 		return (1);
 	if (has_equal(var[0]) != 0 && has_only_num(var[0]) == 0)
 	{
-		print_err(var[0], ERR_FILE_NOT_VALID);
+		print_err("##handle_export.if2##", 1);
 		state->status = 1;
 		return (free(var), 1);
 	}
 	if (has_alnum_underscore_str(var[0]) != 0)
 	{
-		print_err(var[0], ERR_FILE_NOT_VALID);
+		print_err("not a valid identifier", 1);
 		state->status = 1;
 		return (free(var), 1);
 	}
@@ -160,7 +160,7 @@ int	handle_unset(t_token *token, t_state *state)
 	i = 0;
 	while (state->env[i])
 	{
-		if (ft_strncmp(state->env[i], var[0], len) == 0 
+		if (ft_strncmp(state->env[i], var[0], len) == 0
 			&& state->env[i][len] == '=')
 		{
 			if (var[0] && ft_strncmp(var[0], "PATH", 4) == 0)

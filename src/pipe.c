@@ -10,32 +10,37 @@ static int	w_exit_status(int status)
 	return ((status >> 8) & 0x000000ff);
 }
 
-void	handle_exec_error(t_token *token, t_cmd *cmd)
-{
-	struct stat	buf;
+// void	handle_exec_error(t_token *token, t_cmd *cmd)
+// {
+// 	struct stat	buf;
 
-	stat(token->data, &buf);
- 	if (S_ISDIR(buf.st_mode))
-	{
-		print_err(cmd->cmd, EISDIR);
-		exit(126);
-	}
-	else if (errno == EACCES || access(token->data, X_OK))
-	{
-		print_err(cmd->cmd, EACCES);
-		exit(126);
-	}
-	else if (access(token->data, F_OK))
-	{
-		print_err(cmd->cmd, ENOENT);
-		exit(127);
-	}
-	else
-	{
-		print_err(cmd->cmd, errno);
-		exit(127);
-	}
-}
+// 	stat(token->data, &buf);
+// 	if (!S_ISDIR(buf.st_mode) && ft_strncmp(cmd->cmd, token->data, ft_strlen(cmd->cmd) + 1) == 0)
+// 	{
+// 		print_err(cmd->cmd, ERR_CMD_NOT_FOUND);
+// 		exit(127);
+// 	}
+//  	else if (S_ISDIR(buf.st_mode))
+// 	{
+// 		print_err(cmd->cmd, EISDIR);
+// 		exit(126);
+// 	}
+// 	else if (errno == EACCES || access(token->data, X_OK))
+// 	{
+// 		print_err(cmd->cmd, EACCES);
+// 		exit(126);
+// 	}
+// 	else if (access(token->data, F_OK))
+// 	{
+// 		print_err(cmd->cmd, ENOENT);
+// 		exit(127);
+// 	}
+// 	else
+// 	{
+// 		print_err(cmd->cmd, errno);
+// 		exit(127);
+// 	}
+// }
 
 int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 {
@@ -43,37 +48,34 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 
 	if (!token || !state || !cmd)
 		return (FAILURE);
-	set_heredoc_fds(token, cmd, 0);
-	if (set_red_file_fds(token, cmd, state) == 1)
-	{
-		state->status = 1;
-		return (1);
-	}
-	set_cmd_arg_and_path(token, state, cmd);
+	if (set_heredoc_fds(token, cmd, 0) != SUCCESS)
+		return (FAILURE);
+	if (set_red_file_fds(token, cmd, state) != SUCCESS)
+		return (FAILURE);
+	if (set_cmd_arg_and_path(token, state, cmd) != SUCCESS)
+		return (FAILURE);
 	if (!cmd->cmd)
-		return (1);
-	if (cmd->in == -2)
+		return (FAILURE);
+	if (cmd->in == NONE)
 		cmd->in = cmd->heredoc[0];
 	if (token_is_built_in(token))
-		handle_built_in(token, state, cmd);
+	{
+		if (handle_built_in(token, state, cmd) != SUCCESS)
+			return (FAILURE);
+	}
 	else
 	{
 		pid = fork();
 		if (pid == -1)
-			return (perror("fork"), FAILURE); // todo(kkarakus): handle close;
+			return (FAILURE); // todo(kkarakus): handle close;
 		else if (pid == 0)
 		{
 			if (cmd->in != -2)
 				dup2(cmd->in, STDIN_FILENO);
 			if (cmd->out != -2)
 				dup2(cmd->out, STDOUT_FILENO);
-			if (ft_strncmp(cmd->cmd, token->data, ft_strlen(cmd->cmd) + 1) == 0)
-			{
-				print_err(cmd->cmd, ERR_CMD_NOT_FOUND);
-				exit(127);
-			}
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
-				handle_exec_error(token, cmd);
+				exit(1);
 		}
 		if (pid != 0)
 		{
@@ -87,15 +89,13 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 		{
 			free(cmd->heredoc);
 			cmd->heredoc = NULL;
-			// free(cmd->argv[0]); //todo(sademir): if it is open, it gives double free error (prompt = ca)
-			// cmd->argv[0] = NULL;
 			free(cmd->argv);
 			cmd->argv = NULL;
-			return (0);
+			return (SUCCESS);
 		}
-		return (free(cmd->heredoc), 0);
+		return (free(cmd->heredoc), SUCCESS);
 	}
-	return (0);
+	return (SUCCESS);
 }
 
 int	pipe_init(int (*fd)[2], int pipe_count)
@@ -114,20 +114,18 @@ int	pipe_init(int (*fd)[2], int pipe_count)
 	return (SUCCESS);
 }
 
-static void	handle_child_process(t_token **token_arr, t_state *state, int i, int (*fd)[2], t_cmd *cmd)
+static int	handle_child_process(t_token **token_arr, t_state *state, int i, int (*fd)[2], t_cmd *cmd)
 {
 	int	j;
 	int	arr_len;
 
 	arr_len = token_arr_len(token_arr);
 	if (!token_arr[i] || !state || arr_len < 1 || !cmd)
-		exit(1); // todo(sademir): handle error case
-	if (set_red_file_fds(token_arr[i], cmd, state) == 1)
-	{
-		state->status = 1;
-		exit (1);
-	}
-	set_cmd_arg_and_path(token_arr[i], state, cmd);
+		return (FAILURE);
+	if (set_red_file_fds(token_arr[i], cmd, state) != SUCCESS)
+		return (FAILURE);
+	if (set_cmd_arg_and_path(token_arr[i], state, cmd) != SUCCESS)
+		return (FAILURE);
 	j = 0;
 	while (j < arr_len - 1)
 	{
@@ -138,12 +136,12 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 		}
 		j++;
 	}
-	if (cmd->in == -2)
+	if (cmd->in == NONE)
 		cmd->in = cmd->heredoc[i];
 	if (i != 0)
 	{
 		close(fd[i - 1][1]);
-		if (cmd->in != -2)
+		if (cmd->in != NONE)
 			dup2(cmd->in, STDIN_FILENO);
 		else
 			dup2(fd[i - 1][0], STDIN_FILENO);
@@ -153,7 +151,7 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 	if (i != arr_len - 1)
 	{
 		close(fd[i][0]);
-		if (cmd->out != -2)
+		if (cmd->out != NONE)
 			dup2(cmd->out, STDOUT_FILENO);
 		else
 			dup2(fd[i][1], STDOUT_FILENO);
@@ -161,25 +159,9 @@ static void	handle_child_process(t_token **token_arr, t_state *state, int i, int
 	else
 		dup2(cmd->out, STDOUT_FILENO);
 	if (cmd_is_str_built_in(cmd))
-		handle_built_in(token_arr[i], state, cmd);
+		return (handle_built_in(token_arr[i], state, cmd));
 	else if (execve(cmd->cmd, cmd->argv, state->env) == -1)
-	{
-		if (errno == ENOENT)
-		{
-			print_err(cmd->cmd, errno);
-			exit(127);
-		}
-		else if (errno == EACCES)
-		{
-			print_err(cmd->cmd, errno);
-			exit(127);
-		}
-		else
-		{
-			print_err(cmd->cmd, ENOENT);
-			exit(127);
-		}
-	}
+		return (FAILURE);
 }
 
 int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_cmd *cmd)
@@ -196,15 +178,18 @@ int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_
 		return (FAILURE);
 	while (i < arr_len)
 	{
-		set_heredoc_fds(token_arr[i], cmd, i);
+		if (set_heredoc_fds(token_arr[i], cmd, i) != SUCCESS)
+			return (FAILURE);
 		pid = fork();
 		pids[i] = pid;
 		if (pid == -1)
-			return (perror("fork"), free(pids), FAILURE); // todo(kkarakus): handle close;
+			return (free(pids), FAILURE);
 		if (pid == 0)
 		{
-			handle_child_process(token_arr, state, i, fd, cmd);
-			exit (1);
+			if (handle_child_process(token_arr, state, i, fd, cmd) != SUCCESS)
+				exit(state->status);
+			else
+				exit(0);
 		}
 		else
 		{
@@ -232,15 +217,15 @@ int	cmd_init(t_cmd *cmd, int arr_len)
 
 	cmd->argv = NULL;
 	cmd->cmd = NULL;
-	cmd->in = -2;
-	cmd->out = -2;
-	cmd->heredoc = (int *)malloc(sizeof(int) * arr_len);
+	cmd->in = NONE;
+	cmd->out = NONE;
+	cmd->heredoc = (int *) malloc(sizeof(int) * arr_len);
 	if (!cmd->heredoc)
 		return (FAILURE);
 	i = 0;
 	while (i < arr_len)
 	{
-		cmd->heredoc[i] = -2;
+		cmd->heredoc[i] = NONE;
 		i++;
 	}
 	return (SUCCESS);
@@ -253,20 +238,20 @@ int	execute_prompt(t_state *state)
 	int		(*fd)[2];
 
 	if (!state || !state->token_arr)
-		return (1);
+		return (FAILURE);
 	arr_len = token_arr_len(state->token_arr);
 	if (arr_len < 1)
 		return (FAILURE);
-	if (cmd_init(&cmd, arr_len) != 0)
+	if (cmd_init(&cmd, arr_len) != SUCCESS)
 		return (FAILURE);
 	if (arr_len == 1)
 		return (pipe_single_exec(state->token_arr[0], state, &cmd));
 	fd = (int (*)[2]) malloc(sizeof(int [2]) * (arr_len - 1));
 	if (!fd)
-		return (free(cmd.heredoc), 1);
-	if (pipe_init(fd, arr_len - 1) != 0)
-		return (free(fd), free(cmd.heredoc), 1);
-	if (fork_init(fd, arr_len, state->token_arr, state, &cmd) != 0)
-		return (free(fd), free(cmd.heredoc), 1);
+		return (free(cmd.heredoc), FAILURE);
+	if (pipe_init(fd, arr_len - 1) != SUCCESS)
+		return (free(fd), free(cmd.heredoc), FAILURE);
+	if (fork_init(fd, arr_len, state->token_arr, state, &cmd) != SUCCESS)
+		return (free(fd), free(cmd.heredoc), FAILURE);
 	return (SUCCESS);
 }

@@ -13,6 +13,8 @@
 # define SUCCESS 0
 # define FAILURE -1
 
+# define NONE -2
+
 // # define ERR_STR_PREFIX	"minishell: "
 # define ERR_STR_UNKNOWN "unknown error\n"
 
@@ -155,7 +157,7 @@ void				handle_dollar(t_token **root, t_state *state);
 int					handle_special_dollar(char **data, int start, int i,
 						t_state *state);
 void				handle_number_dollar(char **data, int start, int i);
-int	handle_regular_dollar(char **data, int start, int i, t_state *state);
+int					handle_regular_dollar(char **data, int start, int i, t_state *state);
 char				*create_data_from_dollar(char *data, char *value, int start,
 						int index);
 void				extract_dollar_key_values(char **data, t_state *state,
@@ -192,7 +194,7 @@ int					pipe_single_exec(t_token *token, t_state *state,
 						t_cmd *cmd);
 int					pipe_init(int (*fd)[2], int pipe_count);
 int					set_red_file_fds(t_token *token, t_cmd *cmd, t_state *state);
-void				set_cmd_arg_and_path(t_token *token, t_state *state,
+int					set_cmd_arg_and_path(t_token *token, t_state *state,
 						t_cmd *cmd);
 int					handle_redl(t_token *token, t_cmd *cmd,
 						bool has_last_heredoc, t_state *state);
@@ -200,8 +202,8 @@ int					handle_redr(t_token *token, t_cmd *cmd, t_state *state);
 int					handle_redrr(t_token *token, t_cmd *cmd, t_state *state);
 int					handle_redll(t_token *token, t_cmd *cmd, int i);
 
-void				print_err(const char *file, int err_flag);
-void				set_heredoc_fds(t_token *token, t_cmd *cmd, int i);
+void				print_err(const char *msg, t_state *state, const int status);
+int					set_heredoc_fds(t_token *token, t_cmd *cmd, int i);
 void				handle_signals(void);
 
 int					handle_built_in(t_token *token, t_state *state, t_cmd *cmd);

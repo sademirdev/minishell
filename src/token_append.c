@@ -117,7 +117,7 @@ char	**token_to_arg(t_token *token, char *cmd_path)
 
 	if (!token || !cmd_path)
 		return (NULL);
-	// todo (sademir): check return values of malloc 
+	// todo (sademir): check return values of malloc
 	argv = (char **) malloc(sizeof(char *) * (token_count_args(token) + 3)); // todo(sademir): when it is (+2) it throws "Heap buffer overflow" in token_to_arg
 	if (!argv)
 		return (NULL);
@@ -139,19 +139,20 @@ char	**token_to_arg(t_token *token, char *cmd_path)
 	return (argv);
 }
 
-void	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd *cmd)
+int	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd *cmd)
 {
 	char	**argv;
 	char	*cmd_path;
 
 	if (!token || !cmd || !state)
-		return ;
+		return (FAILURE);
 	cmd_path = find_path(token->data, state->env);
 	if (!cmd_path)
-		return ;
+		return (FAILURE);
 	argv = token_to_arg(token, cmd_path);
 	if (!argv)
-		return ;
+		return (FAILURE);
 	cmd->cmd = cmd_path;
 	cmd->argv = argv;
+	return (SUCCESS);
 }
