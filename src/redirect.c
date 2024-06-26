@@ -5,7 +5,7 @@
 
 int	set_red_file_fds(t_token *token, t_cmd *cmd, t_state *state)
 {
-	bool	has_last_heredoc;
+	bool		has_last_heredoc;
 	t_token	*temp;
 
 	if (!token)
@@ -23,14 +23,20 @@ int	set_red_file_fds(t_token *token, t_cmd *cmd, t_state *state)
 	while (token)
 	{
 		if (token->type == RED_L)
+		{
 			if (handle_redl(token, cmd, has_last_heredoc, state) != SUCCESS)
 				return (FAILURE);
+		}
 		else if (token->type == RED_R)
+		{
 			if (handle_redr(token, cmd, state) != SUCCESS)
 				return (FAILURE);
+		}
 		else if (token->type == RED_RR)
+		{
 			if (handle_redrr(token, cmd, state) != SUCCESS)
 				return (FAILURE);
+		}
 		token = token->next;
 		if (!token)
 			break ;

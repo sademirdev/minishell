@@ -6,28 +6,28 @@
 static bool	is_relative_path(const char *path);
 static bool	is_absolute_path(const char *path);
 static int	handle_relative_path(t_token *token, t_state *state);
-static int	handle_absolute_path(t_token *token);
+static int	handle_absolute_path(t_token *token, t_state *state);
 
 int	handle_cd(t_token *token, t_state *state)
 {
 	const char	*home_path;
 
 	if (!token)
-		return (1);
+		return (FAILURE);
 	home_path = getenv("HOME");
 	if (!home_path)
-		return (write(2, "cd: HOME not set\n", 17), 1); // todo: use print_err instead
+		return (print_exec_err(state, token, 113, ERR_HOME_NOT_SET));
 	if (!token->next)
 	{
 		if (chdir(home_path) == -1)
-			return (write(2, "cd: cannot change directory\n", 17), 1);
-		return (0);
+			return (print_exec_err(state, token, 114, ERR_CANT_CHANGE_DIR));
+		return (SUCCESS);
 	}
 	if (is_relative_path(token->next->data))
 		return (handle_relative_path(token, state));
 	else if (is_absolute_path(token->next->data))
-		return (handle_absolute_path(token));
-	return (0);
+		return (handle_absolute_path(token, state));
+	return (FAILURE);
 }
 
 static bool	is_relative_path(const char *path)
@@ -57,29 +57,25 @@ static int	handle_relative_path(t_token *token, t_state *state)
 
 	len = 0;
 	if (!getcwd(cwd, PATH_MAX))
-		return (1);
+		return (FAILURE);
 	len = ft_strlen(cwd) + ft_strlen(token->next->data) + 1;
 	if (len >= PATH_MAX)
-		return (1);
+		return (FAILURE);
 	temp_path = malloc(sizeof(char) * (len + 1));
 	if (!temp_path)
-		return (1);
+		return (FAILURE);
 	ft_strlcpy(temp_path, cwd, ft_strlen(cwd) + 1);
 	temp_path[ft_strlen(cwd)] = '/';
 	ft_strlcpy(temp_path + ft_strlen(cwd) + 1, token->next->data, len);
 	temp_path[len] = '\0';
 	if (chdir(temp_path) == -1)
-	{
-		print_err("##handle_relative_path.if##", 1);
-		state->status = 1;
-		return (free(temp_path), 1);
-	}
-	return (free(temp_path), 0);
+		return (free(temp_path), print_exec_err(state, token, 120, ERR_CANT_CHANGE_DIR));
+	return (free(temp_path), SUCCESS);
 }
 
-static int	handle_absolute_path(t_token *token)
+static int	handle_absolute_path(t_token *token, t_state *state)
 {
 	if (chdir(token->next->data) == -1)
-		return (print_err("##handle_absolute_path.if##", 1), 1);
-	return (0);
+		return (print_exec_err(state, token, 120, ERR_CANT_CHANGE_DIR));
+	return (SUCCESS);
 }

@@ -12,14 +12,22 @@
 
 # define SUCCESS 0
 # define FAILURE -1
+# define HANDLED -2
 
 # define NAFD -2
 
-// # define ERR_STR_PREFIX	"minishell: "
-# define ERR_STR_UNKNOWN "unknown error\n"
+# define ECMDNF 10001
+# define ERR_HOME_NOT_SET 10002
+# define ERR_CMD_NOT_FOUND 10003
+# define ERR_CANT_CHANGE_DIR 10004
+# define ERR_NOT_A_VALID_IDENTIFIER 10005
+# define ERR_OTHER 20000
 
-# define ERR_CMD_NOT_FOUND 127
+# define ERR_STR_UNEXPECTED "unexpected error\n"
 # define ERR_STR_CMD_NOT_FOUND "command not found\n"
+# define ERR_STR_HOME_NOT_SET "HOME not set\n"
+# define ERR_STR_CANT_CHANGE_DIR 10004 "cannot change directory\n"
+# define ERR_STR_NOT_A_VALID_IDENTIFIER "not a valid identifier\n"
 
 # define PROMPT "minishell: "
 
@@ -88,7 +96,7 @@ typedef struct s_state
 	char			**argv;
 	char			**env;
 	char			*prompt;
-	t_token			**token_arr;
+	t_token		**token_arr;
 	int				cmd_ct;
 	int				err;
 }					t_state;
@@ -229,7 +237,13 @@ void				state_dispose(t_state **state);
 void				dispose_prompt(t_state *state);
 int					pass_data(char *prompt, int *i);
 char				**copy_env(char **env);
-int					has_equal(char *str);
 int					ft_atoi(const char *str);
+
+
+void	print_unknown_error(t_state *state);
+int		print_exec_err(t_state *state, const t_token *token, int status, int err);
+char	*ft_strchr(const char *s, int c);
+char	*get_cmd_path(t_token *token, t_state *state);
+void	fatal(const char *msg, int err);
 
 #endif

@@ -13,9 +13,9 @@ int	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc, t_state *stat
 	if (temp && !temp->next && temp->prev && !temp->prev->prev)
 		return (FAILURE);
 	if (access(temp->data, F_OK) == -1)
-		return (print_err("##handle_redl.if1##", state, 0), FAILURE);
+		return (print_exec_err(state, token, 100, EACCES)); // todo(sademir): check status and error values
 	if (access(temp->data, R_OK) == -1)
-		return (print_err("##handle_redl.if2##", state, 2), FAILURE);
+		return (print_exec_err(state, token, 101, EACCES)); // todo(sademir): check status and error values
 	if (has_last_heredoc)
 		close(open(temp->data, O_RDONLY));
 	else
@@ -64,10 +64,10 @@ int	handle_redr(t_token *token, t_cmd *cmd, t_state *state)
 	if (!temp)
 		return (FAILURE);
 	if (access(temp->data, F_OK) == 0 && access(temp->data, W_OK) == -1)
-		return (print_err("##handle_redr.if1##", state, 2), FAILURE);
+		return (print_exec_err(state, token, 102, EACCES));
 	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (cmd->out == -1)
-		return (print_err("##handle_redr.if2##", state, 1), FAILURE);
+		return (print_exec_err(state, token, 103, ENOENT));
 	return (SUCCESS);
 }
 
@@ -79,9 +79,9 @@ int	handle_redrr(t_token *token, t_cmd *cmd, t_state *state)
 		return (FAILURE);
 	temp = token->next;
 	if (access(temp->data, F_OK) == 0 && access(temp->data, W_OK) == -1)
-		return (print_err("##handle_redrr.if1##", state, 2), FAILURE);
+		return (print_exec_err(state, token, 104, EACCES));
 	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (cmd->out == -1)
-		return (print_err("##handle_redrr.if2##", state, 1), FAILURE);
+		return (print_exec_err(state, token, 105, ENOENT));
 	return (SUCCESS);
 }

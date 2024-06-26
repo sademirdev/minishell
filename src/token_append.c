@@ -146,7 +146,7 @@ int	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd *cmd)
 
 	if (!token || !cmd || !state)
 		return (FAILURE);
-	cmd_path = find_path(token->data, state->env);
+	cmd_path = get_cmd_path(token, state);
 	if (!cmd_path)
 		return (FAILURE);
 	argv = token_to_arg(token, cmd_path);
