@@ -61,11 +61,11 @@ int	handle_export(t_token *token, t_state *state, t_cmd *cmd)
 	var = NULL;
 	temp = token->next;
 	if (temp->data[0] == '=' && temp->data[1] == '\0')
-		return (FAILURE);
+		return (print_exec_err(state, token, 1, ERR_NOT_A_VALID_IDENTIFIER));
 	var = ft_split(temp->data, '=');
 	if (!var)
 		return (FAILURE);
-	if (has_equal(var[0]) || has_only_num(var[0]))
+	if (has_equal(var[0]) && has_only_num(var[0]))
 		return (free(var), print_exec_err(state, token, 1, ERR_NOT_A_VALID_IDENTIFIER));
 	if (has_alnum_underscore_str(var[0]))
 		return (free(var), print_exec_err(state, token, 1, ERR_NOT_A_VALID_IDENTIFIER));

@@ -69,7 +69,7 @@ static int	handle_relative_path(t_token *token, t_state *state)
 	ft_strlcpy(temp_path + ft_strlen(cwd) + 1, token->next->data, len);
 	temp_path[len] = '\0';
 	if (chdir(temp_path) == -1)
-		return (free(temp_path), print_exec_err(state, token, 120, ERR_CANT_CHANGE_DIR));
+		return (free(temp_path), print_exec_err(state, token, 1, ERR_NO_SUCH_FILE_OR_DIR));
 	return (free(temp_path), SUCCESS);
 }
 

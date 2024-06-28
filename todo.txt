@@ -9,3 +9,6 @@
 -> `cd` with multiple arguments error, it gives error on linux but not on macos
 	cd $PWD hi
 	bash: cd: too many arguments
+
+-> export
+-> handle changing $PWD on `cd`

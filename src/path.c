@@ -34,48 +34,6 @@ void	dispose_paths(char **paths)
 	free(paths);
 }
 
-char *join_path(char **paths, char *command)
-{
-	char	*cmd_path;
-	char	*temp;
-	int		i;
-
-	if (!paths || !command)
-		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		temp = ft_strjoin(paths[i], "/", false);
-		if (!temp)
-			return (dispose_paths(paths), NULL);
-		cmd_path = ft_strjoin(temp, command, false);
-		if (!cmd_path)
-			return (dispose_paths(paths), NULL);
-		if (access(cmd_path, X_OK) == 0)
-			return (dispose_paths(paths), cmd_path);
-		free(cmd_path);
-		i++;
-	}
-	return (command);
-}
-
-char	*find_path(char *command, char **env)
-{
-	char	**paths;
-	char	*path;
-
-	if (!command || command[0] == '\0')
-		return (NULL);
-	path = get_env_path_arr_as_str(env);
-	if (!path)
-		return (NULL);
-	paths = ft_split(path, ':');
-	if (!paths)
-		return (NULL);
-	free(path);
-	return (join_path(paths, command));
-}
-
 char	*get_cmd_absolute_path(t_token *token, t_state *state)
 {
 	struct stat	buf;
@@ -84,11 +42,11 @@ char	*get_cmd_absolute_path(t_token *token, t_state *state)
 	if (errno == EACCES)
 		return (print_exec_err(state, token, 106, EACCES), NULL);
 	if (S_ISDIR(buf.st_mode))
-		return (print_exec_err(state, token, 107, EISDIR), NULL);
+		return (print_exec_err(state, token, 126, ERR_IS_DIR), NULL);
 	if (access(token->data, F_OK))
-		return (print_exec_err(state, token, 108, ENOENT), NULL);
+		return (print_exec_err(state, token, 127, ERR_NO_SUCH_FILE_OR_DIR), NULL);
 	if (access(token->data, X_OK))
-		return (print_exec_err(state, token, 109, EACCES), NULL);
+		return (print_exec_err(state, token, 126, ERR_PERMISSION_DENIED), NULL);
 	return (token->data);
 }
 
@@ -116,7 +74,9 @@ char *get_cmd_relative_path(t_token *token, t_state *state, char **path_arr)
 		free(cmd_path);
 		i++;
 	}
-	return (print_exec_err(state, token, 0, ERR_OTHER), NULL);
+	if (token_is_built_in(token))
+		return (token->data);
+	return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND), NULL);
 }
 
 char	*get_cmd_path(t_token *token, t_state *state)

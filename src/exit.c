@@ -12,10 +12,9 @@ int	handle_exit(t_token *token, t_state *state)
 	if (!token)
 		fatal("invalid argument\n", 2);
 	if (token && token->next && token->next->next)
-		return (FAILURE);
-	write(2, "exit\n", 5);
- 	if (token->next && !ft_is_digit(token->next->data))
-		return (FAILURE);
+		return (print_exec_err(state, token, 1, ERR_TOO_MANY_ARG));
+	if (token->next && !ft_is_digit(token->next->data))
+		return (print_exec_err(state, token, 255, ERR_NUMERIC_ARG_REQUIRED));
 	if (token->next)
 	{
 		exit_code = ft_atoi(token->next->data);
