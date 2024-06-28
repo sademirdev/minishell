@@ -42,12 +42,27 @@ static int	w_exit_status(int status)
 // 	}
 // }
 
+bool	token_has_cmd(t_token *token)
+{
+	if (!token)
+		return (false);
+	while (token)
+	{
+		if (token->type == CMD)
+			return (true);
+		token = token->next;
+	}
+	return (false);
+}
+
 int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 {
 	int			pid;
 
 	if (!token || !state || !cmd)
 		return (FAILURE);
+	if (token_has_cmd(token) == false)
+		return (SUCCESS);
 	if (set_heredoc_fds(token, cmd, 0) != SUCCESS)
 		return (FAILURE);
 	if (set_red_file_fds(token, cmd, state) != SUCCESS)
