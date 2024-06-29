@@ -44,7 +44,7 @@ static bool	validate_export_value(t_state *state, t_token *arg)
 	return (true);
 }
 
-static int	set_env_value(t_state *state, char *key)
+int	set_env_value(t_state *state, char *key)
 {
 	char	*data;
 	int		i;

@@ -8,6 +8,23 @@ static bool	is_absolute_path(const char *path);
 static int	handle_relative_path(t_token *token, t_state *state);
 static int	handle_absolute_path(t_token *token, t_state *state);
 
+static int	set_pwd_buffer(t_state *state)
+{
+	char	buffer[4096];
+
+	if (!state)
+		return (FAILURE);
+	buffer[0] = 'P';
+	buffer[1] = 'W';
+	buffer[2] = 'D';
+	buffer[3] = '=';
+	getcwd(buffer + 4, 1024);
+	state->cwd = ft_strdup(buffer);
+	if (!state->cwd)
+		return (FAILURE);
+	return (SUCCESS);
+}
+
 int	handle_cd(t_token *token, t_state *state)
 {
 	const char	*home_path;
@@ -16,11 +33,15 @@ int	handle_cd(t_token *token, t_state *state)
 		return (FAILURE);
 	home_path = getenv("HOME");
 	if (!home_path)
-		return (print_exec_err(state, token, 113, ERR_HOME_NOT_SET));
+		return (print_exec_err(state, token, 1, ERR_HOME_NOT_SET));
 	if (!token->next)
 	{
 		if (chdir(home_path) == -1)
 			return (print_exec_err(state, token, 114, ERR_CANT_CHANGE_DIR));
+		if (set_pwd_buffer(state) != SUCCESS)
+			return (FAILURE);
+		if (set_env_value(state, state->cwd) != SUCCESS)
+			return (FAILURE);
 		return (SUCCESS);
 	}
 	if (is_relative_path(token->next->data))
@@ -70,6 +91,10 @@ static int	handle_relative_path(t_token *token, t_state *state)
 	temp_path[len] = '\0';
 	if (chdir(temp_path) == -1)
 		return (free(temp_path), print_exec_err(state, token, 1, ERR_NO_SUCH_FILE_OR_DIR));
+	if (set_pwd_buffer(state) != SUCCESS)
+		return (FAILURE);
+	if (set_env_value(state, cwd))
+		return (FAILURE);
 	return (free(temp_path), SUCCESS);
 }
 
@@ -77,5 +102,9 @@ static int	handle_absolute_path(t_token *token, t_state *state)
 {
 	if (chdir(token->next->data) == -1)
 		return (print_exec_err(state, token, 120, ERR_CANT_CHANGE_DIR));
+	if (set_pwd_buffer(state) != SUCCESS)
+		return (FAILURE);
+	if (set_env_value(state, state->cwd))
+		return (FAILURE);
 	return (SUCCESS);
 }

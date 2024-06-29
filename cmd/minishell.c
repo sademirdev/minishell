@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include <unistd.h>
 #include <stdlib.h>
 
 char	*_token_type_tostr(t_token_type type)
@@ -107,6 +108,7 @@ static t_state	*state_init(char **argv, char **env)
 	state->status = 0;
 	state->cmd_ct = 0;
 	state->err = 0;
+	state->cwd = NULL;
 	return (state);
 }
 

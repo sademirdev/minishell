@@ -115,6 +115,7 @@ typedef struct s_state
 	t_token		**token_arr;
 	int				cmd_ct;
 	int				err;
+	char			*cwd;
 }					t_state;
 
 typedef struct s_cmd
@@ -266,5 +267,7 @@ void	dprintln(int fd, const char *s);
 bool	is_al_underscore(char c);
 char	**str_arr_append(char **str_arr, char *data);
 char	**str_arr_remove(char **str_arr, char *key);
+int		set_env_value(t_state *state, char *key);
+
 
 #endif
