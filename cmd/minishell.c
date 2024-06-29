@@ -132,12 +132,10 @@ int	main(int argc, char ** argv, char **env)
 			continue ;
 		}
 		state->token_arr = run_lexer(state);
-		if (state->token_arr && execute_prompt(state) != SUCCESS)
-		{
-			state->status = 1;
-			print_err("unknown error", state, state->status);
-			continue ;
-		}
+		if (state->token_arr && execute_prompt(state) == SUCCESS)
+			state->status = 0;
+		else
+			print_unknown_error(state);
 		dispose_prompt(state);
 	}
 	return (state_dispose(&state), 0);

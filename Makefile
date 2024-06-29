@@ -25,7 +25,7 @@ RLFLAGS			= -L./lib/readline/lib -I./lib/readline/include/readline -lreadline
 DIR				= $(shell echo $(PWD))
 READLINE		= ./lib/readline/lib/libreadline.a
 
-F_INFO_LIB_LINUX = -ltinfo
+# F_INFO_LIB_LINUX = -ltinfo
 
 MURMUR_EVAL = $(LIB)/murmur.eval-master/murmur_eval/build/libmurmureval.a
 # os = ${shell uname -s}
@@ -33,7 +33,6 @@ MURMUR_EVAL = $(LIB)/murmur.eval-master/murmur_eval/build/libmurmureval.a
 # NPROCS = $(shell sysctl -n hw.ncpu)
 # else ifeq '$(os)' 'Linux'
 # NPROCS = $(shell nproc)
-# endif
 # MAKEFLAGS += -j$(NPROCS)
 
 w = 1

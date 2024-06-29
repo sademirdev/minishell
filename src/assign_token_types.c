@@ -50,7 +50,7 @@ void	assign_token_types(t_token *token)
 	assign_token_types_file(token);
 	while (token && token->type != NONE && token->type != ARG)
 		token = token->next;
-	if (token)
+	if (token && token->type != RED_RR)
 	{
 		token->type = CMD;
 		token = token->next;

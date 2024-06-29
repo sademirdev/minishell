@@ -12,14 +12,34 @@
 
 # define SUCCESS 0
 # define FAILURE -1
+# define HANDLED -2
 
 # define NAFD -2
 
-// # define ERR_STR_PREFIX	"minishell: "
-# define ERR_STR_UNKNOWN "unknown error\n"
+# define ECMDNF 10001
+# define ERR_HOME_NOT_SET 10002
+# define ERR_CMD_NOT_FOUND 10003
+# define ERR_CANT_CHANGE_DIR 10004
+# define ERR_OTHER 30001
+# define ERR_NO_SUCH_FILE_OR_DIR 30002
+# define ERR_NUMERIC_ARG_REQUIRED 30003
+# define ERR_TOO_MANY_ARG 30004
+# define ERR_NOT_A_VALID_IDENTIFIER 30005
+# define ERR_PERMISSION_DENIED 30006
+# define ERR_PERMISSION_DENIED_BROKEN_PIPE 30007
+# define ERR_IS_DIR 30008
 
-# define ERR_CMD_NOT_FOUND 127
+# define ERR_STR_UNEXPECTED "unexpected error\n"
 # define ERR_STR_CMD_NOT_FOUND "command not found\n"
+# define ERR_STR_HOME_NOT_SET "HOME not set\n"
+# define ERR_STR_CANT_CHANGE_DIR 10004 "cannot change directory\n"
+# define ERR_STR_NOT_A_VALID_IDENTIFIER " not a valid identifier\n"
+# define ERR_STR_NO_SUCH_FILE_OR_DIR " No such file or directory\n"
+# define ERR_STR_NUMERIC_ARG_REQUIRED " numeric argument required\n"
+# define ERR_STR_TOO_MANY_ARG " too many arguments\n"
+# define ERR_STR_PERMISSION_DENIED " Permission denied\n"
+# define ERR_STR_PERMISSION_DENIED_BROKEN_PIPE " Permission denied\n"
+# define ERR_STR_IS_DIR " is a directory\n"
 
 # define PROMPT "minishell: "
 
@@ -88,7 +108,7 @@ typedef struct s_state
 	char			**argv;
 	char			**env;
 	char			*prompt;
-	t_token			**token_arr;
+	t_token		**token_arr;
 	int				cmd_ct;
 	int				err;
 }					t_state;
@@ -229,7 +249,13 @@ void				state_dispose(t_state **state);
 void				dispose_prompt(t_state *state);
 int					pass_data(char *prompt, int *i);
 char				**copy_env(char **env);
-int					has_equal(char *str);
 int					ft_atoi(const char *str);
+
+
+void	print_unknown_error(t_state *state);
+int		print_exec_err(t_state *state, const t_token *token, int status, int err);
+char	*ft_strchr(const char *s, int c);
+char	*get_cmd_path(t_token *token, t_state *state);
+void	fatal(const char *msg, int err);
 
 #endif

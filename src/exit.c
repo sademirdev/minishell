@@ -7,40 +7,22 @@ static bool	ft_is_digit(char *c);
 
 int	handle_exit(t_token *token, t_state *state)
 {
-	long	exit_code; // todo(sademir): is it ok
+	int	exit_code;
 
 	if (!token)
-	{
-		print_err("invalid argument", state, 1);
-		exit(2); // dispose minishell before exit
-	}
+		fatal("invalid argument\n", 2);
 	if (token && token->next && token->next->next)
-	{
-		print_err("##handle_exit.if2##", EINVAL);
-		state->status = 1;
-		return (FAILURE);
-	}
-	write (2, "exit\n", 5);
- 	if (token->next && !ft_is_digit(token->next->data))
-	{
-		print_err("##handle_exit.if3##", ENOENT);
-		state->status = ENOENT;
-		return (FAILURE);
-	}
+		return (print_exec_err(state, token, 1, ERR_TOO_MANY_ARG));
+	if (token->next && !ft_is_digit(token->next->data))
+		return (print_exec_err(state, token, 255, ERR_NUMERIC_ARG_REQUIRED));
 	if (token->next)
 	{
 		exit_code = ft_atoi(token->next->data);
 		if (exit_code < 0)
-		{
-			return (state->status = (int)(256 + (exit_code % 256)), 1);
-		}
-		state->status = (int)(exit_code % 256);
-		return (FAILURE);
+			return (print_exec_err(state, token, (int)(256 + (exit_code % 256)), ERR_OTHER));
+		return (print_exec_err(state, token, (int)(exit_code % 256), ERR_OTHER));
 	}
-	else
-		state->status = 0;
-	// free all the malloced memory
-	return (0);
+	return (SUCCESS);
 }
 
 static bool	ft_is_digit(char *c)

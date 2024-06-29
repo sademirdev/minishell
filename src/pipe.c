@@ -42,12 +42,27 @@ static int	w_exit_status(int status)
 // 	}
 // }
 
+bool	token_has_cmd(t_token *token)
+{
+	if (!token)
+		return (false);
+	while (token)
+	{
+		if (token->type == CMD)
+			return (true);
+		token = token->next;
+	}
+	return (false);
+}
+
 int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 {
 	int			pid;
 
 	if (!token || !state || !cmd)
 		return (FAILURE);
+	if (token_has_cmd(token) == false)
+		return (SUCCESS);
 	if (set_heredoc_fds(token, cmd, 0) != SUCCESS)
 		return (FAILURE);
 	if (set_red_file_fds(token, cmd, state) != SUCCESS)
@@ -70,12 +85,12 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 			return (FAILURE); // todo(kkarakus): handle close;
 		else if (pid == 0)
 		{
-			if (cmd->in != -2)
+			if (cmd->in != NAFD)
 				dup2(cmd->in, STDIN_FILENO);
-			if (cmd->out != -2)
+			if (cmd->out != NAFD)
 				dup2(cmd->out, STDOUT_FILENO);
 			if (execve(cmd->cmd, cmd->argv, state->env) == -1)
-				exit(1);
+				exit(state->status);
 		}
 		if (pid != 0)
 		{
@@ -161,14 +176,15 @@ static int	handle_child_process(t_token **token_arr, t_state *state, int i, int 
 	if (cmd_is_str_built_in(cmd))
 		return (handle_built_in(token_arr[i], state, cmd));
 	else if (execve(cmd->cmd, cmd->argv, state->env) == -1)
-		return (FAILURE);
+		exit(state->status);
+	return (SUCCESS);
 }
 
 int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_cmd *cmd)
 {
-	int	i;
-	pid_t	pid;
 	pid_t	*pids;
+	pid_t	pid;
+	int		i;
 
 	i = 0;
 	if (!fd || arr_len < 0)
@@ -181,9 +197,9 @@ int	fork_init(int (*fd)[2], int arr_len, t_token **token_arr, t_state *state, t_
 		if (set_heredoc_fds(token_arr[i], cmd, i) != SUCCESS)
 			return (FAILURE);
 		pid = fork();
-		pids[i] = pid;
 		if (pid == -1)
 			return (free(pids), FAILURE);
+		pids[i] = pid;
 		if (pid == 0)
 		{
 			if (handle_child_process(token_arr, state, i, fd, cmd) != SUCCESS)
