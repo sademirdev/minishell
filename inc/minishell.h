@@ -264,6 +264,7 @@ void	fatal(const char *msg, int err);
 void	dprint(int fd, const char *s);
 void	dprintln(int fd, const char *s);
 bool	is_al_underscore(char c);
-char	 **str_arr_append(char **str_arr, char *data);
+char	**str_arr_append(char **str_arr, char *data);
+char	**str_arr_remove(char **str_arr, char *key);
 
 #endif
