@@ -24,7 +24,7 @@ static bool	validate_export_value(t_state *state, t_token *arg)
 {
 	int	i;
 
-	if (!arg)
+	if (!arg || !state)
 		return (false);
 	while (arg)
 	{
@@ -46,14 +46,13 @@ static bool	validate_export_value(t_state *state, t_token *arg)
 
 static int	set_env_value(t_state *state, char *key)
 {
-	char	**temp;
 	char	*data;
 	int		i;
 	int		len;
 	bool	new;
 
 	if (!state || !state->env || !key)
-		return (-64);
+		return (FAILURE);
 	new = true;
 	i = 0;
 	while (state->env[i])
@@ -69,14 +68,12 @@ static int	set_env_value(t_state *state, char *key)
 	}
 	if (new)
 	{
-		temp = state->env;
 		data = ft_strdup(key);
 		if (!data)
 			return (FAILURE);
 		state->env = str_arr_append(state->env, data);
 		if (!state->env)
 			return (free(data), FAILURE);
-		free(temp);
 	}
 	return (SUCCESS);
 }

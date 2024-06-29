@@ -279,5 +279,35 @@ char **str_arr_append(char **str_arr, char *data)
 	}
 	new_str_arr[i++] = data;
 	new_str_arr[i] = NULL;
+	free(str_arr);
+	return (new_str_arr);
+}
+
+char	**str_arr_remove(char **str_arr, char *key)
+{
+	char	**new_str_arr;
+	int		i;
+	int		len;
+
+	if (!str_arr || !key)
+		return (NULL);
+	i = 0;
+	while (str_arr[i])
+		i++;
+	len = i;
+	new_str_arr = (char **) malloc(sizeof(char *) * len);
+	if (!new_str_arr)
+		return (NULL);
+	i = 0;
+	while (str_arr[i])
+	{
+		if (ft_strncmp(str_arr[i], key, ft_strlen(key)) == 0 && str_arr[i][ft_strlen(key)] == '=')
+			free(str_arr[i]);
+		else
+			new_str_arr[i] = str_arr[i];
+		i++;
+	}
+	new_str_arr[i] = NULL;
+	free(str_arr);
 	return (new_str_arr);
 }

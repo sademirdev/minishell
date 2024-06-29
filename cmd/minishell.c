@@ -110,6 +110,17 @@ static t_state	*state_init(char **argv, char **env)
 	return (state);
 }
 
+static bool env_is_null(t_state *state, char **env)
+{
+	if (!state || !state->env)
+	{
+		state->env = copy_env(env);
+		if (!state->env)
+			return (true);
+	}
+	return (false);
+}
+
 int	main(int argc, char ** argv, char **env)
 {
 	t_state	*state;
@@ -120,6 +131,8 @@ int	main(int argc, char ** argv, char **env)
 		return (argc);
 	while (true)
 	{
+		if (env_is_null(state, env))
+			continue ;
 		state->prompt = readline(PROMPT);
 		if (!state->prompt)
 			break ;
