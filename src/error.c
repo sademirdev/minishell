@@ -16,6 +16,7 @@ void	print_unknown_error(t_state *state)
 		puterr("unknown error\n");
 	}
 }
+
 int	print_exec_err(t_state *state, const t_token *token, int status, int err)
 {
 	state->err = HANDLED;
