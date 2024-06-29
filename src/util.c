@@ -250,3 +250,34 @@ void dprintln(int fd, const char *s)
 	write(fd, s, ft_strlen(s));
 	dprint(fd, "\n");
 }
+
+bool	is_al_underscore(char c)
+{
+	return (is_alpha(c) || c == '_');
+}
+
+char **str_arr_append(char **str_arr, char *data)
+{
+	char	**new_str_arr;
+	int		i;
+	int		len;
+
+	if (!str_arr || !data)
+		return (NULL);
+	i = 0;
+	while (str_arr[i])
+		i++;
+	len = i;
+	new_str_arr = (char **) malloc(sizeof(char *) * (len + 2));
+	if (!new_str_arr)
+		return (NULL);
+	i = 0;
+	while (str_arr[i])
+	{
+		new_str_arr[i] = str_arr[i];
+		i++;
+	}
+	new_str_arr[i++] = data;
+	new_str_arr[i] = NULL;
+	return (new_str_arr);
+}

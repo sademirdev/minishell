@@ -47,6 +47,8 @@ int	print_exec_err(t_state *state, const t_token *token, int status, int err)
 		puterr(ERR_STR_PERMISSION_DENIED);
 	else if (err == ERR_PERMISSION_DENIED_BROKEN_PIPE)
 		puterr(ERR_STR_PERMISSION_DENIED_BROKEN_PIPE);
+	else if (err == ERR_NOT_VALID_IN_THIS_CTX)
+		puterr(ERR_STR_NOT_VALID_IN_THIS_CTX);
 	else if (err == ERR_IS_DIR)
 		puterr(ERR_STR_IS_DIR);
 	else
