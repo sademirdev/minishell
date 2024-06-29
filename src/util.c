@@ -1,5 +1,6 @@
 #include "minishell.h"
 #include <stdlib.h>
+#include <unistd.h>
 
 int	ft_strlen(const char *s)
 {
@@ -237,4 +238,15 @@ char	*ft_strchr(const char *s, int c)
 	if ((char) c == '\0')
 		return ((char *) &s[i]);
 	return (NULL);
+}
+
+void dprint(int fd, const char *s)
+{
+	write(fd, s, ft_strlen(s));
+}
+
+void dprintln(int fd, const char *s)
+{
+	write(fd, s, ft_strlen(s));
+	dprint(fd, "\n");
 }

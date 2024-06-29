@@ -35,6 +35,8 @@ int	print_exec_err(t_state *state, const t_token *token, int status, int err)
 	// todo(sademir): add other errors
 	else if (err == ERR_NOT_A_VALID_IDENTIFIER)
 		puterr(ERR_STR_NOT_A_VALID_IDENTIFIER);
+	else if (err == ERR_NOT_A_VALID_IDENTIFIER_J)
+		puterr(ERR_STR_NOT_A_VALID_IDENTIFIER);
 	else if (err == ERR_NO_SUCH_FILE_OR_DIR)
 		puterr(ERR_STR_NO_SUCH_FILE_OR_DIR);
 	else if (err == ERR_NUMERIC_ARG_REQUIRED)
