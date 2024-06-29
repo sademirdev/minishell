@@ -20,6 +20,9 @@
 # define ERR_HOME_NOT_SET 10002
 # define ERR_CMD_NOT_FOUND 10003
 # define ERR_CANT_CHANGE_DIR 10004
+# define ERR_NOT_A_VALID_IDENTIFIER_J 10005
+# define ERR_NOT_VALID_IN_THIS_CTX 10006
+
 # define ERR_OTHER 30001
 # define ERR_NO_SUCH_FILE_OR_DIR 30002
 # define ERR_NUMERIC_ARG_REQUIRED 30003
@@ -40,6 +43,7 @@
 # define ERR_STR_PERMISSION_DENIED " Permission denied\n"
 # define ERR_STR_PERMISSION_DENIED_BROKEN_PIPE " Permission denied\n"
 # define ERR_STR_IS_DIR " is a directory\n"
+# define ERR_STR_NOT_VALID_IN_THIS_CTX "not valid in this context\n"
 
 # define PROMPT "minishell: "
 
@@ -257,5 +261,9 @@ int		print_exec_err(t_state *state, const t_token *token, int status, int err);
 char	*ft_strchr(const char *s, int c);
 char	*get_cmd_path(t_token *token, t_state *state);
 void	fatal(const char *msg, int err);
+void	dprint(int fd, const char *s);
+void	dprintln(int fd, const char *s);
+bool	is_al_underscore(char c);
+char	 **str_arr_append(char **str_arr, char *data);
 
 #endif

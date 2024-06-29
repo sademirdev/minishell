@@ -10,5 +10,7 @@
 	cd $PWD hi
 	bash: cd: too many arguments
 
--> export
 -> handle changing $PWD on `cd`
+-> `ctrl d` signal does not works when there is a str that coming from user on prompt
+-> handle `~` in cd
+-> handle `-` flag in cd

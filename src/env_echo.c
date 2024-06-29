@@ -16,15 +16,9 @@ int	handle_env(t_token *token, t_state *state, t_cmd *cmd)
 	{
 		if (state->env[i] && token && token->next && (token->next->type == RED_R || token->next->type == RED_RR ||
 				token->next->type == PIPE))
-		{
-			write(cmd->out, state->env[i], ft_strlen(state->env[i]));
-			write(cmd->out, "\n", 1);
-		}
+			dprintln(cmd->out, state->env[i]);
 		else
-		{
-			write(1, state->env[i], ft_strlen(state->env[i]));
-			write(1, "\n", 1);
-		}
+			dprintln(STDOUT_FILENO, state->env[i]);
 		i++;
 	}
 	return (SUCCESS);
@@ -78,10 +72,6 @@ static char	*merge_args(t_token *arg, bool n)
 	return (buffer);
 }
 
-static void dprint(int fd, const char *s)
-{
-	write(fd, s, ft_strlen(s));
-}
 
 static bool	is_echo_n_flag(const char *flag)
 {
