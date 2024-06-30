@@ -42,6 +42,17 @@ char	**copy_env(char **env)
 	return (env_copy);
 }
 
+static bool	env_is_null(t_state *state, char **env)
+{
+	if (!state || !state->env)
+	{
+		state->env = copy_env(env);
+		if (!state->env)
+			return (true);
+	}
+	return (false);
+}
+
 static t_state	*state_init(char **argv, char **env)
 {
 	t_state	*state;
@@ -59,17 +70,6 @@ static t_state	*state_init(char **argv, char **env)
 	state->cmd_ct = 0;
 	state->err = 0;
 	return (state);
-}
-
-static bool	env_is_null(t_state *state, char **env)
-{
-	if (!state || !state->env)
-	{
-		state->env = copy_env(env);
-		if (!state->env)
-			return (true);
-	}
-	return (false);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -96,11 +96,7 @@ int	main(int argc, char **argv, char **env)
 			continue ;
 		}
 		state->token_arr = run_lexer(state);
-		if (state->token_arr && execute_prompt(state) == SUCCESS)
-			state->status = 0;
-		else
-			print_unknown_err(state);
-		dispose_prompt(state);
+		run_executor(state);
 	}
 	return (state_dispose(&state), 0);
 }

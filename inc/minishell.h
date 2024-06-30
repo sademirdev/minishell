@@ -125,9 +125,9 @@ typedef struct s_cmd
 
 typedef struct s_handle_cp_arg
 {
-	int			i;
-	int		(*fd)[2];
-	int			arr_len;
+	int	i;
+	int	(*fd)[2];
+	int	arr_len;
 }			t_handle_cp_arg;
 
 void					print_unknown_err(t_state *state);
@@ -178,7 +178,8 @@ int						token_append_meta_pipe(t_token **token);
 int						token_append_meta_redl(t_token **token);
 int						token_append_meta_redll(t_token **token);
 int						token_count_pipe(t_token *token);
-void					token_insertion(t_token **token, t_token *temp, t_token *sub_nodes);
+void					token_insertion(t_token **token, t_token *temp,
+							t_token *sub_nodes);
 t_token					**token_separate_by_pipe(t_token *token);
 t_token					*token_get_last(t_token *node);
 int						token_arr_len(t_token **token_arr);
@@ -250,17 +251,22 @@ int						pass_data(char *prompt, int *i);
 char					**copy_env(char **env);
 char					*get_cmd_path(t_token *token, t_state *state);
 int						token_count_args(t_token *token);
-int						handle_fds(t_token *token, t_cmd *cmd, t_state *state,
-	bool has_last_heredoc);
+int						handle_fds(t_token *token, t_cmd *cmd,
+							t_state *state, bool has_last_heredoc);
 char					**token_to_arg(t_token *token, char *cmd_path);
 int						count_unnecessary_quotes(char *data);
 bool					is_unnecessary_quote(int *quote, char data);
 bool					has_unnecessary_quotes(char *data);
-void					t_handle_cp_arg_init(t_handle_cp_arg *arg, int (*fd)[2], int i);
-void					handle_child_process(int (*fd)[2], t_state* state, t_cmd *cmd, int i);
-int						fork_init(t_state *state, t_cmd *cmd, int (*fd)[2], int arr_len);
+void					t_handle_cp_arg_init(t_handle_cp_arg *arg, int (*fd)[2],
+							int i);
+void					handle_child_process(int (*fd)[2], t_state *state,
+							t_cmd *cmd, int i);
+int						fork_init(t_state *state, t_cmd *cmd, int (*fd)[2],
+							int arr_len);
 int						w_exit_status(int status);
-int						exec_single_cmd(t_token *token, t_state *state, t_cmd *cmd);
+int						exec_single_cmd(t_token *token, t_state *state,
+							t_cmd *cmd);
 bool					token_has_cmd(t_token *token);
+void					run_executor(t_state *state);
 
 #endif

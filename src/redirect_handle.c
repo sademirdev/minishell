@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
-#include "readline/history.h"
 #include "readline/readline.h"
 
 int	handle_redl(t_token *token, t_cmd *cmd, \
@@ -15,7 +14,7 @@ int	handle_redl(t_token *token, t_cmd *cmd, \
 	if (!token)
 		return (FAILURE);
 	temp = token->next;
-	if (temp && !temp->next && temp->prev && !temp->prev->prev)
+	if (!temp && !temp->next)
 		return (FAILURE);
 	if (access(temp->data, F_OK) == -1)
 		return (print_exec_err(state, token, 1, ERR_NO_SUCH_FILE_OR_DIR));

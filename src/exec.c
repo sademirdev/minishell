@@ -5,6 +5,15 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
+void	run_executor(t_state *state)
+{
+	if (state->token_arr && execute_prompt(state) == SUCCESS)
+		state->status = 0;
+	else
+		print_unknown_err(state);
+	dispose_prompt(state);
+}
+
 static void	fork_init_exec_child_part_close(int (*fd)[2], int i)
 {
 	if (i != 0)
@@ -64,25 +73,6 @@ int	fork_init(t_state *state, t_cmd *cmd, int (*fd)[2], int arr_len)
 	return (free(pids), SUCCESS);
 }
 
-int	cmd_init(t_cmd *cmd, int arr_len)
-{
-	int32_t	i;
-
-	cmd->argv = NULL;
-	cmd->cmd = NULL;
-	cmd->in = NAFD;
-	cmd->out = NAFD;
-	cmd->heredoc = (int *) malloc(sizeof(int) * arr_len);
-	if (!cmd->heredoc)
-		return (FAILURE);
-	i = 0;
-	while (i < arr_len)
-	{
-		cmd->heredoc[i] = NAFD;
-		i++;
-	}
-	return (SUCCESS);
-}
 
 int	execute_prompt(t_state *state)
 {

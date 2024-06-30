@@ -31,12 +31,12 @@ int	exec_single_cmd_with_fork(t_cmd *cmd, t_state *state)
 
 int	exec_single_cmd_prepare_fds(t_token *token, t_state *state, t_cmd *cmd)
 {
-	if (token_has_cmd(token) == false)
-		return (SUCCESS);
 	if (set_heredoc_fds(token, cmd, 0) != SUCCESS)
 		return (FAILURE);
 	if (set_red_file_fds(token, cmd, state) != SUCCESS)
 		return (FAILURE);
+	if (token_has_cmd(token) == false)
+		return (SUCCESS);
 	if (set_cmd_arg_and_path(token, state, cmd) != SUCCESS)
 		return (FAILURE);
 	if (!cmd->cmd)

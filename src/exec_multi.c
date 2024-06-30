@@ -54,6 +54,8 @@ void	handle_child_process(int (*fd)[2], t_state *state, t_cmd *cmd, int i)
 		return (exit(state->status));
 	if (set_red_file_fds(state->token_arr[i], cmd, state) != SUCCESS)
 		return (exit(state->status));
+	if (token_has_cmd(state->token_arr[i]) == false)
+		return (exit(state->status));
 	if (set_cmd_arg_and_path(state->token_arr[i], state, cmd) != SUCCESS)
 		return (exit(state->status));
 	close_other_fds(i, fd, arr_len);
