@@ -268,5 +268,6 @@ int						exec_single_cmd(t_token *token, t_state *state,
 							t_cmd *cmd);
 bool					token_has_cmd(t_token *token);
 void					run_executor(t_state *state);
+int						cmd_init(t_cmd *cmd, int arr_len);
 
 #endif

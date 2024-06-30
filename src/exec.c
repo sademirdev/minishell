@@ -73,7 +73,6 @@ int	fork_init(t_state *state, t_cmd *cmd, int (*fd)[2], int arr_len)
 	return (free(pids), SUCCESS);
 }
 
-
 int	execute_prompt(t_state *state)
 {
 	int			arr_len;
