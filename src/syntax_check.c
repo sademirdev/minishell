@@ -23,7 +23,7 @@ void	syntax_other(t_state *shell, t_syntax *syntax, int *i)
 int	choose(t_state *shell, t_syntax *syntax, int *i)
 {
 	(void)(((shell->prompt[*i] == '\'') && (syntax_squote(syntax), 1)) \
-	|| ((shell->prompt[*i] == '"') && (syntax_dquote(syntax), 1)));
+		|| ((shell->prompt[*i] == '"') && (syntax_dquote(syntax), 1)));
 	if (syntax->duplex)
 		return ((*i)++, 1);
 	if ((shell->prompt[*i] == '>' && shell->prompt[(*i) + 1] != '>') || \
@@ -69,18 +69,18 @@ int	syntax_check(t_state *shell)
 		if (result == 2)
 			break ;
 	}
-    return ((syntax.duplex << 0) | (syntax.simplex << 8) | \
-        (syntax.zero_pipe << 16) | (syntax.undefined << 24));
+  return ((syntax.duplex << 0) | (syntax.simplex << 8) | \
+		(syntax.zero_pipe << 16) | (syntax.undefined << 24));
 }
 
 void	print_syntax_err(int errs)
 {
 	if (errs & 0xff000000)
-		write(2, UNKNOWN_ERR, sizeof UNKNOWN_ERR );
+		eprintln(ESTR_SYN_UNKNOWN_ERR);
 	if (errs & 0x00ff0000)
-		write(2, ZERO_PIPE, sizeof ZERO_PIPE );
+		eprintln(ESTR_SYN_ZERO_PIPE);
 	if (errs & 0x0000ff00)
-		write(2, EMPTY_AFTER, sizeof EMPTY_AFTER );
+		eprintln(ESTR_SYN_EMPTY_AFTER);
 	if (errs & 0x000000ff)
-		write(2, MISS_QUOTE, sizeof MISS_QUOTE );
+		eprintln(ESTR_SYN_MISS_QUOTE);
 }

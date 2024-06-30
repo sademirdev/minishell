@@ -5,12 +5,12 @@
 
 static bool	ft_is_digit(char *c);
 
-int	handle_exit(t_token *token, t_state *state)
+int	exec_exit(t_state *state, t_token *token)
 {
 	int	exit_code;
 
 	if (!token)
-		fatal("invalid argument\n", 2);
+		print_fatal_err("invalid argument\n", 2);
 	if (token && token->next && token->next->next)
 		return (print_exec_err(state, token, 1, ERR_TOO_MANY_ARG));
 	if (token->next && !ft_is_digit(token->next->data))
@@ -19,8 +19,8 @@ int	handle_exit(t_token *token, t_state *state)
 	{
 		exit_code = ft_atoi(token->next->data);
 		if (exit_code < 0)
-			return (print_exec_err(state, token, (int)(256 + (exit_code % 256)), ERR_OTHER));
-		return (print_exec_err(state, token, (int)(exit_code % 256), ERR_OTHER));
+			return (print_exec_err(state, token, (int)(256 + (exit_code % 256)), ENO_OTHER));
+		return (print_exec_err(state, token, (int)(exit_code % 256), ENO_OTHER));
 	}
 	return (SUCCESS);
 }

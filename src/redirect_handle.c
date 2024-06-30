@@ -2,6 +2,10 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
+#include <stdio.h>
+#include "readline/history.h"
+#include "readline/readline.h"
 
 int	handle_redl(t_token *token, t_cmd *cmd, bool has_last_heredoc, t_state *state)
 {

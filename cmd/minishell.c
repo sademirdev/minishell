@@ -1,61 +1,9 @@
 #include "minishell.h"
 #include <unistd.h>
 #include <stdlib.h>
-
-char	*_token_type_tostr(t_token_type type)
-{
-	switch (type)
-	{
-	case CMD:
-		return ("CMD");
-	case ARG:
-		return ("ARG");
-	case PIPE:
-		return ("PIPE");
-	case RED_L:
-		return ("RED_L");
-	case RED_LL:
-		return ("RED_LL");
-	case RED_R:
-		return ("RED_R");
-	case RED_RR:
-		return ("RED_RR");
-	case RED_FILE:
-		return ("RED_FILE");
-	case RED_HEREDOC:
-		return ("RED_HEREDOC");
-	default:
-		return ("NONE");
-	}
-}
-
-// static void	_token_print(t_token *token)
-// {
-// 	while (token)
-// 	{
-// 		printf("(data: %s, type: %s) ", token->data,
-// 			_token_type_tostr(token->type));
-// 		token = token->next;
-// 	}
-// }
-
-// static void	token_print(t_token **token_arr)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	if (token_arr[i])
-// 		printf("[  ");
-// 	while (token_arr[i])
-// 	{
-// 		printf("[ ");
-// 		_token_print(token_arr[i]);
-// 		printf(" ] : ");
-// 		i++;
-// 	}
-// 	if (token_arr[0])
-// 		printf("  ]\n");
-// }
+#include <stdio.h>
+#include "readline/history.h"
+#include "readline/readline.h"
 
 static void	dispose_env_idx(char **copy_env, int i)
 {
@@ -108,7 +56,6 @@ static t_state	*state_init(char **argv, char **env)
 	state->status = 0;
 	state->cmd_ct = 0;
 	state->err = 0;
-	state->cwd = NULL;
 	return (state);
 }
 
@@ -135,7 +82,7 @@ int	main(int argc, char ** argv, char **env)
 	{
 		if (env_is_null(state, env))
 			continue ;
-		state->prompt = readline(PROMPT);
+		state->prompt = readline(COLOR_YELLOW PROMPT COLOR_RESET);
 		if (!state->prompt)
 			break ;
 		add_history(state->prompt);
@@ -150,7 +97,7 @@ int	main(int argc, char ** argv, char **env)
 		if (state->token_arr && execute_prompt(state) == SUCCESS)
 			state->status = 0;
 		else
-			print_unknown_error(state);
+			print_unknown_err(state);
 		dispose_prompt(state);
 	}
 	return (state_dispose(&state), 0);

@@ -4,7 +4,35 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-static int	print_env(t_state *state)
+static int	print_export(t_state *state, t_cmd *cmd);
+static bool	validate_export_value(t_state *state, t_token *arg);
+static int	export_env(t_token *arg, t_state *state);
+
+int	exec_export(t_state *state, t_token *token, t_cmd *cmd)
+{
+	if (!token || !state || !cmd)
+		return (FAILURE);
+	if (is_empty_arg(token->next))
+		return (print_export(state, cmd));
+	if (validate_export_value(state, token->next) == false)
+		return (FAILURE);
+	if (export_env(token->next, state) != SUCCESS)
+		return (FAILURE);
+	return (SUCCESS);
+}
+
+bool	is_empty_arg(t_token *arg)
+{
+	while (arg)
+	{
+		if (arg->type == ARG)
+			return (false);
+		arg = arg->next;
+	}
+	return (true);
+}
+
+static int	print_export(t_state *state, t_cmd *cmd)
 {
 	int	i;
 
@@ -13,8 +41,8 @@ static int	print_env(t_state *state)
 	i = 0;
 	while (state->env[i])
 	{
-		dprint(STDOUT_FILENO, "declare -x ");
-		dprintln(STDOUT_FILENO, state->env[i]);
+		dprint(cmd->out, "declare -x ");
+		dprintln(cmd->out, state->env[i]);
 		i++;
 	}
 	return (SUCCESS);
@@ -28,54 +56,20 @@ static bool	validate_export_value(t_state *state, t_token *arg)
 		return (false);
 	while (arg)
 	{
-		if (!is_al_underscore(arg->data[0]))
-			return (print_exec_err(state, arg, 1, ERR_NOT_A_VALID_IDENTIFIER_J), false);
+		if (arg->type == ARG && !is_al_underscore(arg->data[0]))
+			return (print_exec_err(state, arg, 1, ERRP_NOT_A_VALID_IDENTIFIER), false);
 		i = 0;
 		while (arg->data[i])
 		{
 			if (arg->data[i] == '=')
 				break ;
-			if (!is_alnum_underscore(arg->data[i]))
-				return (print_exec_err(state, arg, 1, ERR_NOT_A_VALID_IDENTIFIER_J), false);
+			if (arg->type == ARG && !is_alnum_underscore(arg->data[i]))
+				return (print_exec_err(state, arg, 1, ERRP_NOT_A_VALID_IDENTIFIER), false);
 			i++;
 		}
 		arg = arg->next;
 	}
 	return (true);
-}
-
-int	set_env_value(t_state *state, char *key)
-{
-	char	*data;
-	int		i;
-	int		len;
-	bool	new;
-
-	if (!state || !state->env || !key)
-		return (FAILURE);
-	new = true;
-	i = 0;
-	while (state->env[i])
-	{
-		len = ft_strlen(key) - ft_strlen(ft_strchr(key, '='));
-		if (ft_strncmp(state->env[i], key, len) == 0 && state->env[i][len] == '=')
-		{
-			free(state->env[i]);
-			state->env[i] = ft_strdup(key);
-			new = false;
-		}
-		i++;
-	}
-	if (new)
-	{
-		data = ft_strdup(key);
-		if (!data)
-			return (FAILURE);
-		state->env = str_arr_append(state->env, data);
-		if (!state->env)
-			return (free(data), FAILURE);
-	}
-	return (SUCCESS);
 }
 
 static int	export_env(t_token *arg, t_state *state)
@@ -89,22 +83,9 @@ static int	export_env(t_token *arg, t_state *state)
 			arg = arg->next;
 			continue ;
 		}
-		if (set_env_value(state, arg->data) != SUCCESS)
+		if (env_set_value(state, arg->data) != SUCCESS)
 			return (FAILURE);
 		arg = arg->next;
 	}
-	return (SUCCESS);
-}
-
-int	handle_export(t_token *token, t_state *state, t_cmd *cmd)
-{
-	if (!token || !state || !cmd)
-		return (FAILURE);
-	if (!token->next)
-		return (print_env(state));
-	if (validate_export_value(state, token->next) == false)
-		return (FAILURE);
-	if (export_env(token->next, state) != SUCCESS)
-		return (FAILURE);
 	return (SUCCESS);
 }

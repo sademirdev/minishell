@@ -1,26 +1,5 @@
 #include "minishell.h"
-
-int	handle_built_in(t_token *token, t_state *state, t_cmd *cmd)
-{
-	int	result;
-
-	result = SUCCESS;
-	if (ft_strncmp(token->data, "echo", 5) == 0)
-		result = handle_echo(token, state, cmd);
-	else if (ft_strncmp(token->data, "cd", 3) == 0)
-		result = handle_cd(token, state);
-	else if (ft_strncmp(token->data, "pwd", 4) == 0)
-		result = handle_pwd();
-	else if (ft_strncmp(token->data, "export", 7) == 0)
-		result = handle_export(token, state, cmd);
-	else if (ft_strncmp(token->data, "unset", 6) == 0)
-		result = handle_unset(token, state);
-	else if (ft_strncmp(token->data, "env", 4) == 0)
-		result = handle_env(token, state, cmd);
-	else if (ft_strncmp(token->data, "exit", 5) == 0)
-		result = handle_exit(token, state);
-	return (result);
-}
+#include <unistd.h>
 
 static bool	str_is_build_in(const char *str)
 {
@@ -43,6 +22,30 @@ static bool	str_is_build_in(const char *str)
 	return (false);
 }
 
+int	exec_built_in(t_state *state, t_token *token, t_cmd *cmd)
+{
+	if (cmd->in == NAFD)
+		cmd->in = STDIN_FILENO;
+	if (cmd->out == NAFD)
+		cmd->out = STDOUT_FILENO;
+	if (ft_strncmp(token->data, "echo", 5) == 0)
+		return (exec_echo(state, token, cmd));
+	if (ft_strncmp(token->data, "cd", 3) == 0)
+		return (exec_cd(state, token));
+	if (ft_strncmp(token->data, "pwd", 4) == 0)
+		return (exec_pwd(cmd));
+	if (ft_strncmp(token->data, "export", 7) == 0)
+		return (exec_export(state, token, cmd));
+	if (ft_strncmp(token->data, "unset", 6) == 0)
+		return (exec_unset(state, token));
+	if (ft_strncmp(token->data, "env", 4) == 0)
+		return (exec_env(state, cmd));
+	if (ft_strncmp(token->data, "exit", 5) == 0)
+		return (exec_exit(state, token));
+	return (SUCCESS);
+}
+
+
 bool	cmd_is_str_built_in(t_cmd *cmd)
 {
 	if (!cmd || !cmd->cmd)
@@ -56,3 +59,4 @@ bool	token_is_built_in(t_token *token)
 		return (false);
 	return (str_is_build_in(token->data));
 }
+

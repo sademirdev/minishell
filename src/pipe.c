@@ -10,38 +10,6 @@ static int	w_exit_status(int status)
 	return ((status >> 8) & 0x000000ff);
 }
 
-// void	handle_exec_error(t_token *token, t_cmd *cmd)
-// {
-// 	struct stat	buf;
-
-// 	stat(token->data, &buf);
-// 	if (!S_ISDIR(buf.st_mode) && ft_strncmp(cmd->cmd, token->data, ft_strlen(cmd->cmd) + 1) == 0)
-// 	{
-// 		print_err(cmd->cmd, ERR_CMD_NOT_FOUND);
-// 		exit(127);
-// 	}
-//  	else if (S_ISDIR(buf.st_mode))
-// 	{
-// 		print_err(cmd->cmd, EISDIR);
-// 		exit(126);
-// 	}
-// 	else if (errno == EACCES || access(token->data, X_OK))
-// 	{
-// 		print_err(cmd->cmd, EACCES);
-// 		exit(126);
-// 	}
-// 	else if (access(token->data, F_OK))
-// 	{
-// 		print_err(cmd->cmd, ENOENT);
-// 		exit(127);
-// 	}
-// 	else
-// 	{
-// 		print_err(cmd->cmd, errno);
-// 		exit(127);
-// 	}
-// }
-
 bool	token_has_cmd(t_token *token)
 {
 	if (!token)
@@ -55,7 +23,7 @@ bool	token_has_cmd(t_token *token)
 	return (false);
 }
 
-int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
+int	exec_single_cmd(t_token *token, t_state *state, t_cmd *cmd)
 {
 	int			pid;
 
@@ -75,14 +43,14 @@ int	pipe_single_exec(t_token *token, t_state *state, t_cmd *cmd)
 		cmd->in = cmd->heredoc[0];
 	if (token_is_built_in(token))
 	{
-		if (handle_built_in(token, state, cmd) != SUCCESS)
+		if (exec_built_in(state, token, cmd) != SUCCESS)
 			return (FAILURE);
 	}
 	else
 	{
 		pid = fork();
 		if (pid == -1)
-			return (FAILURE); // todo(kkarakus): handle close;
+			return (FAILURE);
 		else if (pid == 0)
 		{
 			if (cmd->in != NAFD)
@@ -174,7 +142,7 @@ static int	handle_child_process(t_token **token_arr, t_state *state, int i, int 
 	else
 		dup2(cmd->out, STDOUT_FILENO);
 	if (cmd_is_str_built_in(cmd))
-		return (handle_built_in(token_arr[i], state, cmd));
+		return (exec_built_in(state, token_arr[i], cmd));
 	else if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 		exit(state->status);
 	return (SUCCESS);
@@ -261,7 +229,7 @@ int	execute_prompt(t_state *state)
 	if (cmd_init(&cmd, arr_len) != SUCCESS)
 		return (FAILURE);
 	if (arr_len == 1)
-		return (pipe_single_exec(state->token_arr[0], state, &cmd));
+		return (exec_single_cmd(state->token_arr[0], state, &cmd));
 	fd = (int (*)[2]) malloc(sizeof(int [2]) * (arr_len - 1));
 	if (!fd)
 		return (free(cmd.heredoc), FAILURE);

@@ -2,13 +2,8 @@
 # define MINISHELL_H
 
 # include <stdbool.h>
-# include <stdint.h>
-# include <stdio.h>
-# include "readline/history.h"
-# include "readline/readline.h"
-# include <errno.h>
 
-# define PATH_MAX 2048
+# define PATH_MAX 4096
 
 # define SUCCESS 0
 # define FAILURE -1
@@ -16,14 +11,8 @@
 
 # define NAFD -2
 
-# define ECMDNF 10001
-# define ERR_HOME_NOT_SET 10002
-# define ERR_CMD_NOT_FOUND 10003
-# define ERR_CANT_CHANGE_DIR 10004
-# define ERR_NOT_A_VALID_IDENTIFIER_J 10005
-# define ERR_NOT_VALID_IN_THIS_CTX 10006
+# define ENO_OTHER 40000
 
-# define ERR_OTHER 30001
 # define ERR_NO_SUCH_FILE_OR_DIR 30002
 # define ERR_NUMERIC_ARG_REQUIRED 30003
 # define ERR_TOO_MANY_ARG 30004
@@ -32,18 +21,35 @@
 # define ERR_PERMISSION_DENIED_BROKEN_PIPE 30007
 # define ERR_IS_DIR 30008
 
-# define ERR_STR_UNEXPECTED "unexpected error\n"
-# define ERR_STR_CMD_NOT_FOUND "command not found\n"
-# define ERR_STR_HOME_NOT_SET "HOME not set\n"
-# define ERR_STR_CANT_CHANGE_DIR 10004 "cannot change directory\n"
-# define ERR_STR_NOT_A_VALID_IDENTIFIER " not a valid identifier\n"
-# define ERR_STR_NO_SUCH_FILE_OR_DIR " No such file or directory\n"
-# define ERR_STR_NUMERIC_ARG_REQUIRED " numeric argument required\n"
-# define ERR_STR_TOO_MANY_ARG " too many arguments\n"
-# define ERR_STR_PERMISSION_DENIED " Permission denied\n"
-# define ERR_STR_PERMISSION_DENIED_BROKEN_PIPE " Permission denied\n"
-# define ERR_STR_IS_DIR " is a directory\n"
-# define ERR_STR_NOT_VALID_IN_THIS_CTX "not valid in this context\n"
+# define ERR_HOME_NOT_SET 10001
+# define ERR_CMD_NOT_FOUND 10002
+# define ERR_CANT_CHANGE_DIR 10003
+# define ERRP_NOT_A_VALID_IDENTIFIER 10004
+# define ERR_NOT_VALID_IN_THIS_CTX 10005
+
+# define ENDL "\n"
+# define ESTR_UNKNOWN "unknown error"
+# define ESTR_UNEXPECTED "unexpected error"
+# define ESTR_CMD_NOT_FOUND "command not found"
+# define ESTR_HOME_NOT_SET "HOME not set"
+# define ESTR_CANT_CHANGE_DIR "cannot change directory"
+# define ESTR_INVALID_ARG "invalid argument"
+# define ESTR_NOT_A_VALID_IDENTIFIER "not a valid identifier"
+# define ESTR_NO_SUCH_FILE_OR_DIR "no such file or directory"
+# define ESTR_NUMERIC_ARG_REQUIRED "numeric argument required"
+# define ESTR_TOO_MANY_ARG "too many arguments"
+# define ESTR_PERMISSION_DENIED "permission denied"
+# define ESTR_PERMISSION_DENIED_BROKEN_PIPE "permission denied"
+# define ESTR_IS_DIR "is a directory"
+# define ESTR_NOT_VALID_IN_THIS_CTX "not valid in this context"
+# define ESTR_SYN_UNKNOWN_ERR "unknown syntax error"
+# define ESTR_SYN_ZERO_PIPE "syntax error near unexpected token `newline'"
+# define ESTR_SYN_EMPTY_AFTER "syntax error near unexpected token `newline'"
+# define ESTR_SYN_MISS_QUOTE "unexpected quote `'', `\"'"
+
+# define COLOR_RED "\e[0;31m"
+# define COLOR_YELLOW "\e[0;32m"
+# define COLOR_RESET "\e[0m"
 
 # define PROMPT "minishell: "
 
@@ -54,17 +60,6 @@ typedef struct s_syntax
 	unsigned char	zero_pipe;
 	unsigned char	undefined;
 }					t_syntax;
-
-# define UNKNOWN_ERR "shell says: I don't know what you're trying to do\n"
-# define ZERO_PIPE \
-	"shell says: syntax error near expected non-exist \
-token before `|'\n"
-# define EMPTY_AFTER \
-	"shell says: syntax error near unexpected token after \
-`|', `>', `<', `>>', `<<'\n"
-# define MISS_QUOTE \
-	"shell says: unexpected EOF while looking for matching \
-`'', `\"'\n"
 
 typedef enum e_token_type
 {
@@ -112,10 +107,9 @@ typedef struct s_state
 	char			**argv;
 	char			**env;
 	char			*prompt;
-	t_token		**token_arr;
+	t_token			**token_arr;
 	int				cmd_ct;
 	int				err;
-	char			*cwd;
 }					t_state;
 
 typedef struct s_cmd
@@ -127,147 +121,126 @@ typedef struct s_cmd
 	int				*heredoc;
 }					t_cmd;
 
-typedef struct s_error
-{
-	int				errnum;
-	char			*message;
-	bool			fatal;
-}					t_error;
-
-char				*_token_type_tostr(t_token_type type);
-
-
-int					ft_strlen(const char *s);
-char				*ft_strdup(const char *src);
-char				*ft_substr(char const *s, int start, int len);
-int					ft_strlcpy(char *dst, const char *src, int dst_size);
-char				*ft_itoa(int n);
-int					execute_prompt(t_state *state);
-t_token				*token_new(char *data, t_token_type type);
-t_token				*token_add_last(t_token *token, t_token *new);
-void				token_add_next(t_token *token, t_token *new);
-void				token_add_prev(t_token **token, t_token *new);
-void				token_dispose(t_token **token);
-void				token_dispose_all(t_token **token);
-t_token				**token_separate_by_pipe(t_token *token);
-
-int					create_separated_node(t_token **root, char *prompt,
-						int start, int i);
-t_token				*separate_prompt_by_space(char *prompt);
-int					pass_quoted_str(char *p, int *oi);
-t_token_type		get_meta_type(char *data, int i);
-int					token_append_meta_redr(t_token **token);
-int					token_append_meta_redrr(t_token **token);
-bool				is_meta(t_token_type type);
-bool				is_meta_char(char *data, int i);
-int					token_append_str(t_token **token, int start, int i);
-char				get_in_quote(char old, char data);
-void				token_append_all(t_token **token, int start, int i,
-						t_token_type type);
-void				token_append_meta_data_init(t_token_append_meta_data *md,
-						t_token **token);
-bool				token_append_meta(t_token **token);
-t_token				*token_get_root(t_token *node);
-bool				token_is_just_meta(t_token **token);
-t_token				*extract_meta_chars(t_token **root);
-bool				has_syntax_errs(t_token **root);
-bool				token_separation_meta_data_init(t_token_separation_meta_data *md,
-						t_token *token);
-void				token_old_del(t_token **temp, t_token *root);
-bool				is_valid_dollar(char *data, int i);
-bool				is_digit(char c);
-bool				is_alpha(char c);
-bool				is_alnum_underscore(char c);
-void				handle_dollar(t_token **root, t_state *state);
-int					handle_special_dollar(char **data, int start, int i,
-						t_state *state);
-void				handle_number_dollar(char **data, int start, int i);
-int					handle_regular_dollar(char **data, int start, int i, t_state *state);
-char				*create_data_from_dollar(char *data, char *value, int start,
-						int index);
-void				extract_dollar_key_values(char **data, t_state *state,
-						bool *has_dollar);
-char				*get_dollar_value(char *key, t_state *state);
-
-
-int					ft_strcmp(char *s1, char *s2);
-int					ft_strncmp(const char *s1, const char *s2, int n);
-void				token_insert_dollar_nodes(t_token **token);
-int					token_append_meta_pipe(t_token **token);
-int					token_append_meta_redl(t_token **token);
-int					token_append_meta_redll(t_token **token);
-void				token_dispose(t_token **token);
-void				token_dispose_all(t_token **token);
-int					token_count_pipe(t_token *token);
-t_token				**token_separate_by_pipe(t_token *token);
-t_token				*token_get_last(t_token *node);
-void				assign_token_types(t_token *token);
-void				assign_token_arr_types(t_token **token_arr);
-
-void				error_print(t_error *err);
-t_token				**run_lexer(t_state *state);
-
-void				handle_unnecessary_quotes(t_token *root);
-char				**ft_split(char const *str, char c);
-int					token_arr_len(t_token **token_arr);
-char				*find_path(char *command, char **env);
-char				*ft_strjoin(char const *s1, char const *s2, bool flag_free);
-char				*token_join_arg_str(t_token *token);
-int					fork_init(int (*fd)[2], int arr_len, t_token **token_arr,
-						t_state *state, t_cmd *cmd);
-int					pipe_single_exec(t_token *token, t_state *state,
-						t_cmd *cmd);
-int					pipe_init(int (*fd)[2], int pipe_count);
-int					set_red_file_fds(t_token *token, t_cmd *cmd, t_state *state);
-int					set_cmd_arg_and_path(t_token *token, t_state *state,
-						t_cmd *cmd);
-int					handle_redl(t_token *token, t_cmd *cmd,
-						bool has_last_heredoc, t_state *state);
-int					handle_redr(t_token *token, t_cmd *cmd, t_state *state);
-int					handle_redrr(t_token *token, t_cmd *cmd, t_state *state);
-int					handle_redll(t_token *token, t_cmd *cmd, int i);
-
-void				print_err(const char *msg, t_state *state, const int status);
-int					set_heredoc_fds(t_token *token, t_cmd *cmd, int i);
-void				handle_signals(void);
-
-int					handle_built_in(t_token *token, t_state *state, t_cmd *cmd);
-bool				token_is_built_in(t_token *token);
-bool				cmd_is_str_built_in(t_cmd *cmd);
-int					handle_unset(t_token *token, t_state *state);
-int					handle_pwd(void);
-int					handle_export(t_token *token, t_state *state, t_cmd *cmd);
-char				**get_env(char *new_var, char *temp, int i, t_state *state);
-int					handle_exit(t_token *token, t_state *state);
-int					handle_env(t_token *token, t_state *state, t_cmd *cmd);
-int					handle_echo(t_token *token, t_state *state, t_cmd *cmd);
-int					handle_cd(t_token *token, t_state *state);
-int					syntax_check(t_state *shell);
-void				syntax_squote(t_syntax *syntax);
-int					syntax_darrow(t_syntax *syntax, int *i);
-void				syntax_dquote(t_syntax *syntax);
-int					syntax_sarrow(t_syntax *syntax, int *i);
-int					syntax_pipe(t_state *shell, t_syntax *syntax, int *i);
-void				print_syntax_err(int errs);
-void				token_arr_dispose(t_token ***token_arr);
-void				state_dispose(t_state **state);
-void				dispose_prompt(t_state *state);
-int					pass_data(char *prompt, int *i);
-char				**copy_env(char **env);
-int					ft_atoi(const char *str);
-
-
-void	print_unknown_error(t_state *state);
-int		print_exec_err(t_state *state, const t_token *token, int status, int err);
-char	*ft_strchr(const char *s, int c);
-char	*get_cmd_path(t_token *token, t_state *state);
-void	fatal(const char *msg, int err);
-void	dprint(int fd, const char *s);
-void	dprintln(int fd, const char *s);
-bool	is_al_underscore(char c);
-char	**str_arr_append(char **str_arr, char *data);
-char	**str_arr_remove(char **str_arr, char *key);
-int		set_env_value(t_state *state, char *key);
-
+void					print_unknown_err(t_state *state);
+int						print_exec_err(t_state *state, const t_token *token,
+							int status, int err);
+void					print_fatal_err(const char *msg, const int err);
+char					*ft_strchr(const char *s, int c);
+char					*ft_strdup(const char *src);
+char					*ft_substr(char const *s, int start, int len);
+char					*ft_itoa(int n);
+char					**ft_split(char const *str, char c);
+char					*ft_strjoin(char const *s1, char const *s2,
+							bool flag_free);
+int						ft_strlen(const char *s);
+int						ft_strcmp(char *s1, char *s2);
+int						ft_strncmp(const char *s1, const char *s2, int n);
+int						ft_atoi(const char *str);
+bool					is_al_underscore(char c);
+bool					is_digit(char c);
+bool					is_alpha(char c);
+bool					is_alnum_underscore(char c);
+void					dprint(int fd, const char *s);
+void					dprintln(int fd, const char *s);
+void					eprint(const char *str);
+void					eprintln(const char *str);
+char					**str_arr_append(char **str_arr, char *data);
+char					**str_arr_remove(char **str_arr, char *key);
+t_token					*token_new(char *data, t_token_type type);
+t_token					*token_add_last(t_token *token, t_token *new);
+void					token_add_prev(t_token **token, t_token *new);
+void					token_dispose(t_token **token);
+void					token_dispose_all(t_token **token);
+t_token					**token_separate_by_pipe(t_token *token);
+int						token_append_meta_redr(t_token **token);
+int						token_append_meta_redrr(t_token **token);
+int						token_append_str(t_token **token, int start, int i);
+void					token_append_all(t_token **token, int start, int i,
+							t_token_type type);
+void					token_append_meta_data_init(
+							t_token_append_meta_data *md, t_token **token);
+bool					token_append_meta(t_token **token);
+t_token					*token_get_root(t_token *node);
+bool					token_is_just_meta(t_token **token);
+bool					token_separation_meta_data_init(
+							t_token_separation_meta_data *md, t_token *token);
+void					token_old_del(t_token **temp, t_token *root);
+void					token_insert_dollar_nodes(t_token **token);
+int						token_append_meta_pipe(t_token **token);
+int						token_append_meta_redl(t_token **token);
+int						token_append_meta_redll(t_token **token);
+int						token_count_pipe(t_token *token);
+t_token					**token_separate_by_pipe(t_token *token);
+t_token					*token_get_last(t_token *node);
+int						token_arr_len(t_token **token_arr);
+bool					token_is_built_in(t_token *token);
+void					token_arr_dispose(t_token ***token_arr);
+void					assign_token_types(t_token *token);
+void					assign_token_arr_types(t_token **token_arr);
+void					syntax_squote(t_syntax *syntax);
+void					syntax_dquote(t_syntax *syntax);
+int						syntax_check(t_state *shell);
+int						syntax_darrow(t_syntax *syntax, int *i);
+int						syntax_sarrow(t_syntax *syntax, int *i);
+int						syntax_pipe(t_state *shell, t_syntax *syntax, int *i);
+int						env_set_value(t_state *state, char *key_value);
+int						env_set_pwd(t_state *state);
+char					*env_get_value(t_state *state, const char *key);
+int						exec_built_in(t_state *state, t_token *token,
+							t_cmd *cmd);
+int						exec_echo(t_state *state, t_token *token, t_cmd *cmd);
+int						exec_env(t_state *state, t_cmd *cmd);
+int						exec_cd(t_state *state, t_token *token);
+int						exec_pwd(t_cmd *cmd);
+int						exec_export(t_state *state, t_token *token, t_cmd *cmd);
+int						exec_unset(t_state *state, t_token *token);
+int						exec_exit(t_state *state, t_token *token);
+bool					is_empty_arg(t_token *arg);
+int						execute_prompt(t_state *state);
+t_token					**run_lexer(t_state *state);
+int						create_separated_node(t_token **root, char *prompt,
+							int start, int i);
+t_token					*separate_prompt_by_space(char *prompt);
+int						pass_quoted_str(char *p, int *oi);
+t_token_type			get_meta_type(char *data, int i);
+bool					is_meta(t_token_type type);
+bool					is_meta_char(char *data, int i);
+char					get_in_quote(char old, char data);
+t_token					*extract_meta_chars(t_token **root);
+bool					is_valid_dollar(char *data, int i);
+void					handle_dollar(t_token **root, t_state *state);
+int						handle_special_dollar(char **data, int start, int i,
+							t_state *state);
+void					handle_number_dollar(char **data, int start, int i);
+int						handle_regular_dollar(char **data, int start, int i,
+							t_state *state);
+void					handle_unnecessary_quotes(t_token *root);
+char					*create_data_from_dollar(char *data, char *value,
+							int start, int index);
+void					extract_dollar_key_values(char **data, t_state *state,
+							bool *has_dollar);
+char					*get_dollar_value(char *key, t_state *state);
+int						fork_init(int (*fd)[2], int arr_len,
+							t_token **token_arr, t_state *state, t_cmd *cmd);
+int						pipe_init(int (*fd)[2], int pipe_count);
+int						set_red_file_fds(t_token *token, t_cmd *cmd,
+							t_state *state);
+int						set_cmd_arg_and_path(t_token *token, t_state *state,
+							t_cmd *cmd);
+int						handle_redl(t_token *token, t_cmd *cmd,
+							bool has_last_heredoc, t_state *state);
+int						handle_redr(t_token *token, t_cmd *cmd, t_state *state);
+int						handle_redrr(t_token *token, t_cmd *cmd,
+							t_state *state);
+int						handle_redll(t_token *token, t_cmd *cmd, int i);
+void					handle_signals(void);
+int						set_heredoc_fds(t_token *token, t_cmd *cmd, int i);
+bool					cmd_is_str_built_in(t_cmd *cmd);
+void					print_syntax_err(int errs);
+void					state_dispose(t_state **state);
+void					dispose_prompt(t_state *state);
+int						pass_data(char *prompt, int *i);
+char					**copy_env(char **env);
+char					*get_cmd_path(t_token *token, t_state *state);
 
 #endif

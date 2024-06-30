@@ -90,22 +90,6 @@ char	*ft_substr(char const *s, int start, int len)
 	return (buf);
 }
 
-int	ft_strlcpy(char *dst, const char *src, int dst_size)
-{
-	int	i;
-
-	if (dst_size == 0)
-		return (ft_strlen(src));
-	i = 0;
-	while (src[i] && i < dst_size - 1)
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	dst[i] = '\0';
-	return (ft_strlen(src));
-}
-
 static int	ft_count_digit(int n)
 {
 	int	c;
@@ -240,16 +224,6 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-void dprint(int fd, const char *s)
-{
-	write(fd, s, ft_strlen(s));
-}
-
-void dprintln(int fd, const char *s)
-{
-	write(fd, s, ft_strlen(s));
-	dprint(fd, "\n");
-}
 
 bool	is_al_underscore(char c)
 {

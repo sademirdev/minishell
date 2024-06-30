@@ -35,19 +35,6 @@ t_token	*token_add_last(t_token *token, t_token *new)
 	return (root);
 }
 
-void	token_add_next(t_token *token, t_token *new)
-{
-	t_token	*temp;
-
-	if (!token || !new)
-		return ;
-	temp = token->next;
-	token->next = new;
-	new->prev = token;
-	new->next = temp;
-	temp->prev = new;
-}
-
 void	token_add_prev(t_token **token, t_token *new)
 {
 	t_token	*temp;

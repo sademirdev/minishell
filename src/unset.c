@@ -1,28 +1,8 @@
 #include "minishell.h"
 
-static bool	validate_unset_arg(t_state *state, t_token *arg)
-{
-	int	i;
+static bool	validate_unset_arg(t_state *state, t_token *arg);
 
-	if (!arg || !state)
-		return (false);
-	while (arg)
-	{
-		if (!is_al_underscore(arg->data[0]))
-			return (print_exec_err(state, arg, 1, ERR_NOT_A_VALID_IDENTIFIER_J), false);
-		i = 0;
-		while (arg->data[i])
-		{
-			if (!is_alnum_underscore(arg->data[i]))
-				return (print_exec_err(state, arg, 1, ERR_NOT_A_VALID_IDENTIFIER_J), false);
-			i++;
-		}
-		arg = arg->next;
-	}
-	return (true);
-}
-
-int	handle_unset(t_token *token, t_state *state)
+int	exec_unset(t_state *state, t_token *token)
 {
 	if (!token || !state)
 		return (FAILURE);
@@ -39,4 +19,26 @@ int	handle_unset(t_token *token, t_state *state)
 		token = token->next;
 	}
 	return (SUCCESS);
+}
+
+static bool	validate_unset_arg(t_state *state, t_token *arg)
+{
+	int	i;
+
+	if (!arg || !state)
+		return (false);
+	while (arg)
+	{
+		if (!is_al_underscore(arg->data[0]))
+			return (print_exec_err(state, arg, 1, ERRP_NOT_A_VALID_IDENTIFIER), false);
+		i = 0;
+		while (arg->data[i])
+		{
+			if (!is_alnum_underscore(arg->data[i]))
+				return (print_exec_err(state, arg, 1, ERRP_NOT_A_VALID_IDENTIFIER), false);
+			i++;
+		}
+		arg = arg->next;
+	}
+	return (true);
 }

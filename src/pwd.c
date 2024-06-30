@@ -1,13 +1,12 @@
 #include "minishell.h"
-#include <stdio.h>
 #include <unistd.h>
 
-int	handle_pwd(void)
+int	exec_pwd(t_cmd *cmd)
 {
-	char	cwd[1024];
+	char	cwd[PATH_MAX];
 
 	if ((getcwd(cwd, sizeof(cwd)) == 0) || ft_strlen(cwd) == 0)
 		return (FAILURE);
-	printf("%s\n", cwd);
+	dprintln(cmd->out, cwd);
 	return (SUCCESS);
 }
