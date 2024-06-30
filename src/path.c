@@ -45,26 +45,28 @@ char	*get_cmd_absolute_path(t_token *token, t_state *state)
 	if (S_ISDIR(buf.st_mode))
 		return (print_exec_err(state, token, 126, ERR_IS_DIR), NULL);
 	if (access(token->data, F_OK))
-		return (print_exec_err(state, token, 127, ERR_NO_SUCH_FILE_OR_DIR), NULL);
+		return (print_exec_err(state, token, 127, \
+			ERR_NO_SUCH_FILE_OR_DIR), NULL);
 	if (access(token->data, X_OK))
 		return (print_exec_err(state, token, 126, ERR_PERMISSION_DENIED), NULL);
 	return (token->data);
 }
 
-char *get_cmd_relative_path(t_token *token, t_state *state, char **path_arr)
+char	*get_cmd_relative_path(t_token *token, t_state *state, char **path_arr)
 {
-	struct stat	buf;
-	char				*cmd_path;
-	char				*temp;
-	int					i;
+	char			*cmd_path;
+	char			*temp;
+	int				i;
+	struct stat		buf;
 
 	i = 0;
 	while (path_arr[i])
 	{
-		temp = ft_strjoin(path_arr[i], "/", false);
+		temp = ft_strjoin(path_arr[i++], "/", false);
 		if (!temp)
 			return (NULL);
 		cmd_path = ft_strjoin(temp, token->data, false);
+		free(temp);
 		if (!cmd_path)
 			return (NULL);
 		stat(cmd_path, &buf);
@@ -73,7 +75,6 @@ char *get_cmd_relative_path(t_token *token, t_state *state, char **path_arr)
 		if (!access(cmd_path, F_OK) && !access(cmd_path, X_OK))
 			return (cmd_path);
 		free(cmd_path);
-		i++;
 	}
 	if (token_is_built_in(token))
 		return (token->data);

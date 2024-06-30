@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include <stdlib.h>
 
 t_token	*extract_meta_chars(t_token **root)
 {

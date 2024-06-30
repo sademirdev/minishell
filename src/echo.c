@@ -4,7 +4,7 @@
 
 static bool	is_echo_n_flag(const char *flag);
 static char	*merge_args(t_token *arg, bool n);
-static int	get_buffer_len(t_token *arg, bool n);
+static int	get_buffer_len(t_token *arg, bool n, int *j);
 
 int	exec_echo(t_state *state, t_token *token, t_cmd *cmd)
 {
@@ -50,10 +50,9 @@ static char	*merge_args(t_token *arg, bool n)
 	int			i;
 	int			j;
 
-	buffer = (char *) malloc(sizeof(char) * get_buffer_len(arg, n));
+	buffer = (char *) malloc(sizeof(char) * get_buffer_len(arg, n, &j));
 	if (!buffer)
 		return (NULL);
-	j = 0;
 	while (arg)
 	{
 		if (arg->type != ARG)
@@ -74,12 +73,13 @@ static char	*merge_args(t_token *arg, bool n)
 	return (buffer);
 }
 
-static int	get_buffer_len(t_token *arg, bool n)
+static int	get_buffer_len(t_token *arg, bool n, int *j)
 {
 	int	len;
 	int	space;
 	int	newline;
 
+	*j = 0;
 	len = 0;
 	if (arg && arg->data)
 		len = ft_strlen(arg->data);

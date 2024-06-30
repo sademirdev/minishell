@@ -19,8 +19,10 @@ int	exec_exit(t_state *state, t_token *token)
 	{
 		exit_code = ft_atoi(token->next->data);
 		if (exit_code < 0)
-			return (print_exec_err(state, token, (int)(256 + (exit_code % 256)), ENO_OTHER));
-		return (print_exec_err(state, token, (int)(exit_code % 256), ENO_OTHER));
+			return (print_exec_err(state, token, \
+				(int)(256 + (exit_code % 256)), ENO_OTHER));
+		return (print_exec_err(state, token, \
+			(int)(exit_code % 256), ENO_OTHER));
 	}
 	return (SUCCESS);
 }

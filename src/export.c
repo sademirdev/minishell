@@ -57,14 +57,16 @@ static bool	validate_export_value(t_state *state, t_token *arg)
 	while (arg)
 	{
 		if (arg->type == ARG && !is_al_underscore(arg->data[0]))
-			return (print_exec_err(state, arg, 1, ERRP_NOT_A_VALID_IDENTIFIER), false);
+			return (print_exec_err(state, arg, 1, \
+				ERRP_NOT_A_VALID_IDENTIFIER), false);
 		i = 0;
 		while (arg->data[i])
 		{
 			if (arg->data[i] == '=')
 				break ;
 			if (arg->type == ARG && !is_alnum_underscore(arg->data[i]))
-				return (print_exec_err(state, arg, 1, ERRP_NOT_A_VALID_IDENTIFIER), false);
+				return (print_exec_err(state, arg, 1, \
+					ERRP_NOT_A_VALID_IDENTIFIER), false);
 			i++;
 		}
 		arg = arg->next;

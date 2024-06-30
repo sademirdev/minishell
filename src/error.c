@@ -1,5 +1,6 @@
 #include "minishell.h"
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 
 static int	print_exec_err_with_prefix(const t_token *token, int err);

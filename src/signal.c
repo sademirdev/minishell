@@ -1,39 +1,53 @@
-// #include "minishell.h"
-// #include "signal.h"
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <termios.h>
-// #include <unistd.h>
-// #include <readline/readline.h>
-// #include <readline/history.h>
+#include "minishell.h"
+#include "signal.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <termios.h>
+#include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
+void	coix(int sig)
+{
+	(void)sig;
+	rl_on_new_line();
+	printf("\033[K");
+	rl_redisplay();
+	g_sig = 0;
+}
 
-// void	set_termios(void)
-// {
-// 	struct termios	term;
+void	ctrl_c(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
+	if (!g_sig)
+	{
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
+}
 
-// 	if (!isatty(STDIN_FILENO))
-// 		exit((perror("error"), -1));
-// 	if (tcgetattr(STDIN_FILENO, &term) != 0)
-// 		exit((perror("error"), -1));
-// 	term.c_cc[VQUIT] = _POSIX_VDISABLE;
-// 	if (tcsetattr(STDIN_FILENO, TCSANOW, &term) != 0)
-// 		exit((perror("error"), -1));
-// }
+void	tcseta(void)
+{
+	struct termios	term1;
 
-// void	signal_handler_ctrl_c(int signo)
-// {
-// 	if (signo == SIGINT)
-// 	{
-// 		printf("\n");
-// 		rl_on_new_line();
-// 		rl_replace_line("", 0);
-// 		rl_redisplay();
-// 	}
-// }
+	if (tcgetattr(STDIN_FILENO, &term1) != 0)
+		exit((perror("error"), -1));
+	else
+	{
+		term1.c_cc[VQUIT] = _POSIX_VDISABLE;
+		term1.c_lflag |= ECHOE | ICANON;
+		if (tcsetattr(STDIN_FILENO, TCSANOW, &term1) != 0)
+			exit((perror("error"), -1));
+		if (tcgetattr(STDIN_FILENO, &term1) != 0)
+			exit((perror("error"), -1));
+	}
+}
 
-// void	handle_signals(void)
-// {
-// 	set_termios();
-// 	signal(SIGINT, signal_handler_ctrl_c);
-// }
+void	handle_signals(void)
+{
+	tcseta();
+	signal(SIGINT, ctrl_c);
+	signal(SIGQUIT, coix);
+}

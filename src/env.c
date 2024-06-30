@@ -47,7 +47,8 @@ int	env_set_value(t_state *state, char *key_value)
 	while (state->env[i])
 	{
 		len = ft_strlen(key_value) - ft_strlen(ft_strchr(key_value, '='));
-		if (ft_strncmp(state->env[i], key_value, len) == 0 && state->env[i][len] == '=')
+		if (ft_strncmp(state->env[i], key_value, len) == 0
+			&& state->env[i][len] == '=')
 		{
 			free(state->env[i]);
 			state->env[i] = ft_strdup(key_value);
@@ -78,7 +79,7 @@ static int	env_set_value_new(t_state *state, char *key_value)
 char	*env_get_value(t_state *state, const char *key)
 {
 	int			i;
-	size_t	len;
+	size_t		len;
 
 	if (!state || !state->env || !key)
 		return (NULL);
@@ -86,7 +87,8 @@ char	*env_get_value(t_state *state, const char *key)
 	while (state->env[i])
 	{
 		len = ft_strlen(key);
-		if (ft_strncmp(state->env[i], key, len) == 0 && state->env[i][len] == '=')
+		if (ft_strncmp(state->env[i], key, len) == 0
+			&& state->env[i][len] == '=')
 			return (state->env[i] + 5);
 		i++;
 	}

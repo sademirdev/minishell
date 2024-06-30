@@ -1,9 +1,11 @@
 #include "minishell.h"
-#include <unistd.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include "readline/history.h"
 #include "readline/readline.h"
+#include <stdlib.h>
+#include <unistd.h>
+
+int	g_sig = 0;
 
 static void	dispose_env_idx(char **copy_env, int i)
 {
@@ -25,7 +27,7 @@ char	**copy_env(char **env)
 	i = 0;
 	while (env[i])
 		i++;
-	env_copy = (char **) malloc(sizeof(char *) * (i + 1));
+	env_copy = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!env_copy)
 		return (NULL);
 	i = 0;
@@ -59,7 +61,7 @@ static t_state	*state_init(char **argv, char **env)
 	return (state);
 }
 
-static bool env_is_null(t_state *state, char **env)
+static bool	env_is_null(t_state *state, char **env)
 {
 	if (!state || !state->env)
 	{
@@ -70,11 +72,11 @@ static bool env_is_null(t_state *state, char **env)
 	return (false);
 }
 
-int	main(int argc, char ** argv, char **env)
+int	main(int argc, char **argv, char **env)
 {
 	t_state	*state;
 
-	// handle_signals();
+	handle_signals();
 	state = state_init(argv, env);
 	if (!state)
 		return (argc);

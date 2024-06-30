@@ -39,24 +39,10 @@ void	token_arr_dispose(t_token ***token_arr)
 	*token_arr = NULL;
 }
 
-int	token_count_pipe(t_token *token)
+bool	token_sep_md_init(t_token_sep_md *md, t_token *token)
 {
-	int	count;
-
-	count = 0;
-	while (token)
-	{
-		if (token->type == PIPE)
-			count++;
-		token = token->next;
-	}
-	return (count);
-}
-
-bool	token_separation_meta_data_init(t_token_separation_meta_data *md, t_token *token)
-{
-	(*md).token_arr = (t_token **)malloc(sizeof(t_token *) * (token_count_pipe(token)
-				+ 2));
+	(*md).token_arr = (t_token **)malloc(sizeof(t_token *) * \
+		(token_count_pipe(token)+ 2));
 	if (!(*md).token_arr)
 		return (true);
 	(*md).iter = token;
@@ -67,9 +53,9 @@ bool	token_separation_meta_data_init(t_token_separation_meta_data *md, t_token *
 
 t_token	**token_separate_by_pipe(t_token *token)
 {
-	t_token_separation_meta_data md;
+	t_token_sep_md	md;
 
-	if (token_separation_meta_data_init(&md, token))
+	if (token_sep_md_init(&md, token))
 		return (NULL);
 	while (md.iter)
 	{
@@ -78,12 +64,12 @@ t_token	**token_separate_by_pipe(t_token *token)
 			md.temp = md.iter;
 			md.token_arr[md.i] = md.temp_root;
 			md.temp_root = md.iter->next;
-			md.iter->prev->next = NULL; // note: segfault when prev NULL.
+			md.iter->prev->next = NULL;
 			md.iter = md.iter->next;
 			if (md.temp)
 				token_dispose(&md.temp);
 			if (md.temp_root && md.temp_root->type == PIPE)
-				return (NULL); // todo(sademir): give syntax error
+				return (NULL);
 			md.i++;
 		}
 		else

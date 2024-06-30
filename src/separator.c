@@ -51,8 +51,8 @@ int	pass_data(char *prompt, int *i)
 	if (prompt[*i] && (prompt[*i] == '\'' || prompt[*i] == '"'))
 		if (pass_quoted_str(prompt, i) == -42)
 			return (1);
-	while (prompt[*i] && prompt[*i] != ' ' && prompt[*i] != '\t' && prompt[*i] != '\''
-		&& prompt[*i] != '"')
+	while (prompt[*i] && prompt[*i] != ' ' && prompt[*i] != '\t'
+		&& prompt[*i] != '\'' && prompt[*i] != '"')
 		(*i)++;
 	return (0);
 }
@@ -61,10 +61,9 @@ void	token_insert_dollar_nodes(t_token **token)
 {
 	t_token	*sub_nodes;
 	t_token	*temp;
-	t_token	*sub_last;
 
 	if (!token || !*token)
-		return ; // todo(apancar): handle error
+		return ;
 	temp = *token;
 	sub_nodes = separate_prompt_by_space(temp->data);
 	if (!sub_nodes)
@@ -78,8 +77,16 @@ void	token_insert_dollar_nodes(t_token **token)
 		else
 			*token = temp->next;
 		token_dispose(&temp);
-		return ; // todo(apancar): handle error
+		return ;
 	}
+	token_insertion(token, temp, sub_nodes);
+}
+
+void	token_insertion(t_token **token, t_token *temp, \
+	t_token *sub_nodes)
+{
+	t_token	*sub_last;
+
 	if (temp->prev)
 	{
 		temp->prev->next = sub_nodes;
@@ -89,7 +96,7 @@ void	token_insert_dollar_nodes(t_token **token)
 		*token = sub_nodes;
 	sub_last = token_get_last(sub_nodes);
 	if (!sub_last)
-		return ; // todo(apancar): handle error
+		return ;
 	if (temp->next)
 		sub_last->next = temp->next;
 	if (temp->next)

@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include <stdlib.h>
 
 t_token	*token_get_root(t_token *node)
 {
@@ -50,20 +51,6 @@ void	token_old_del(t_token **temp, t_token *root)
 		(*temp)->prev->next = (*temp)->next;
 	if ((*temp)->next)
 		(*temp)->next->prev = (*temp)->prev;
-	// if (root == *temp)
-	// 	root = (*temp)->next; // todo(apancar): check again unnecessary assignment
 	*temp = (*temp)->next;
 	token_dispose(&old_node);
-}
-
-int	token_arr_len(t_token **token_arr)
-{
-	int	i;
-
-	if (!token_arr)
-		return (0);
-	i = 0;
-	while (token_arr[i])
-		i++;
-	return (i);
 }

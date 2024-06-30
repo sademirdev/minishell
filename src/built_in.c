@@ -45,7 +45,6 @@ int	exec_built_in(t_state *state, t_token *token, t_cmd *cmd)
 	return (SUCCESS);
 }
 
-
 bool	cmd_is_str_built_in(t_cmd *cmd)
 {
 	if (!cmd || !cmd->cmd)
@@ -59,4 +58,3 @@ bool	token_is_built_in(t_token *token)
 		return (false);
 	return (str_is_build_in(token->data));
 }
-

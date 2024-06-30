@@ -17,7 +17,7 @@ char	*get_dollar_value(char *key, t_state *state)
 		{
 			value = ft_strdup(&state->env[i][key_len + 1]);
 			if (!value)
-				(void)i; // todo(hkizrak-): handle
+				return (NULL);
 		}
 		i++;
 	}
@@ -38,7 +38,7 @@ char	*create_data_from_dollar(char *data, char *value, int start,
 	new_data = (char *)malloc((start + value_len + ft_strlen(data + index - 1))
 			* sizeof(char));
 	if (!new_data)
-		(void)index; // todo(apancar): handle
+		(void)index;
 	i = 0;
 	j = 0;
 	while (i < start - 1)

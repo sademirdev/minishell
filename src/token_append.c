@@ -2,8 +2,6 @@
 #include "stdlib.h"
 #include "unistd.h"
 
-// todo(hkizrak-): check possible errors for side by side metas (throw syntax
-// error)  a<b
 bool	token_append_meta(t_token **token)
 {
 	t_token_append_meta_data	md;
@@ -37,20 +35,14 @@ void	token_append_all(t_token **token, int start, int i,
 {
 	if (start != -1)
 		token_append_str(token, start, i);
-	// todo(hkizrak-): check if there are two PIPE side by side after this func
-	// (throw syntax error)
 	if (type == PIPE)
 		token_append_meta_pipe(token);
 	if (type == RED_L)
 		token_append_meta_redl(token);
-	// todo(hkizrak-): check if there are > or >> after this created node (throw
-	// syntax error)
 	if (type == RED_LL)
 		token_append_meta_redll(token);
 	if (type == RED_R)
 		token_append_meta_redr(token);
-	// todo(hkizrak-): check if there are < or << after this created node (throw
-	// syntax error)
 	if (type == RED_RR)
 		token_append_meta_redrr(token);
 }
@@ -84,31 +76,6 @@ int	token_append_str(t_token **token, int start, int i)
 	return (SUCCESS);
 }
 
-int	token_count_args(t_token *token)
-{
-	t_token	*temp;
-	int		len;
-	bool	on_arg;
-
-	if (!token)
-		return (FAILURE);
-	temp = token;
-	len = 0;
-	on_arg = false;
-	while (temp)
-	{
-		if (temp->type == ARG)
-		{
-			len++;
-			on_arg = true;
-		}
-		else if (on_arg)
-			break ;
-		temp = temp->next;
-	}
-	return (len);
-}
-
 char	**token_to_arg(t_token *token, char *cmd_path)
 {
 	char	**argv;
@@ -117,8 +84,7 @@ char	**token_to_arg(t_token *token, char *cmd_path)
 
 	if (!token || !cmd_path)
 		return (NULL);
-	// todo (sademir): check return values of malloc
-	argv = (char **) malloc(sizeof(char *) * (token_count_args(token) + 3)); // todo(sademir): when it is (+2) it throws "Heap buffer overflow" in token_to_arg
+	argv = (char **) malloc(sizeof(char *) * (token_count_args(token) + 3));
 	if (!argv)
 		return (NULL);
 	argv[0] = cmd_path;
@@ -137,22 +103,4 @@ char	**token_to_arg(t_token *token, char *cmd_path)
 	}
 	argv[i] = NULL;
 	return (argv);
-}
-
-int	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd *cmd)
-{
-	char	**argv;
-	char	*cmd_path;
-
-	if (!token || !cmd || !state)
-		return (FAILURE);
-	cmd_path = get_cmd_path(token, state);
-	if (!cmd_path)
-		return (FAILURE);
-	argv = token_to_arg(token, cmd_path);
-	if (!argv)
-		return (FAILURE);
-	cmd->cmd = cmd_path;
-	cmd->argv = argv;
-	return (SUCCESS);
 }

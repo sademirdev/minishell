@@ -3,9 +3,9 @@
 
 void	handle_dollar(t_token **root, t_state *state)
 {
-	t_token	*temp;
-	t_token	*iter;
-	bool	has_dollar;
+	t_token		*temp;
+	t_token		*iter;
+	bool		has_dollar;
 
 	if (!root || !*root || !state)
 		return ;
@@ -38,42 +38,22 @@ int	handle_special_dollar(char **data, int start, int i,
 	{
 		value = ft_itoa(state->status);
 		if (value < 0)
-			return (i); // todo(fekiz): handle error
+			return (i);
 	}
 	else
 	{
 		value = ft_strdup(state->argv[0]);
 		if (!value)
-			return (i - 1); // todo(fekiz): handle error
+			return (i - 1);
 	}
 	i++;
 	new_data = create_data_from_dollar(*data, value, start, i);
 	if (!new_data)
-	{
-		free(value);
-		return (i); // todo(hkizrak-): handle
-	}
+		return (free(value), i);
 	temp = *data;
 	*data = new_data;
-	free(temp);
-	free(value);
-	return (i - 1);
+	return (free(temp), free(value), i - 1);
 }
-
-// static int check_key_existence(char *key, t_state *state)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (state->env[i])
-// 	{
-// 		if (ft_strncmp(state->env[i], key, ft_strlen(key)) == 0
-// 			&& state->env[i][ft_strlen(key)] == '=')
-// 			return (0);
-// 		i++;
-// 	}
-// 	return (1);
-// }
 
 void	handle_number_dollar(char **data, int start, int i)
 {
@@ -83,11 +63,11 @@ void	handle_number_dollar(char **data, int start, int i)
 
 	empty_value = ft_strdup("");
 	if (!empty_value)
-		return ; // todo(hkizrak-): handle
+		return ;
 	i++;
 	new_data = create_data_from_dollar(*data, empty_value, start, i);
 	if (!new_data)
-		return ; // todo(hkizrak-): handle
+		return ;
 	temp = *data;
 	*data = new_data;
 	free(temp);
@@ -100,29 +80,25 @@ int	handle_regular_dollar(char **data, int start, int i, t_state *state)
 	char	*new_data;
 	char	*temp;
 	char	*key;
-	int		value_len;
 
 	while (is_alnum_underscore((*data)[i]))
 		i++;
 	key = ft_substr(*data, start, i - start);
 	if (!key)
-		(void)i; // todo(hkizrak-): handle
+		return (start - 1);
 	value = get_dollar_value(key, state);
 	if (!value)
 	{
 		value = ft_strdup("");
 		if (!value)
-			return (1); // todo(hkizrak-): handle
+			return (1);
 	}
 	new_data = create_data_from_dollar(*data, value, start, i);
 	if (!new_data)
-		(void)i; // todo(hkizrak-): handle
+		return (start - 1);
 	temp = *data;
 	*data = new_data;
-	free(temp);
-	free(key);
-	value_len = ft_strlen(value);
-	if (value_len == 0)
-		return (free(value), start - 1);
-	return (free(value), start + value_len - 1);
+	if (ft_strlen(value) == 0)
+		return (free(key), free(temp), free(value), start - 1);
+	return (free(key), free(temp), free(value), start + ft_strlen(value) - 1);
 }
