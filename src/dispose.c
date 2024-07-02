@@ -20,3 +20,13 @@ void	dispose_prompt(t_state *state)
 	free(state->prompt);
 	state->prompt = NULL;
 }
+
+void	state_dispose_single(t_state **state)
+{
+	if (!state || !*state)
+		return ;
+	free((*state)->env);
+	(*state)->env = NULL;
+	free((*state)->prompt);
+	(*state)->prompt = NULL;
+}

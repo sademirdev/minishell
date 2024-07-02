@@ -96,6 +96,8 @@ int	main(int argc, char **argv, char **env)
 			continue ;
 		}
 		state->token_arr = run_lexer(state);
+		if (!state->token_arr)
+			continue ;
 		run_executor(state);
 	}
 	return (state_dispose(&state), 0);
