@@ -7,9 +7,7 @@
 
 void	run_executor(t_state *state)
 {
-	if (state->token_arr && execute_prompt(state) == SUCCESS)
-		state->status = 0;
-	else
+	if (!(state->token_arr && execute_prompt(state) == SUCCESS))
 		print_unknown_err(state);
 	dispose_prompt(state);
 }
