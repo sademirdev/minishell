@@ -89,6 +89,8 @@ char	*get_cmd_path(t_token *token, t_state *state)
 
 	if (ft_strchr(token->data, '/'))
 		return (get_cmd_absolute_path(token, state));
+	if (!state->env)
+		return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND), NULL);
 	path_arr_str = get_env_path_arr_as_str(state->env);
 	if (!path_arr_str)
 		return (NULL);

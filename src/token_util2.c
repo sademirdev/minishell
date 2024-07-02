@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include <stdlib.h>
 
 int	token_count_pipe(t_token *token)
 {
@@ -60,7 +61,11 @@ int	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd *cmd)
 		return (FAILURE);
 	cmd_path = get_cmd_path(token, state);
 	if (!cmd_path)
+	{
+		if (state->err != HANDLED)
+			return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND), FAILURE);
 		return (FAILURE);
+	}
 	argv = token_to_arg(token, cmd_path);
 	if (!argv)
 		return (FAILURE);

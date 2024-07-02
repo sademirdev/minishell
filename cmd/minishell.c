@@ -42,17 +42,6 @@ char	**copy_env(char **env)
 	return (env_copy);
 }
 
-static bool	env_is_null(t_state *state, char **env)
-{
-	if (!state || !state->env)
-	{
-		state->env = copy_env(env);
-		if (!state->env)
-			return (true);
-	}
-	return (false);
-}
-
 static t_state	*state_init(char **argv, char **env)
 {
 	t_state	*state;
@@ -82,8 +71,6 @@ int	main(int argc, char **argv, char **env)
 		return (argc);
 	while (true)
 	{
-		if (env_is_null(state, env))
-			continue ;
 		state->prompt = readline(COLOR_YELLOW PROMPT COLOR_RESET);
 		if (!state->prompt)
 			break ;
