@@ -77,7 +77,7 @@ char	*ft_substr(char const *s, int start, int len)
 		return (ft_strdup(""));
 	if (len > slen - start)
 		len = slen - start;
-	buf = (char *) malloc ((len + 1) * sizeof(char));
+	buf = (char *)malloc((len + 1) * sizeof(char));
 	if (buf == NULL)
 		return (NULL);
 	i = 0;

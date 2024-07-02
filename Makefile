@@ -46,11 +46,11 @@ ifeq '$(debug)' '1'
 CFLAGS += -g
 endif
 
-# asan = 0
-# ifeq '$(asan)' '1'
-# CFLAGS += -fsanitize=address
-# # CFLAGS += -fsanitize=thread
-# endif
+asan = 1
+ifeq '$(asan)' '1'
+CFLAGS += -fsanitize=address
+# CFLAGS += -fsanitize=thread
+endif
 
 test = 0
 ifeq '$(test)' '1'
