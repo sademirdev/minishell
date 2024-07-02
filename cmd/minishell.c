@@ -87,5 +87,5 @@ int	main(int argc, char **argv, char **env)
 			continue ;
 		run_executor(state);
 	}
-	return (state_dispose(&state), 0);
+	return (state_dispose(&state), state->status);
 }
