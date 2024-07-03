@@ -2,6 +2,7 @@
 # define MINISHELL_H
 
 # include <stdbool.h>
+#include <stdio.h>
 
 # define PATH_MAX 4096
 
@@ -48,7 +49,7 @@
 # define ESTR_SYN_MISS_QUOTE "unexpected quote `'', `\"'"
 
 # define COLOR_RED "\e[0;31m"
-# define COLOR_YELLOW "\e[0;32m"
+# define COLOR_GREEN "\e[0;32m"
 # define COLOR_RESET "\e[0m"
 
 # define PROMPT "minishell: "

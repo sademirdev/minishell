@@ -71,7 +71,7 @@ int	main(int argc, char **argv, char **env)
 		return (argc);
 	while (true)
 	{
-		state->prompt = readline(COLOR_YELLOW PROMPT COLOR_RESET);
+		state->prompt = readline(COLOR_GREEN PROMPT COLOR_RESET);
 		if (!state->prompt)
 			break ;
 		add_history(state->prompt);

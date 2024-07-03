@@ -70,7 +70,7 @@ int	exec_single_cmd(t_token *token, t_state *state, t_cmd *cmd)
 			cmd->argv = NULL;
 			return (SUCCESS);
 		}
-		return (free(cmd->heredoc), SUCCESS);
+		return (free(cmd->heredoc), free(cmd->cmd), SUCCESS);
 	}
 	return (SUCCESS);
 }
