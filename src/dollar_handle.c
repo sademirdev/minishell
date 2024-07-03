@@ -74,12 +74,20 @@ void	handle_number_dollar(char **data, int start, int i)
 	free(empty_value);
 }
 
+static char *str_get_empty_when_null(char *value)
+{
+	if (!value)
+		return (ft_strdup(""));
+	return (value);
+}
+
 int	handle_regular_dollar(char **data, int start, int i, t_state *state)
 {
 	char	*value;
 	char	*new_data;
 	char	*temp;
 	char	*key;
+	int		len;
 
 	while (is_alnum_underscore((*data)[i]))
 		i++;
@@ -87,18 +95,16 @@ int	handle_regular_dollar(char **data, int start, int i, t_state *state)
 	if (!key)
 		return (start - 1);
 	value = get_dollar_value(key, state);
+	value = str_get_empty_when_null(value);
 	if (!value)
-	{
-		value = ft_strdup("");
-		if (!value)
-			return (1);
-	}
+		return (1);
 	new_data = create_data_from_dollar(*data, value, start, i);
 	if (!new_data)
 		return (start - 1);
 	temp = *data;
 	*data = new_data;
-	if (ft_strlen(value) == 0)
+	len = ft_strlen(value);
+	if (len == 0)
 		return (free(key), free(temp), free(value), start - 1);
-	return (free(key), free(temp), free(value), start + ft_strlen(value) - 1);
+	return (free(key), free(temp), free(value), start + len - 1);
 }
