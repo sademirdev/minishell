@@ -60,7 +60,7 @@ int	fork_init(t_state *state, t_cmd *cmd, int (*fd)[2], int arr_len)
 	if (!pids)
 		return (FAILURE);
 	if (fork_init_exec_child_part(state, cmd, pids, fd) != SUCCESS)
-		return (FAILURE);
+		return (free(pids), FAILURE);
 	i = 0;
 	while (i < arr_len)
 	{
@@ -93,5 +93,5 @@ int	execute_prompt(t_state *state)
 		return (free(fd), free(cmd.heredoc), FAILURE);
 	if (fork_init(state, &cmd, fd, arr_len) != SUCCESS)
 		return (free(fd), free(cmd.heredoc), FAILURE);
-	return (free(fd), SUCCESS);
+	return (free(fd), free(cmd.heredoc), SUCCESS);
 }

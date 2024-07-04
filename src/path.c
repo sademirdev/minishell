@@ -38,6 +38,7 @@ void	dispose_paths(char **paths)
 char	*get_cmd_absolute_path(t_token *token, t_state *state)
 {
 	struct stat	buf;
+	char		*new;
 
 	stat(token->data, &buf);
 	if (errno == EACCES)
@@ -49,10 +50,13 @@ char	*get_cmd_absolute_path(t_token *token, t_state *state)
 			ERR_NO_SUCH_FILE_OR_DIR), NULL);
 	if (access(token->data, X_OK))
 		return (print_exec_err(state, token, 126, ERR_PERMISSION_DENIED), NULL);
-	return (token->data);
+	new = ft_strdup(token->data);
+	if (!new)
+		return (NULL);
+	return (new);
 }
 
-char	*get_cmd_relative_path(t_token *token, t_state *state, char **path_arr)
+static char	*get_cmd_relative_path(t_token *token, t_state *state, char **path_arr)
 {
 	char			*cmd_path;
 	char			*temp;
@@ -65,6 +69,8 @@ char	*get_cmd_relative_path(t_token *token, t_state *state, char **path_arr)
 		temp = ft_strjoin(path_arr[i++], "/", false);
 		if (!temp)
 			return (NULL);
+		while (token->type != CMD)
+			token = token->next;
 		cmd_path = ft_strjoin(temp, token->data, true);
 		if (!cmd_path)
 			return (free(temp), NULL);

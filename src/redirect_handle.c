@@ -17,9 +17,9 @@ int	handle_redl(t_token *token, t_cmd *cmd, \
 	if (!temp && !temp->next)
 		return (FAILURE);
 	if (access(temp->data, F_OK) == -1)
-		return (print_exec_err(state, token, 1, ERR_NO_SUCH_FILE_OR_DIR));
+		return (print_exec_err(state, token->next, 1, ERR_NO_SUCH_FILE_OR_DIR));
 	if (access(temp->data, R_OK) == -1)
-		return (print_exec_err(state, token, 101, EACCES));
+		return (print_exec_err(state, token->next, 101, EACCES));
 	if (has_last_heredoc)
 		close(open(temp->data, O_RDONLY));
 	else

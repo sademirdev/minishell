@@ -11,7 +11,6 @@ int	exec_echo(t_state *state, t_token *token, t_cmd *cmd)
 	char	*buffer;
 	bool	n;
 
-	printf("[DEBUG]: at\n");
 	if (!state || !token || !cmd)
 		return (FAILURE);
 	if (is_empty_arg(token->next))
