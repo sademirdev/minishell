@@ -1,5 +1,6 @@
 #include "minishell.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 static bool	str_is_build_in(const char *str)
 {
@@ -22,12 +23,34 @@ static bool	str_is_build_in(const char *str)
 	return (false);
 }
 
+static int	set_built_in_path_and_arg(t_state *state, t_token *token, t_cmd *cmd)
+{
+	char	*cmd_path;
+	char	**argv;
+
+	cmd_path = token->data;
+	if (!cmd_path)
+	{
+		if (state->err != HANDLED)
+			return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND), FAILURE);
+		return (FAILURE);
+	}
+	cmd->cmd = cmd_path;
+	argv = token_to_arg(token, cmd_path);
+	if (!argv)
+		return (free(cmd_path), FAILURE);
+	cmd->argv = argv;
+	return (SUCCESS);
+}
+
 int	exec_built_in(t_state *state, t_token *token, t_cmd *cmd)
 {
 	if (cmd->in == NAFD)
 		cmd->in = STDIN_FILENO;
 	if (cmd->out == NAFD)
 		cmd->out = STDOUT_FILENO;
+	if (set_built_in_path_and_arg(state, token, cmd) != SUCCESS)
+		return (FAILURE);
 	if (ft_strncmp(token->data, "echo", 5) == 0)
 		return (exec_echo(state, token, cmd));
 	if (ft_strncmp(token->data, "cd", 3) == 0)

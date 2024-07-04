@@ -23,8 +23,13 @@ void	dispose_prompt(t_state *state)
 
 void	state_dispose_single(t_state **state)
 {
+	int	i;
+
 	if (!state || !*state)
 		return ;
+	i = 0;
+	while ((*state)->env && (*state)->env[i])
+		free((*state)->env[i++]);
 	free((*state)->env);
 	(*state)->env = NULL;
 	free((*state)->prompt);

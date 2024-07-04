@@ -93,5 +93,5 @@ int	execute_prompt(t_state *state)
 		return (free(fd), free(cmd.heredoc), FAILURE);
 	if (fork_init(state, &cmd, fd, arr_len) != SUCCESS)
 		return (free(fd), free(cmd.heredoc), FAILURE);
-	return (SUCCESS);
+	return (free(fd), SUCCESS);
 }

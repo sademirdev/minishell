@@ -65,13 +65,12 @@ char	*get_cmd_relative_path(t_token *token, t_state *state, char **path_arr)
 		temp = ft_strjoin(path_arr[i++], "/", false);
 		if (!temp)
 			return (NULL);
-		cmd_path = ft_strjoin(temp, token->data, false);
-		free(temp);
+		cmd_path = ft_strjoin(temp, token->data, true);
 		if (!cmd_path)
-			return (NULL);
+			return (free(temp), NULL);
 		stat(cmd_path, &buf);
 		if (S_ISDIR(buf.st_mode))
-			return (print_exec_err(state, token, 110, EISDIR), NULL);
+			return (free(temp), free(cmd_path), print_exec_err(state, token, 110, EISDIR), NULL);
 		if (!access(cmd_path, F_OK) && !access(cmd_path, X_OK))
 			return (cmd_path);
 		free(cmd_path);

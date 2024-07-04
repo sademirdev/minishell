@@ -51,6 +51,7 @@ int	handle_redll(t_token *token, t_cmd *cmd, int i)
 		write(fd[1], "\n", 1);
 		free(buf);
 	}
+	free(buf);
 	close(fd[1]);
 	if (cmd->heredoc[i] != -2)
 		close(cmd->heredoc[i]);

@@ -91,7 +91,7 @@ c: clean
 
 fclean: clean
 	$(RM) $(NAME) & wait
-	$(RM) lib/readline
+	# $(RM) lib/readline
 f: fclean
 
 re: fclean

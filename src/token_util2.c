@@ -59,6 +59,16 @@ int	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd *cmd)
 
 	if (!token || !cmd || !state)
 		return (FAILURE);
+	if (token_is_built_in(token))
+	{
+		if (exec_built_in(state, token, cmd) != SUCCESS)
+		{
+			token->data = NULL;
+			return (cmd_dispose(cmd), FAILURE);
+		}
+		token->data = NULL;
+		return (cmd_dispose(cmd), SUCCESS);
+	}
 	cmd_path = get_cmd_path(token, state);
 	if (!cmd_path)
 	{
@@ -66,10 +76,10 @@ int	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd *cmd)
 			return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND), FAILURE);
 		return (FAILURE);
 	}
+	cmd->cmd = cmd_path;
 	argv = token_to_arg(token, cmd_path);
 	if (!argv)
-		return (FAILURE);
-	cmd->cmd = cmd_path;
+		return (free(cmd_path), FAILURE);
 	cmd->argv = argv;
 	return (SUCCESS);
 }

@@ -46,31 +46,25 @@ int	exec_single_cmd_prepare_fds(t_token *token, t_state *state, t_cmd *cmd)
 	return (SUCCESS);
 }
 
+void	cmd_dispose(t_cmd *cmd)
+{
+	if (!cmd)
+		return ;
+	free(cmd->cmd);
+	cmd->cmd = NULL;
+	free(cmd->argv);
+	cmd->argv = NULL;
+	free(cmd->heredoc);
+	cmd->heredoc = NULL;
+}
+
 int	exec_single_cmd(t_token *token, t_state *state, t_cmd *cmd)
 {
 	if (!token || !state || !cmd)
 		return (FAILURE);
 	if (exec_single_cmd_prepare_fds(token, state, cmd) != SUCCESS)
-		return (FAILURE);
-	if (token_is_built_in(token))
-	{
-		if (exec_built_in(state, token, cmd) != SUCCESS)
-			return (FAILURE);
-	}
-	else
-		if (exec_single_cmd_with_fork(cmd, state) != SUCCESS)
-			return (FAILURE);
-	if (cmd)
-	{
-		if (cmd->argv)
-		{
-			free(cmd->heredoc);
-			cmd->heredoc = NULL;
-			free(cmd->argv);
-			cmd->argv = NULL;
-			return (SUCCESS);
-		}
-		return (free(cmd->heredoc), free(cmd->cmd), SUCCESS);
-	}
-	return (SUCCESS);
+		return (cmd_dispose(cmd), FAILURE);
+	if (exec_single_cmd_with_fork(cmd, state) != SUCCESS)
+		return (cmd_dispose(cmd), FAILURE);
+	return (cmd_dispose(cmd), SUCCESS);
 }

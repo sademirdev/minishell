@@ -84,7 +84,10 @@ int	main(int argc, char **argv, char **env)
 		}
 		state->token_arr = run_lexer(state);
 		if (!state->token_arr)
+		{
+			free(state->prompt);
 			continue ;
+		}
 		run_executor(state);
 	}
 	return (state_dispose(&state), state->status);
