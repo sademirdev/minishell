@@ -82,6 +82,7 @@ int	main(int argc, char **argv, char **env)
 			dispose_prompt(state);
 			continue ;
 		}
+		state->err = SUCCESS;
 		state->token_arr = run_lexer(state);
 		if (!state->token_arr)
 		{

@@ -72,7 +72,7 @@ int	set_cmd_arg_and_path(t_token *token, t_state *state, t_cmd *cmd)
 	cmd_path = get_cmd_path(token, state);
 	if (!cmd_path)
 	{
-		if (state->err != HANDLED)
+		if (state->err != HANDLED && state->err != SUCCESS)
 			return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND), FAILURE);
 		return (FAILURE);
 	}

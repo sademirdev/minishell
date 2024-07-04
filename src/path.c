@@ -64,6 +64,8 @@ static char	*get_cmd_relative_path(t_token *token, t_state *state, char **path_a
 	struct stat		buf;
 
 	i = 0;
+	if (*token->data == '\0')
+		return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND), NULL);
 	while (path_arr[i])
 	{
 		temp = ft_strjoin(path_arr[i++], "/", false);
@@ -73,10 +75,10 @@ static char	*get_cmd_relative_path(t_token *token, t_state *state, char **path_a
 			token = token->next;
 		cmd_path = ft_strjoin(temp, token->data, true);
 		if (!cmd_path)
-			return (free(temp), NULL);
+			return (NULL);
 		stat(cmd_path, &buf);
 		if (S_ISDIR(buf.st_mode))
-			return (free(temp), free(cmd_path), print_exec_err(state, token, 110, EISDIR), NULL);
+			return (free(cmd_path), print_exec_err(state, token, 127, ERR_IS_DIR), NULL);
 		if (!access(cmd_path, F_OK) && !access(cmd_path, X_OK))
 			return (cmd_path);
 		free(cmd_path);
