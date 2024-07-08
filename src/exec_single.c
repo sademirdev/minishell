@@ -37,7 +37,7 @@ int	exec_single_cmd_prepare_fds(t_token *token, t_state *state, t_cmd *cmd)
 		return (FAILURE);
 	if (token_has_cmd(token) == false)
 		return (SUCCESS);
-	if (set_cmd_arg_and_path(token, state, cmd) != SUCCESS)
+	if (set_cmd_arg_and_path(token, state, cmd, NULL) != SUCCESS)
 		return (FAILURE);
 	if (!cmd->cmd)
 		return (FAILURE);

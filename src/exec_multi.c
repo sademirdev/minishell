@@ -5,16 +5,19 @@
 static void	close_other_fds(int i, int **fd, int arr_len, char *delete_me_on_release)
 {
 	int	j;
+		(void)delete_me_on_release;
+
 
 	j = 0;
+	printf("close_other_fds: i=%d, arr_len=%d\n", i, arr_len);
 	while (j < arr_len - 1)
 	{
 		if (j != i - 1 && j != i)
 		{
-			close(fd[i][0]);
-			print_close(__func__, delete_me_on_release, i, 0);
-			close(fd[i][1]);
-			print_close(__func__, delete_me_on_release, i, 1);
+			close(fd[j][0]);
+		////	print_close(__func__, delete_me_on_release, i, 0);
+			close(fd[j][1]);
+		////	print_close(__func__, delete_me_on_release, i, 1);
 		}
 		j++;
 	}
@@ -22,17 +25,20 @@ static void	close_other_fds(int i, int **fd, int arr_len, char *delete_me_on_rel
 
 static void	set_fds(int **fd, t_cmd *cmd, int arr_len, int i, char *delete_me_on_release)
 {
+		(void)delete_me_on_release;
+
 	if (cmd->in == NAFD)
-		cmd->in = cmd->heredoc[i];
+		if (cmd->heredoc)
+			cmd->in = cmd->heredoc[i];
 	if (i != 0)
 	{
 		close(fd[i - 1][1]);
-		print_close(__func__, delete_me_on_release, i - 1, 1);
+		//print_close(__func__, delete_me_on_release, i - 1, 1);
 		if (cmd->in != NAFD)
 		{
 			dup2(cmd->in, STDIN_FILENO);
 			close(fd[i - 1][0]);
-			print_close(__func__, delete_me_on_release, i - 1, 0);
+			//print_close(__func__, delete_me_on_release, i - 1, 0);
 		}
 		else
 			dup2(fd[i - 1][0], STDIN_FILENO);
@@ -42,12 +48,12 @@ static void	set_fds(int **fd, t_cmd *cmd, int arr_len, int i, char *delete_me_on
 	if (i != arr_len - 1)
 	{
 		close(fd[i][0]);
-		print_close(__func__, delete_me_on_release, i, 0);
+		//print_close(__func__, delete_me_on_release, i, 0);
 		if (cmd->out != NAFD)
 		{
 			dup2(cmd->out, STDOUT_FILENO);
 			close(fd[i][1]);
-			print_close(__func__, delete_me_on_release, i, 1);
+			//print_close(__func__, delete_me_on_release, i, 1);
 		}
 		else
 			dup2(fd[i][1], STDOUT_FILENO);
@@ -67,14 +73,17 @@ void	handle_child_process(int **fd, t_state *state, t_cmd *cmd, int i)
 		return (exit(state->status));
 	if (token_has_cmd(state->token_arr[i]) == false)
 		return (exit(state->status));
-	if (set_cmd_arg_and_path(state->token_arr[i], state, cmd) != SUCCESS)
+	cmd->is_first_cmd = (i == 0);
+	cmd->is_last_cmd = (i == arr_len - 1);
+	cmd->cmd_idx = i;
+	if (set_cmd_arg_and_path(state->token_arr[i], state, cmd, fd) != SUCCESS)
 		return (exit(state->status));
-	print_debug(__func__, "Heredoc has been set.", cmd, arr_len, fd);
+	//print_debug(__func__, "before close_other_fds", cmd, arr_len, fd);
 	close_other_fds(i, fd, arr_len, cmd->cmd);
 	set_fds(fd, cmd, arr_len, i, cmd->cmd);
 	if (cmd_is_str_built_in(cmd))
 	{
-		if (exec_built_in(state, state->token_arr[i], cmd) != SUCCESS)
+		if (exec_built_in(state, state->token_arr[i], cmd, fd) != SUCCESS)
 			return (exit(state->status));
 		exit(0);
 	}
@@ -89,7 +98,8 @@ int	**pipe_fds_dispose_idx(int **pipe_fds, int i)
 		return (NULL);
 	if (i < 1)
 		return (free(pipe_fds), NULL);
-	while (i)
+	i--;
+	while (i >= 0)
 	{
 		free(pipe_fds[i]);
 		i--;

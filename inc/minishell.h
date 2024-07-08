@@ -122,6 +122,9 @@ typedef struct s_cmd
 	int				in;
 	int				out;
 	int				*heredoc;
+	bool			is_first_cmd;
+	bool			is_last_cmd;
+	int				cmd_idx;
 }					t_cmd;
 
 typedef struct s_handle_cp_arg
@@ -196,7 +199,7 @@ int					syntax_pipe(t_state *shell, t_syntax *syntax, int *i);
 int					env_set_value(t_state *state, char *key_value);
 int					env_set_pwd(t_state *state);
 char				*env_get_value(t_state *state, const char *key);
-int					exec_built_in(t_state *state, t_token *token, t_cmd *cmd);
+int					exec_built_in(t_state *state, t_token *token, t_cmd *cmd, int **pipe_fds);
 int					exec_echo(t_state *state, t_token *token, t_cmd *cmd);
 int					exec_env(t_state *state, t_cmd *cmd);
 int					exec_cd(t_state *state, t_token *token);
@@ -233,7 +236,7 @@ int					**pipe_fds_init(int pipe_count);
 int					set_red_file_fds(t_token *token, t_cmd *cmd,
 						t_state *state);
 int					set_cmd_arg_and_path(t_token *token, t_state *state,
-						t_cmd *cmd);
+						t_cmd *cmd, int **pipe_fds);
 int					handle_redl(t_token *token, t_cmd *cmd,
 						bool has_last_heredoc, t_state *state);
 int					handle_redr(t_token *token, t_cmd *cmd, t_state *state);
@@ -271,5 +274,5 @@ void				cmd_dispose(t_cmd *cmd);
 int					**pipe_fds_dispose_idx(int **pipe_fds, int i);
 
 void print_debug(const char *tag, const char *message, t_cmd *cmd, int cmd_count, int **fd); // todo: delete this on release
-void print_close(const char *func, char *cmd, int i, int j);
+//void print_close(const char *func, char *cmd, int i, int j);
 #endif

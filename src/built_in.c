@@ -42,13 +42,27 @@ static int	set_built_in_path_and_arg(t_state *state, t_token *token, t_cmd *cmd)
 	cmd->argv = argv;
 	return (SUCCESS);
 }
-
-int	exec_built_in(t_state *state, t_token *token, t_cmd *cmd)
+void	built_in_handle_fds(t_cmd *cmd, int **pipe_fds)
 {
-	if (cmd->in == NAFD)
-		cmd->in = STDIN_FILENO;
-	if (cmd->out == NAFD)
-		cmd->out = STDOUT_FILENO;
+	if (pipe_fds)
+	{
+		if (!cmd->is_first_cmd && cmd->in == NAFD)
+			cmd->in = pipe_fds[0][0];
+		if (!cmd->is_last_cmd && cmd->out == NAFD)
+			cmd->out = pipe_fds[1][1];
+	}
+	else
+	{
+		if (cmd->in == NAFD)
+			cmd->in = STDIN_FILENO;
+		if (cmd->out == NAFD)
+			cmd->out = STDOUT_FILENO;
+	}
+}
+
+int	exec_built_in(t_state *state, t_token *token, t_cmd *cmd, int **pipe_fds)
+{
+	built_in_handle_fds(cmd, pipe_fds);
 	if (set_built_in_path_and_arg(state, token, cmd) != SUCCESS)
 		return (FAILURE);
 	if (ft_strncmp(token->data, "echo", 5) == 0)
