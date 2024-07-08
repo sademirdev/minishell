@@ -12,17 +12,19 @@ void	run_executor(t_state *state)
 	dispose_prompt(state);
 }
 
-static void	fork_init_exec_child_part_close(int (*fd)[2], int i)
+static void	fork_init_exec_child_part_close(int **fd, int i, char *delete_me_on_release)
 {
 	if (i != 0)
 	{
 		close(fd[i - 1][0]);
+		print_close(__func__, delete_me_on_release, i - 1, 0);
 		close(fd[i - 1][1]);
+		print_close(__func__, delete_me_on_release, i - 1, 1);
 	}
 }
 
 int	fork_init_exec_child_part(t_state *state, t_cmd *cmd, pid_t *pids,
-	int (*fd)[2])
+	int **fd)
 {
 	int		arr_len;
 	pid_t	pid;
@@ -34,6 +36,7 @@ int	fork_init_exec_child_part(t_state *state, t_cmd *cmd, pid_t *pids,
 	{
 		if (set_heredoc_fds(state->token_arr[i], cmd, i) != SUCCESS)
 			return (FAILURE);
+		print_debug(__func__, "Heredoc has been set.", cmd, arr_len, fd);
 		g_sig = 1;
 		pid = fork();
 		if (pid == -1)
@@ -42,14 +45,14 @@ int	fork_init_exec_child_part(t_state *state, t_cmd *cmd, pid_t *pids,
 		if (pid == 0)
 			handle_child_process(fd, state, cmd, i);
 		else
-			fork_init_exec_child_part_close(fd, i);
+			fork_init_exec_child_part_close(fd, i, cmd->cmd);
 		i++;
 	}
 	g_sig = 0;
 	return (SUCCESS);
 }
 
-int	fork_init(t_state *state, t_cmd *cmd, int (*fd)[2], int arr_len)
+int	fork_init(t_state *state, t_cmd *cmd, int **fd, int arr_len)
 {
 	pid_t						*pids;
 	int							i;
@@ -75,8 +78,10 @@ int	execute_prompt(t_state *state)
 {
 	int			arr_len;
 	t_cmd		cmd;
-	int			(*fd)[2];
+	int			**pipe_fds;
 
+	pipe_fds = NULL;
+	print_debug(__func__, "Execution started.", &cmd, 0, NULL);
 	if (!state || !state->token_arr)
 		return (FAILURE);
 	arr_len = token_arr_len(state->token_arr);
@@ -84,14 +89,14 @@ int	execute_prompt(t_state *state)
 		return (FAILURE);
 	if (cmd_init(&cmd, arr_len) != SUCCESS)
 		return (FAILURE);
+	print_debug(__func__, "cmd initialized.", &cmd, arr_len, pipe_fds);
 	if (arr_len == 1)
 		return (exec_single_cmd(state->token_arr[0], state, &cmd));
-	fd = (int (*)[2]) malloc(sizeof(int [2]) * (arr_len - 1));
-	if (!fd)
+	pipe_fds = pipe_fds_init(arr_len - 1);
+	if (!pipe_fds)
 		return (free(cmd.heredoc), FAILURE);
-	if (pipe_init(fd, arr_len - 1) != SUCCESS)
-		return (free(fd), free(cmd.heredoc), FAILURE);
-	if (fork_init(state, &cmd, fd, arr_len) != SUCCESS)
-		return (free(fd), free(cmd.heredoc), FAILURE);
-	return (free(fd), free(cmd.heredoc), SUCCESS);
+	print_debug(__func__, "fd initialized.", &cmd, arr_len, pipe_fds);
+	if (fork_init(state, &cmd, pipe_fds, arr_len) != SUCCESS)
+		return (pipe_fds_dispose_idx(pipe_fds, arr_len - 1), free(cmd.heredoc), FAILURE);
+	return (pipe_fds_dispose_idx(pipe_fds, arr_len - 1), free(cmd.heredoc), SUCCESS);
 }

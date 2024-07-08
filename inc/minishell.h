@@ -127,7 +127,7 @@ typedef struct s_cmd
 typedef struct s_handle_cp_arg
 {
 	int				i;
-	int (*fd)[2];
+	int				**fd;
 	int				arr_len;
 }					t_handle_cp_arg;
 
@@ -229,7 +229,7 @@ char				*create_data_from_dollar(char *data, char *value, int start,
 void				extract_dollar_key_values(char **data, t_state *state,
 						bool *has_dollar);
 char				*get_dollar_value(char *key, t_state *state);
-int					pipe_init(int (*fd)[2], int pipe_count);
+int					**pipe_fds_init(int pipe_count);
 int					set_red_file_fds(t_token *token, t_cmd *cmd,
 						t_state *state);
 int					set_cmd_arg_and_path(t_token *token, t_state *state,
@@ -255,11 +255,11 @@ char				**token_to_arg(t_token *token, char *cmd_path);
 int					count_unnecessary_quotes(char *data);
 bool				is_unnecessary_quote(int *quote, char data);
 bool				has_unnecessary_quotes(char *data);
-void				t_handle_cp_arg_init(t_handle_cp_arg *arg, int (*fd)[2],
+void				t_handle_cp_arg_init(t_handle_cp_arg *arg, int **fd,
 						int i);
-void				handle_child_process(int (*fd)[2], t_state *state,
+void				handle_child_process(int **fd, t_state *state,
 						t_cmd *cmd, int i);
-int					fork_init(t_state *state, t_cmd *cmd, int (*fd)[2],
+int					fork_init(t_state *state, t_cmd *cmd, int **fd,
 						int arr_len);
 int					w_exit_status(int status);
 int					exec_single_cmd(t_token *token, t_state *state, t_cmd *cmd);
@@ -268,5 +268,8 @@ void				run_executor(t_state *state);
 int					cmd_init(t_cmd *cmd, int arr_len);
 void				state_dispose_single(t_state **state);
 void				cmd_dispose(t_cmd *cmd);
+int					**pipe_fds_dispose_idx(int **pipe_fds, int i);
 
+void print_debug(const char *tag, const char *message, t_cmd *cmd, int cmd_count, int **fd); // todo: delete this on release
+void print_close(const char *func, char *cmd, int i, int j);
 #endif

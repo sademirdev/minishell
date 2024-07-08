@@ -7,6 +7,55 @@
 
 int	g_sig = 0;
 
+#define MESSAGE_COLOR "\033[1;33m"
+void print_close(const char *func, char *cmd, int i, int j)
+{
+	(void)cmd;
+	dprintf(2, COLOR_GREEN "[DEBUG]: [%s]: cmd: %s, closed=(%d:%d)\n" COLOR_RESET, func, cmd, i, j);
+	usleep(200);
+}
+void print_cmd(t_cmd *cmd, int cmd_count)
+{
+	dprintf(2, MESSAGE_COLOR "%s, in=%s, out=%s, " COLOR_RESET, cmd->cmd, cmd->in == NAFD ? "NAFD" : ft_itoa(cmd->in), cmd->out == NAFD ? "NAFD" : ft_itoa(cmd->out));
+	dprintf(2, MESSAGE_COLOR "heredoc{" COLOR_RESET);
+	if (cmd_count > 0)
+	{
+		for (int i = 0; i < cmd_count; i++)
+		{
+			if (i != cmd_count - 1)
+				dprintf(2, MESSAGE_COLOR "'%d'=%s, " COLOR_RESET, i, cmd->heredoc[i] == NAFD ? "NAFD" : ft_itoa(cmd->heredoc[i]));
+			else
+				dprintf(2, MESSAGE_COLOR "'%d'=%s" COLOR_RESET, i, cmd->heredoc[i] == NAFD ? "NAFD" : ft_itoa(cmd->heredoc[i]));
+		}
+	}
+	dprintf(2, MESSAGE_COLOR "}\n" COLOR_RESET);
+}
+void print_fd(int **fd, int pipe_count)
+{
+	dprintf(2, MESSAGE_COLOR "[DEBUG]: pipe_fds{" COLOR_RESET);
+	if (fd)
+	{
+		for (int i = 0; i < pipe_count; i++)
+		{
+			if (i == pipe_count - 1)
+				dprintf(2, MESSAGE_COLOR "'%d'=(%d:%d)" COLOR_RESET, i, fd[i][0], fd[i][1]);
+			else
+				dprintf(2, MESSAGE_COLOR "'%d'=(%d:%d), " COLOR_RESET, i, fd[i][0], fd[i][1]);
+		}
+	}
+	dprintf(2, MESSAGE_COLOR "}\n" COLOR_RESET);
+}
+void print_debug(const char *tag, const char *message, t_cmd *cmd, int cmd_count, int **fd)
+{
+  // todo: delete this on release
+	dprintf(2, MESSAGE_COLOR "[DEBUG]: [%s]: %s\n" COLOR_RESET, tag, message);
+	dprintf(2, MESSAGE_COLOR "[DEBUG]: cmd = " COLOR_RESET);
+	print_cmd(cmd, cmd_count);
+	print_fd(fd, cmd_count - 1);
+	dprintf(2, COLOR_RED "---\n" COLOR_RESET);
+	usleep(200);
+}
+
 static void	dispose_env_idx(char **copy_env, int i)
 {
 	if (!copy_env)
