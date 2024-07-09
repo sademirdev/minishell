@@ -14,7 +14,10 @@ int	exec_echo(t_state *state, t_token *token, t_cmd *cmd)
 	if (!state || !token || !cmd)
 		return (FAILURE);
 	if (is_empty_arg(token->next))
+	{
+		state->status = 0;
 		return (dprint(cmd->out, "\n"), SUCCESS);
+	}
 	token = token->next;
 	n = is_echo_n_flag(token->data);
 	if (n)
@@ -25,6 +28,7 @@ int	exec_echo(t_state *state, t_token *token, t_cmd *cmd)
 	if (!buffer)
 		return (FAILURE);
 	dprint(cmd->bout, buffer);
+	state->status = 0;
 	return (free(buffer), SUCCESS);
 }
 

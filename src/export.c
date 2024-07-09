@@ -18,6 +18,7 @@ int	exec_export(t_state *state, t_token *token, t_cmd *cmd)
 		return (FAILURE);
 	if (export_env(token->next, state) != SUCCESS)
 		return (FAILURE);
+	state->status = 0;
 	return (SUCCESS);
 }
 

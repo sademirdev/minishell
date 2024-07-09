@@ -18,11 +18,13 @@ int	exec_cd(t_state *state, t_token *token)
 			return (print_exec_err(state, token, 114, ERR_CANT_CHANGE_DIR));
 		if (env_set_pwd(state) != SUCCESS)
 			return (FAILURE);
+		state->status = 0;
 		return (SUCCESS);
 	}
 	if (chdir(token->next->data) == -1)
 		return (print_exec_err(state, token, 120, ERR_CANT_CHANGE_DIR));
 	if (env_set_pwd(state) != SUCCESS)
 		return (FAILURE);
+	state->status = 0;
 	return (SUCCESS);
 }

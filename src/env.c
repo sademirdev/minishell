@@ -13,6 +13,7 @@ int	exec_env(t_state *state, t_cmd *cmd)
 	i = 0;
 	while (state->env[i])
 		dprintln(cmd->bout, state->env[i++]);
+	state->status = 0;
 	return (SUCCESS);
 }
 

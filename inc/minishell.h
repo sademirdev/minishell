@@ -204,7 +204,7 @@ int					exec_built_in(t_state *state, t_token *token, t_cmd *cmd, int **pipe_fds
 int					exec_echo(t_state *state, t_token *token, t_cmd *cmd);
 int					exec_env(t_state *state, t_cmd *cmd);
 int					exec_cd(t_state *state, t_token *token);
-int					exec_pwd(t_cmd *cmd);
+int					exec_pwd(t_cmd *cmd, t_state *state);
 int					exec_export(t_state *state, t_token *token, t_cmd *cmd);
 int					exec_unset(t_state *state, t_token *token);
 int					exec_exit(t_state *state, t_token *token);
