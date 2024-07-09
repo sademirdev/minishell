@@ -56,7 +56,8 @@ char	*get_cmd_absolute_path(t_token *token, t_state *state)
 	return (new);
 }
 
-static char	*get_cmd_relative_path(t_token *token, t_state *state, char **path_arr)
+static char	*get_cmd_relative_path(t_token *token, t_state *state,
+	char **path_arr)
 {
 	char			*cmd_path;
 	char			*temp;
@@ -78,7 +79,8 @@ static char	*get_cmd_relative_path(t_token *token, t_state *state, char **path_a
 			return (NULL);
 		stat(cmd_path, &buf);
 		if (S_ISDIR(buf.st_mode))
-			return (free(cmd_path), print_exec_err(state, token, 127, ERR_IS_DIR), NULL);
+			return (free(cmd_path),
+				print_exec_err(state, token, 127, ERR_IS_DIR), NULL);
 		if (!access(cmd_path, F_OK) && !access(cmd_path, X_OK))
 			return (cmd_path);
 		free(cmd_path);

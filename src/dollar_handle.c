@@ -74,7 +74,7 @@ void	handle_number_dollar(char **data, int start, int i)
 	free(empty_value);
 }
 
-static char *str_get_empty_when_null(char *value)
+static char	*str_get_empty_when_null(char *value)
 {
 	if (!value)
 		return (ft_strdup(""));

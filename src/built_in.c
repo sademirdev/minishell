@@ -2,7 +2,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-static int	set_built_in_path_and_arg(t_state *state, t_token *token, t_cmd *cmd)
+static int	set_built_in_path_and_arg(t_state *state, t_token *token,
+	t_cmd *cmd)
 {
 	char	*cmd_path;
 	char	**argv;
@@ -11,7 +12,8 @@ static int	set_built_in_path_and_arg(t_state *state, t_token *token, t_cmd *cmd)
 	if (!cmd_path)
 	{
 		if (state->err != HANDLED)
-			return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND), FAILURE);
+			return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND),
+				FAILURE);
 		return (FAILURE);
 	}
 	cmd->cmd = cmd_path;

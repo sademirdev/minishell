@@ -12,10 +12,8 @@ void	run_executor(t_state *state)
 	dispose_prompt(state);
 }
 
-static void	fork_init_exec_child_part_close(int **fd, int i, char *delete_me_on_release)
+static void	fork_init_exec_child_part_close(int **fd, int i)
 {
-	(void)delete_me_on_release;
-	(void)fd;
 	if (i != 0)
 	{
 		close(fd[i - 1][0]);
@@ -44,7 +42,7 @@ int	fork_init_exec_child_part(t_state *state, t_cmd *cmd, pid_t *pids,
 		if (pid == 0)
 			handle_child_process(fd, state, cmd, i);
 		else
-			fork_init_exec_child_part_close(fd, i, cmd->cmd);
+			fork_init_exec_child_part_close(fd, i);
 		i++;
 	}
 	g_sig = AFTER_CMD;
@@ -93,6 +91,8 @@ int	execute_prompt(t_state *state)
 	if (!pipe_fds)
 		return (free(cmd.heredoc), FAILURE);
 	if (fork_init(state, &cmd, pipe_fds, arr_len) != SUCCESS)
-		return (pipe_fds_dispose_idx(pipe_fds, arr_len - 1), free(cmd.heredoc), FAILURE);
-	return (pipe_fds_dispose_idx(pipe_fds, arr_len - 1), free(cmd.heredoc), SUCCESS);
+		return (pipe_fds_dispose_idx(pipe_fds, arr_len - 1), free(cmd.heredoc),
+			FAILURE);
+	return (pipe_fds_dispose_idx(pipe_fds, arr_len - 1), free(cmd.heredoc),
+		SUCCESS);
 }

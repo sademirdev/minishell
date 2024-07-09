@@ -22,7 +22,7 @@ int	exec_cd(t_state *state, t_token *token)
 		return (SUCCESS);
 	}
 	if (chdir(token->next->data) == -1)
-		return (print_exec_err(state, token, 120, ERR_CANT_CHANGE_DIR));
+		return (print_exec_err(state, token, 1, ERR_NO_SUCH_FILE_OR_DIR));
 	if (env_set_pwd(state) != SUCCESS)
 		return (FAILURE);
 	state->status = 0;

@@ -15,13 +15,15 @@ int	exec_exit(t_state *state, t_token *token)
 	if (token && token->next && token->next->next)
 		return (print_exec_err(state, token, 1, ERR_TOO_MANY_ARG));
 	if (token->next && !ft_is_digit(token->next->data))
-		return (print_exec_err(state, token, 255, ERR_NUMERIC_ARG_REQUIRED), exit(255), FAILURE);
+		return (print_exec_err(state, token, 255, ERR_NUMERIC_ARG_REQUIRED),
+			exit(255), FAILURE);
 	if (token->next)
 	{
 		exit_code = ft_atoi(token->next->data);
 		if (exit_code < 0)
 			return (print_exec_err(state, token, \
-				(int)(256 + (exit_code % 256)), ENO_OTHER), exit(exit_code), FAILURE);
+				(int)(256 + (exit_code % 256)), ENO_OTHER), exit(exit_code),
+					FAILURE);
 		return (print_exec_err(state, token, \
 			(int)(exit_code % 256), ENO_OTHER), exit(exit_code), FAILURE);
 		dprintf(2, "[DEBUG]: at\n");

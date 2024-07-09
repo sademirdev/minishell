@@ -77,17 +77,22 @@ static char	*merge_args(t_token *arg, bool n)
 	return (buffer);
 }
 
+static void	get_buffer_len_init(int *j, int *len, int *newline, t_token *arg)
+{
+	*j = 0;
+	*len = 0;
+	if (arg && arg->data)
+		*len = ft_strlen(arg->data);
+	*newline = 1;
+}
+
 static int	get_buffer_len(t_token *arg, bool n, int *j)
 {
 	int	len;
 	int	space;
 	int	newline;
 
-	*j = 0;
-	len = 0;
-	if (arg && arg->data)
-		len = ft_strlen(arg->data);
-	newline = 1;
+	get_buffer_len_init(j, &len, &newline, arg);
 	if (n)
 		newline = 0;
 	space = -1;

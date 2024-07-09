@@ -10,7 +10,7 @@ int	exec_unset(t_state *state, t_token *token)
 		return (FAILURE);
 	if (!token->next)
 	{
-		state->status = 0;
+		state->status = 0;<
 		return (SUCCESS);
 	}
 	token = token->next;
