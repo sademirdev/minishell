@@ -45,9 +45,12 @@ void	print_fatal_err(const char *msg, const int err)
 
 static int	print_exec_err_with_prefix(const t_token *token, int err)
 {
-	eprint(COLOR_RED PROMPT COLOR_RESET);
-	eprint(token->data);
-	eprint(": ");
+	if (err != ENO_OTHER)
+	{
+		eprint(COLOR_RED PROMPT COLOR_RESET);
+		eprint(token->data);
+		eprint(": ");
+	}
 	if (err == ENO_OTHER)
 		return (FAILURE);
 	else if (err == ENOENT)
