@@ -122,9 +122,10 @@ typedef struct s_cmd
 	int				in;
 	int				out;
 	int				*heredoc;
-	bool			is_first_cmd;
-	bool			is_last_cmd;
-	int				cmd_idx;
+	int				idx;
+	int				count;
+	int				bin;
+	int				bout;
 }					t_cmd;
 
 typedef struct s_handle_cp_arg
@@ -274,5 +275,5 @@ void				cmd_dispose(t_cmd *cmd);
 int					**pipe_fds_dispose_idx(int **pipe_fds, int i);
 
 void print_debug(const char *tag, const char *message, t_cmd *cmd, int cmd_count, int **fd); // todo: delete this on release
-//void print_close(const char *func, char *cmd, int i, int j);
+void print_close(const char *func, char *cmd, int i, int j);
 #endif

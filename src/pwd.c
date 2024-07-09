@@ -7,6 +7,6 @@ int	exec_pwd(t_cmd *cmd)
 
 	if ((getcwd(cwd, sizeof(cwd)) == 0) || ft_strlen(cwd) == 0)
 		return (FAILURE);
-	dprintln(cmd->out, cwd);
+	dprintln(cmd->bout, cwd);
 	return (SUCCESS);
 }

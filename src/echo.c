@@ -24,7 +24,7 @@ int	exec_echo(t_state *state, t_token *token, t_cmd *cmd)
 	buffer = merge_args(token, n);
 	if (!buffer)
 		return (FAILURE);
-	dprint(cmd->out, buffer);
+	dprint(cmd->bout, buffer);
 	return (free(buffer), SUCCESS);
 }
 

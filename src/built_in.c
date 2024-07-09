@@ -46,18 +46,19 @@ void	built_in_handle_fds(t_cmd *cmd, int **pipe_fds)
 {
 	if (pipe_fds)
 	{
-		if (!cmd->is_first_cmd && cmd->in == NAFD)
-			cmd->in = pipe_fds[0][0];
-		if (!cmd->is_last_cmd && cmd->out == NAFD)
-			cmd->out = pipe_fds[1][1];
+		if (cmd->idx < cmd->count - 1 && cmd->idx != 0 && cmd->in == NAFD)
+			cmd->bin = pipe_fds[cmd->idx][0];
+		else if (cmd->in != NAFD)
+			cmd->bin = cmd->in;
+		if (cmd->idx < cmd->count - 1 && cmd->out == NAFD)
+			cmd->bout = pipe_fds[cmd->idx][1];
+		else if (cmd->out != NAFD)
+			cmd->bout = cmd->out;
 	}
-	else
-	{
-		if (cmd->in == NAFD)
-			cmd->in = STDIN_FILENO;
-		if (cmd->out == NAFD)
-			cmd->out = STDOUT_FILENO;
-	}
+	if (cmd->in == NAFD)
+		cmd->bin = STDIN_FILENO;
+	if (cmd->out == NAFD)
+		cmd->bout = STDOUT_FILENO;
 }
 
 int	exec_built_in(t_state *state, t_token *token, t_cmd *cmd, int **pipe_fds)

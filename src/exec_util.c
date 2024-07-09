@@ -33,9 +33,8 @@ int	cmd_init(t_cmd *cmd, int arr_len)
 	cmd->cmd = NULL;
 	cmd->in = NAFD;
 	cmd->out = NAFD;
-	cmd->is_first_cmd = false;
-	cmd->is_last_cmd = false;
-	cmd->cmd_idx = 0;
+	cmd->idx = 0;
+	cmd->count = 0;
 	cmd->heredoc = (int *) malloc(sizeof(int) * arr_len);
 	if (!cmd->heredoc)
 		return (FAILURE);

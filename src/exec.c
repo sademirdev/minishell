@@ -14,13 +14,12 @@ void	run_executor(t_state *state)
 
 static void	fork_init_exec_child_part_close(int **fd, int i, char *delete_me_on_release)
 {
-		(void)delete_me_on_release;
+	(void)delete_me_on_release;
+	(void)fd;
 	if (i != 0)
 	{
 		close(fd[i - 1][0]);
-		//print_close(__func__, delete_me_on_release, i - 1, 0);
 		close(fd[i - 1][1]);
-		//print_close(__func__, delete_me_on_release, i - 1, 1);
 	}
 }
 

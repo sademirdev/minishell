@@ -41,8 +41,8 @@ static int	print_export(t_state *state, t_cmd *cmd)
 	i = 0;
 	while (state->env[i])
 	{
-		dprint(cmd->out, "declare -x ");
-		dprintln(cmd->out, state->env[i]);
+		dprint(cmd->bout, "declare -x ");
+		dprintln(cmd->bout, state->env[i]);
 		i++;
 	}
 	return (SUCCESS);
