@@ -36,7 +36,7 @@ int	fork_init_exec_child_part(t_state *state, t_cmd *cmd, pid_t *pids,
 	{
 		if (set_heredoc_fds(state->token_arr[i], cmd, i) != SUCCESS)
 			return (FAILURE);
-		g_sig = 1;
+		g_sig = IN_CMD;
 		pid = fork();
 		if (pid == -1)
 			return (free(pids), FAILURE);
@@ -47,7 +47,7 @@ int	fork_init_exec_child_part(t_state *state, t_cmd *cmd, pid_t *pids,
 			fork_init_exec_child_part_close(fd, i, cmd->cmd);
 		i++;
 	}
-	g_sig = 0;
+	g_sig = AFTER_CMD;
 	return (SUCCESS);
 }
 

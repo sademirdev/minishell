@@ -12,6 +12,11 @@
 
 # define NAFD -2
 
+# define IN_HEREDOC 2
+# define AFTER_HEREDOC 3
+# define IN_CMD 4
+# define AFTER_CMD 5
+
 # define ENO_OTHER 40000
 
 # define ERR_NO_SUCH_FILE_OR_DIR 30002
@@ -246,7 +251,7 @@ int					handle_redll(t_token *token, t_cmd *cmd, int i);
 void				handle_signals(void);
 int					set_heredoc_fds(t_token *token, t_cmd *cmd, int i);
 bool				cmd_is_str_built_in(t_cmd *cmd);
-void				print_syntax_err(int errs);
+void				print_syntax_err(int errs, t_state *state);
 void				state_dispose(t_state **state);
 void				dispose_prompt(t_state *state);
 int					pass_data(char *prompt, int *i);
@@ -273,6 +278,8 @@ int					cmd_init(t_cmd *cmd, int arr_len);
 void				state_dispose_single(t_state **state);
 void				cmd_dispose(t_cmd *cmd);
 int					**pipe_fds_dispose_idx(int **pipe_fds, int i);
+void				built_in_handle_fds(t_cmd *cmd, int **pipe_fds);
+
 
 void print_debug(const char *tag, const char *message, t_cmd *cmd, int cmd_count, int **fd); // todo: delete this on release
 void print_close(const char *func, char *cmd, int i, int j);

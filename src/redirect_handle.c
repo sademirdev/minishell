@@ -42,7 +42,8 @@ int	handle_redll(t_token *token, t_cmd *cmd, int i)
 	temp = token->next;
 	if (pipe(fd) == -1)
 		return (FAILURE);
-	while (true)
+	g_sig = IN_HEREDOC;
+	while (true && g_sig == IN_HEREDOC)
 	{
 		buf = readline("> ");
 		if (!buf || ft_strcmp(temp->data, buf) == 0)
@@ -50,7 +51,9 @@ int	handle_redll(t_token *token, t_cmd *cmd, int i)
 		write(fd[1], buf, ft_strlen(buf));
 		write(fd[1], "\n", 1);
 		free(buf);
+		buf = NULL;
 	}
+	g_sig = AFTER_HEREDOC;
 	free(buf);
 	close(fd[1]);
 	if (cmd->heredoc[i] != -2)

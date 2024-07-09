@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -19,13 +20,25 @@ void	coix(int sig)
 void	ctrl_c(int sig)
 {
 	(void)sig;
-	write(1, "\n", 1);
-	if (!g_sig)
+	if (g_sig == IN_HEREDOC)
 	{
-		rl_replace_line("", 0);
+		write(1, "\033[A", 3);
+		ioctl(0, TIOCSTI, "\n");
+	}
+	else if (g_sig == IN_CMD)
+	{
+		write(1, "\n", 1);
 		rl_on_new_line();
+		g_sig = AFTER_CMD;
+	}
+	else
+	{
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+	g_sig = 1;
 }
 
 void	tcseta(void)

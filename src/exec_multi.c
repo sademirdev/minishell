@@ -2,11 +2,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-// + echo a > a | echo b > b | echo c > c | echo d > d
-// + echo a | echo b | echo c | echo d
-// ls -la | grep c | wc -l
-// cat << a | cat << b | cat << c
-
 static void	close_other_fds(int i, int **fd, int arr_len)
 {
 	int	j;
@@ -91,45 +86,4 @@ void	handle_child_process(int **fd, t_state *state, t_cmd *cmd, int i)
 	if (execve(cmd->cmd, cmd->argv, state->env) == -1)
 		exit(state->status);
 	exit(0);
-}
-
-int	**pipe_fds_dispose_idx(int **pipe_fds, int i)
-{
-	if (!pipe_fds)
-		return (NULL);
-	if (i < 1)
-		return (free(pipe_fds), NULL);
-	i--;
-	while (i >= 0)
-	{
-		free(pipe_fds[i]);
-		i--;
-	}
-	return (NULL);
-}
-
-int	**pipe_fds_init(int pipe_count)
-{
-	int	**pipe_fds;
-	int	i;
-
-	pipe_fds = (int **) malloc(sizeof(int *) * pipe_count);
-	if (!pipe_fds)
-		return (NULL);
-	i = 0;
-	while (i < pipe_count)
-	{
-		pipe_fds[i] = (int *) malloc(sizeof(int) * 2);
-		if (!pipe_fds[i])
-			return (pipe_fds_dispose_idx(pipe_fds, i));
-		i++;
-	}
-	i = 0;
-	while (i < pipe_count)
-	{
-		if (pipe(pipe_fds[i]) == -1)
-			return (pipe_fds_dispose_idx(pipe_fds, pipe_count - 1), NULL);
-		i++;
-	}
-	return (pipe_fds);
 }

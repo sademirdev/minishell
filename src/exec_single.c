@@ -7,7 +7,7 @@ int	exec_single_cmd_with_fork(t_cmd *cmd, t_state *state)
 {
 	pid_t	pid;
 
-	g_sig = 1;
+	g_sig = IN_CMD;
 	pid = fork();
 	if (pid == -1)
 		return (FAILURE);
@@ -25,7 +25,7 @@ int	exec_single_cmd_with_fork(t_cmd *cmd, t_state *state)
 		waitpid(pid, &state->status, 0);
 		state->status = w_exit_status(state->status);
 	}
-	g_sig = 0;
+	g_sig = AFTER_CMD;
 	return (SUCCESS);
 }
 

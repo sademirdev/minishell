@@ -72,8 +72,7 @@ static char	*merge_args(t_token *arg, bool n)
 		arg = arg->next;
 	}
 	if (!n)
-		buffer[j] = '\n';
-	j++;
+		buffer[j++] = '\n';
 	buffer[j] = '\0';
 	return (buffer);
 }
@@ -92,6 +91,8 @@ static int	get_buffer_len(t_token *arg, bool n, int *j)
 	if (n)
 		newline = 0;
 	space = -1;
+	if (!arg)
+		space = 0;
 	while (arg)
 	{
 		if (arg->type != ARG)
@@ -104,5 +105,5 @@ static int	get_buffer_len(t_token *arg, bool n, int *j)
 			space++;
 		arg = arg->next;
 	}
-	return (len + space + newline + 1);
+	return (len + space + newline + 2);
 }

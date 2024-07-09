@@ -73,14 +73,26 @@ int	syntax_check(t_state *shell)
 			(syntax.zero_pipe << 16) | (syntax.undefined << 24));
 }
 
-void	print_syntax_err(int errs)
+void	print_syntax_err(int errs, t_state *state)
 {
 	if (errs & 0xff000000)
+	{
 		eprintln(ESTR_SYN_UNKNOWN_ERR);
+		state->status = 1;
+	}
 	else if (errs & 0x00ff0000)
+	{
 		eprintln(ESTR_SYN_ZERO_PIPE);
+		state->status = 258;
+	}
 	else if (errs & 0x0000ff00)
+	{
 		eprintln(ESTR_SYN_EMPTY_AFTER);
+		state->status = 258;
+	}
 	else if (errs & 0x000000ff)
+	{
 		eprintln(ESTR_SYN_MISS_QUOTE);
+		state->status = 1;
+	}
 }
