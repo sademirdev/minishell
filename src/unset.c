@@ -10,7 +10,7 @@ int	exec_unset(t_state *state, t_token *token)
 		return (FAILURE);
 	if (!token->next)
 	{
-		state->status = 0;<
+		state->status = 0;
 		return (SUCCESS);
 	}
 	token = token->next;
@@ -51,6 +51,20 @@ static bool	validate_unset_arg(t_state *state, t_token *arg)
 	return (true);
 }
 
+static char	**allocate_new_str(char **str_arr)
+{
+	char	**new_str_arr;
+	int		i;
+
+	i = 0;
+	while (str_arr[i])
+		i++;
+	new_str_arr = (char **)malloc(sizeof(char *) * (i + 2));
+	if (!new_str_arr)
+		return (NULL);
+	return (new_str_arr);
+}
+
 char	**str_arr_remove(char **str_arr, char *key)
 {
 	char	**new_str_arr;
@@ -59,12 +73,7 @@ char	**str_arr_remove(char **str_arr, char *key)
 
 	if (!str_arr || !key)
 		return (NULL);
-	i = 0;
-	while (str_arr[i])
-		i++;
-	new_str_arr = (char **)malloc(sizeof(char *) * (i + 2));
-	if (!new_str_arr)
-		return (NULL);
+	new_str_arr = allocate_new_str(str_arr);
 	i = 0;
 	j = 0;
 	while (str_arr[i])

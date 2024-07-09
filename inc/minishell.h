@@ -279,6 +279,7 @@ void				state_dispose_single(t_state **state);
 void				cmd_dispose(t_cmd *cmd);
 int					**pipe_fds_dispose_idx(int **pipe_fds, int i);
 void				built_in_handle_fds(t_cmd *cmd, int **pipe_fds);
+void				dispose_paths(char **paths);
 
 
 void print_debug(const char *tag, const char *message, t_cmd *cmd, int cmd_count, int **fd); // todo: delete this on release

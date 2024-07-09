@@ -35,3 +35,18 @@ void	state_dispose_single(t_state **state)
 	free((*state)->prompt);
 	(*state)->prompt = NULL;
 }
+
+void	dispose_paths(char **paths)
+{
+	int	i;
+
+	if (!paths)
+		return ;
+	i = 0;
+	while (paths[i])
+	{
+		free(paths[i]);
+		i++;
+	}
+	free(paths);
+}

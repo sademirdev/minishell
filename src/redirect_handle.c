@@ -48,8 +48,7 @@ int	handle_redll(t_token *token, t_cmd *cmd, int i)
 		buf = readline("> ");
 		if (!buf || ft_strcmp(temp->data, buf) == 0)
 			break ;
-		write(fd[1], buf, ft_strlen(buf));
-		write(fd[1], "\n", 1);
+		dprintln(fd[1], buf);
 		free(buf);
 		buf = NULL;
 	}
@@ -58,8 +57,7 @@ int	handle_redll(t_token *token, t_cmd *cmd, int i)
 	close(fd[1]);
 	if (cmd->heredoc[i] != -2)
 		close(cmd->heredoc[i]);
-	cmd->heredoc[i] = fd[0];
-	return (SUCCESS);
+	return (cmd->heredoc[i] = fd[0], SUCCESS);
 }
 
 int	handle_redr(t_token *token, t_cmd *cmd, t_state *state)

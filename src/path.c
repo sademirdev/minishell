@@ -20,21 +20,6 @@ char	*get_env_path_arr_as_str(char **env)
 	return (NULL);
 }
 
-void	dispose_paths(char **paths)
-{
-	int	i;
-
-	if (!paths)
-		return ;
-	i = 0;
-	while (paths[i])
-	{
-		free(paths[i]);
-		i++;
-	}
-	free(paths);
-}
-
 char	*get_cmd_absolute_path(t_token *token, t_state *state)
 {
 	struct stat	buf;
@@ -56,13 +41,27 @@ char	*get_cmd_absolute_path(t_token *token, t_state *state)
 	return (new);
 }
 
+static char	*get_check_cmd_path(t_token *token, t_state *state, char	*temp)
+{
+	char			*cmd_path;
+	struct stat		buf;
+
+	cmd_path = ft_strjoin(temp, token->data, true);
+	if (!cmd_path)
+		return (NULL);
+	stat(cmd_path, &buf);
+	if (S_ISDIR(buf.st_mode))
+		return (free(cmd_path),
+			print_exec_err(state, token, 127, ERR_IS_DIR), NULL);
+	return (cmd_path);
+}
+
 static char	*get_cmd_relative_path(t_token *token, t_state *state,
 	char **path_arr)
 {
 	char			*cmd_path;
 	char			*temp;
 	int				i;
-	struct stat		buf;
 
 	i = 0;
 	if (*token->data == '\0')
@@ -74,13 +73,7 @@ static char	*get_cmd_relative_path(t_token *token, t_state *state,
 			return (NULL);
 		while (token->type != CMD)
 			token = token->next;
-		cmd_path = ft_strjoin(temp, token->data, true);
-		if (!cmd_path)
-			return (NULL);
-		stat(cmd_path, &buf);
-		if (S_ISDIR(buf.st_mode))
-			return (free(cmd_path),
-				print_exec_err(state, token, 127, ERR_IS_DIR), NULL);
+		cmd_path = get_check_cmd_path(token, state, temp);
 		if (!access(cmd_path, F_OK) && !access(cmd_path, X_OK))
 			return (cmd_path);
 		free(cmd_path);
