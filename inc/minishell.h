@@ -2,7 +2,6 @@
 # define MINISHELL_H
 
 # include <stdbool.h>
-#include <stdio.h>
 
 # define PATH_MAX 4096
 
@@ -133,13 +132,6 @@ typedef struct s_cmd
 	int				bout;
 }					t_cmd;
 
-typedef struct s_handle_cp_arg
-{
-	int				i;
-	int				**fd;
-	int				arr_len;
-}					t_handle_cp_arg;
-
 void				print_unknown_err(t_state *state);
 int					print_exec_err(t_state *state, const t_token *token,
 						int status, int err);
@@ -205,7 +197,8 @@ int					syntax_pipe(t_state *shell, t_syntax *syntax, int *i);
 int					env_set_value(t_state *state, char *key_value);
 int					env_set_pwd(t_state *state);
 char				*env_get_value(t_state *state, const char *key);
-int					exec_built_in(t_state *state, t_token *token, t_cmd *cmd, int **pipe_fds);
+int					exec_built_in(t_state *state, t_token *token,
+						t_cmd *cmd, int **pipe_fds);
 int					exec_echo(t_state *state, t_token *token, t_cmd *cmd);
 int					exec_env(t_state *state, t_cmd *cmd);
 int					exec_cd(t_state *state, t_token *token);
@@ -250,7 +243,6 @@ int					handle_redrr(t_token *token, t_cmd *cmd, t_state *state);
 int					handle_redll(t_token *token, t_cmd *cmd, int i);
 void				handle_signals(void);
 int					set_heredoc_fds(t_token *token, t_cmd *cmd, int i);
-bool				cmd_is_str_built_in(t_cmd *cmd);
 void				print_syntax_err(int errs, t_state *state);
 void				state_dispose(t_state **state);
 void				dispose_prompt(t_state *state);
@@ -264,8 +256,6 @@ char				**token_to_arg(t_token *token, char *cmd_path);
 int					count_unnecessary_quotes(char *data);
 bool				is_unnecessary_quote(int *quote, char data);
 bool				has_unnecessary_quotes(char *data);
-void				t_handle_cp_arg_init(t_handle_cp_arg *arg, int **fd,
-						int i);
 void				handle_child_process(int **fd, t_state *state,
 						t_cmd *cmd, int i);
 int					fork_init(t_state *state, t_cmd *cmd, int **fd,
@@ -281,7 +271,4 @@ int					**pipe_fds_dispose_idx(int **pipe_fds, int i);
 void				built_in_handle_fds(t_cmd *cmd, int **pipe_fds);
 void				dispose_paths(char **paths);
 
-
-void print_debug(const char *tag, const char *message, t_cmd *cmd, int cmd_count, int **fd); // todo: delete this on release
-void print_close(const char *func, char *cmd, int i, int j);
 #endif

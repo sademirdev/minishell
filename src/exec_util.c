@@ -19,12 +19,6 @@ bool	token_has_cmd(t_token *token)
 	return (false);
 }
 
-void	t_handle_cp_arg_init(t_handle_cp_arg *arg, int **fd, int arr_len)
-{
-	arg->fd = fd;
-	arg->arr_len = arr_len;
-}
-
 int	cmd_init(t_cmd *cmd, int arr_len)
 {
 	int	i;

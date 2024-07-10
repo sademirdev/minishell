@@ -47,17 +47,6 @@ bool	is_meta_char(char *data, int i)
 	return (data[i] == '|' || data[i] == '>' || data[i] == '<');
 }
 
-bool	has_meta_char(char *data, int i)
-{
-	while (data[i])
-	{
-		if (is_meta_char(data, i))
-			return (true);
-		i++;
-	}
-	return (false);
-}
-
 t_token_type	get_meta_type(char *data, int i)
 {
 	if (data[i] == '|')

@@ -26,7 +26,6 @@ int	exec_exit(t_state *state, t_token *token)
 					FAILURE);
 		return (print_exec_err(state, token, \
 			(int)(exit_code % 256), ENO_OTHER), exit(exit_code), FAILURE);
-		dprintf(2, "[DEBUG]: at\n");
 	}
 	return (exit(exit_code), SUCCESS);
 }

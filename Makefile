@@ -1,14 +1,13 @@
-CC				= clang
+CC					= clang
 CFLAGS			=
 PROGRAM			= minishell
-LIB				= lib
 SRC_DIR			= src
 CMD_DIR			= cmd
 BIN_DIR			= bin
 INC_DIR			= -Iinc -I./lib/readline/include
 OBJ_DIR			= build
-NAME			= $(BIN_DIR)/$(PROGRAM)
-SRCS			= src/meta.c src/quote.c src/separator.c src/token.c \
+NAME				= $(BIN_DIR)/$(PROGRAM)
+SRCS				= src/meta.c src/quote.c src/separator.c src/token.c \
 	src/token_add.c src/token_append.c src/token_append_util.c src/token_util.c \
 	src/util.c src/dollar.c src/dollar_util.c src/dollar_handle.c \
 	src/assign_token_types.c src/lexer.c src/error.c src/exec.c src/path.c \
@@ -19,23 +18,12 @@ SRCS			= src/meta.c src/quote.c src/separator.c src/token.c \
 	src/util2.c src/util3.c src/quote_util.c src/exec_single.c src/exec_util.c \
 	src/built_in_util.c src/pipe_fds.c
 
-OBJS			= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-CMD				= $(CMD_DIR)/$(PROGRAM).c
-DEPENDENCIES	=
-RM				= rm -rf
-RLFLAGS			= -L./lib/readline/lib -I./lib/readline/include/readline -lreadline
-DIR				= $(shell echo $(PWD))
-READLINE		= ./lib/readline/lib/libreadline.a
-
-# F_INFO_LIB_LINUX = -ltinfo
-
-MURMUR_EVAL = $(LIB)/murmur.eval-master/murmur_eval/build/libmurmureval.a
-# os = ${shell uname -s}
-# ifeq '$(os)' 'Darwin'
-# NPROCS = $(shell sysctl -n hw.ncpu)
-# else ifeq '$(os)' 'Linux'
-# NPROCS = $(shell nproc)
-# MAKEFLAGS += -j$(NPROCS)
+OBJS					= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+CMD						= $(CMD_DIR)/$(PROGRAM).c
+RM						= rm -rf
+RLFLAGS				= -L./lib/readline/lib -I./lib/readline/include/readline -lreadline
+DIR						= $(shell echo $(PWD))
+READLINE			= ./lib/readline/lib/libreadline.a
 
 w = 1
 ifeq '$(w)' '1'
@@ -47,18 +35,12 @@ ifeq '$(debug)' '1'
 CFLAGS += -g
 endif
 
-asan = 1
+asan = 0
 ifeq '$(asan)' '1'
-# CFLAGS += -fsanitize=address
-# CFLAGS += -fsanitize=thread
+CFLAGS += -fsanitize=address
 endif
 
-test = 0
-ifeq '$(test)' '1'
-./$(attest) .
-endif
-
-all: $(DEPENDENCIES) $(READLINE)
+all: $(READLINE)
 	@mkdir -p bin
 	@$(MAKE) $(NAME)
 
@@ -69,47 +51,21 @@ $(READLINE):
 	@cd readline-8.2-rc1 && ./configure --prefix=$(DIR)/lib/readline && make && make install
 	@$(RM) readline-8.2-rc1
 
-$(MURMUR_EVAL):
-	@curl -L -O https://github.com/murmurlab/murmur.eval/archive/refs/heads/master.zip
-	@unzip -d $(LIB) master.zip
-	@$(RM) master.zip
-	@make -C $(LIB)/murmur.eval-master/murmur_eval
-
 $(NAME): $(CMD) $(OBJS)
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(RLFLAGS) $(F_INFO_LIB_LINUX) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(RLFLAGS) $(INC_DIR) $(CMD) $(OBJS) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(INC_DIR)  -c $< -o $@
-
-r: all
-	./$(NAME)
+	$(CC) $(CFLAGS) $(INC_DIR) -c $< -o $@
 
 clean:
 	$(RM) $(OBJS)
-c: clean
 
 fclean: clean
 	$(RM) $(NAME) & wait
-	# $(RM) lib/readline
-f: fclean
 
 re: fclean
 	$(MAKE) all
 
-mt: $(MURMUR_EVAL)
-	clang test/handle_dollar_test.c src/*.c test/libs/tin/equal_primitive.c lib/readline/lib/libreadline.dylib lib/readline/lib/libhistory.dylib -I lib/murmur.eval-master/murmur_eval/incs/ -I inc/ -I lib/readline/include/ -L ./lib/readline/lib/ -lreadline lib/murmur.eval-master/murmur_eval/build/libmurmureval.a -D TEST=1 && ./a.out
-
-t:
-	@mkdir -p bin
-	$(CC) $(CFLAGS) $(RLFLAGS) \
-		$(INC_DIR) \
-		-Itest/libs \
-		test/libs/tin/equal_primitive.c \
-		test/tests/asdsec_tests/separator_test.c \
-		test/main.c \
-		-D TEST=1 $(SRCS) -o bin/test
-	@./bin/test
-
-.PHONY: all clean fclean re run
+.PHONY: all clean fclean re

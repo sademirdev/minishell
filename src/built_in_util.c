@@ -23,13 +23,6 @@ static bool	str_is_build_in(const char *str)
 	return (false);
 }
 
-bool	cmd_is_str_built_in(t_cmd *cmd)
-{
-	if (!cmd || !cmd->cmd)
-		return (false);
-	return (str_is_build_in(cmd->cmd));
-}
-
 bool	token_is_built_in(t_token *token)
 {
 	if (!token || token->type != CMD)

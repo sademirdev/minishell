@@ -61,14 +61,8 @@ static t_state	*state_init(char **argv, char **env)
 	return (state);
 }
 
-int	main(int argc, char **argv, char **env)
+static void	shell_routine(t_state *state)
 {
-	t_state	*state;
-
-	handle_signals();
-	state = state_init(argv, env);
-	if (!state)
-		return (argc);
 	while (true)
 	{
 		state->prompt = readline(COLOR_GREEN PROMPT COLOR_RESET);
@@ -91,5 +85,16 @@ int	main(int argc, char **argv, char **env)
 		}
 		run_executor(state);
 	}
+}
+
+int	main(int argc, char **argv, char **env)
+{
+	t_state	*state;
+
+	handle_signals();
+	state = state_init(argv, env);
+	if (!state)
+		return (argc);
+	shell_routine(state);
 	return (state_dispose(&state), state->status);
 }

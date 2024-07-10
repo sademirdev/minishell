@@ -77,7 +77,7 @@ int **pipe_fds)
 	cmd_path = get_cmd_path(token, state);
 	if (!cmd_path)
 	{
-		if (state->err != HANDLED && state->err != SUCCESS)
+		if (state->err != HANDLED)
 			return (print_exec_err(state, token, 127, ERR_CMD_NOT_FOUND),
 				FAILURE);
 		return (FAILURE);

@@ -8,7 +8,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-void	coix(int sig)
+void	ctrl_d(int sig)
 {
 	(void)sig;
 	rl_on_new_line();
@@ -62,5 +62,5 @@ void	handle_signals(void)
 {
 	tcseta();
 	signal(SIGINT, ctrl_c);
-	signal(SIGQUIT, coix);
+	signal(SIGQUIT, ctrl_d);
 }
