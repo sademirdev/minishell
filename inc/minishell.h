@@ -270,5 +270,7 @@ void				cmd_dispose(t_cmd *cmd);
 int					**pipe_fds_dispose_idx(int **pipe_fds, int i);
 void				built_in_handle_fds(t_cmd *cmd, int **pipe_fds);
 void				dispose_paths(char **paths);
+int					env_len(t_state *state);
+
 
 #endif

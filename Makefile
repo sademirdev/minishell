@@ -16,7 +16,7 @@ SRCS				= src/meta.c src/quote.c src/separator.c src/token.c \
 	src/pwd.c src/syntax_check_util.c src/syntax_check.c src/unset.c \
 	src/signal.c src/dispose.c src/print_util.c src/token_util2.c src/exec_multi.c \
 	src/util2.c src/util3.c src/quote_util.c src/exec_single.c src/exec_util.c \
-	src/built_in_util.c src/pipe_fds.c
+	src/built_in_util.c src/pipe_fds.c src/env_util.c
 
 OBJS					= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CMD						= $(CMD_DIR)/$(PROGRAM).c
