@@ -7,7 +7,7 @@ Minishell is a simple imitation of the bash command line interface. Developed as
 To clone this project onto your local machine, follow these steps:
 
 ```bash
-git clone https://github.com/asdsec/minishell.git
+git clone https://github.com/sademirdev/minishell.git
 cd minishell
 ```
 
@@ -15,7 +15,7 @@ cd minishell
 
 The necessary libraries and tools for Minishell to operate:
 
-- GCC compiler
+- Clang compiler
 - Make
 - readline library
 - Installation
@@ -24,7 +24,7 @@ To compile and run the project, use the following commands:
 
 ```bash
 make
-./minishell
+bin/minishell
 ```
 
 ## Features
@@ -56,10 +56,10 @@ If you would like to contribute to the project:
 This project is licensed under the [MIT License](./LICENSE).
 
 ## Authors
-- Samet Demir
-- Mehmet Ali Keklik
-- Ali Berk Pancar
-- Hülya Kızrak Yiğit
-- Ahmet Cemil Bostanoğlu
-- Kaan Karakuş
-- Ahmet Faruk Basaran
+- [Samet Demir](https://github.com/sademirdev)
+- [Mehmet Ali Keklik](https://github.com/Dumran)
+- [Ali Berk Pancar](https://github.com/aliberkpancar)
+- [Hülya Kızrak Yiğit](https://github.com/hulyakizrakyigit)
+- [Ahmet Cemil Bostanoğlu](https://github.com/acbst0)
+- [Kaan Karakuş](https://github.com/kaankarakus)
+- [Ahmet Faruk Basaran](https://github.com/murmurlab)
