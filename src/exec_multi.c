@@ -23,9 +23,7 @@ static void	set_fds_1(int **fd, t_cmd *cmd, int i)
 	if (cmd->in == NAFD)
 	{
 		if (cmd->heredoc)
-		{
 			cmd->in = cmd->heredoc[i];
-		}
 	}
 	if (i != 0)
 	{
@@ -56,7 +54,10 @@ static void	set_fds_2(int **fd, t_cmd *cmd, int arr_len, int i)
 			close(fd[i][1]);
 		}
 		else
+		{
 			dup2(fd[i][1], STDOUT_FILENO);
+			close(fd[i][1]);
+		}
 	}
 	else
 	{

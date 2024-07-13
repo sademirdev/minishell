@@ -27,6 +27,8 @@ int	cmd_init(t_cmd *cmd, int arr_len)
 	cmd->cmd = NULL;
 	cmd->in = NAFD;
 	cmd->out = NAFD;
+	cmd->bin = NAFD;
+	cmd->bout = NAFD;
 	cmd->idx = 0;
 	cmd->count = 0;
 	cmd->heredoc = (int *) malloc(sizeof(int) * arr_len);

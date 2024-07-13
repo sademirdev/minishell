@@ -79,6 +79,8 @@ int	handle_redr(t_token *token, t_cmd *cmd, t_state *state)
 	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (cmd->out == -1)
 		return (print_exec_err(state, token, 103, ENOENT));
+	if (token_arr_len(state->token_arr) > 1)
+		dup2(cmd->out, STDOUT_FILENO);
 	return (SUCCESS);
 }
 
@@ -94,5 +96,7 @@ int	handle_redrr(t_token *token, t_cmd *cmd, t_state *state)
 	cmd->out = open(temp->data, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (cmd->out == -1)
 		return (print_exec_err(state, token, 105, ENOENT));
+	if (token_arr_len(state->token_arr) > 1)
+		dup2(cmd->out, STDOUT_FILENO);
 	return (SUCCESS);
 }

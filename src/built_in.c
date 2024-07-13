@@ -48,8 +48,8 @@ static void	set_fds_1(int **fd, t_cmd *cmd, int i)
 		}
 	}
 	else
-		if (cmd->in == NAFD)
-			cmd->bin = STDIN_FILENO;
+		if (cmd->in != NAFD)
+			cmd->bin = cmd->in;
 }
 
 static void	set_fds_2(int **fd, t_cmd *cmd, int arr_len, int i)
@@ -76,8 +76,8 @@ static void	set_fds_2(int **fd, t_cmd *cmd, int arr_len, int i)
 		}
 	}
 	else
-		if (cmd->out == NAFD)
-			cmd->bout = STDOUT_FILENO;
+		if (cmd->out != NAFD)
+			cmd->bout = cmd->out;
 }
 
 void	built_in_handle_fds(t_cmd *cmd, int **pipe_fds)
@@ -87,6 +87,10 @@ void	built_in_handle_fds(t_cmd *cmd, int **pipe_fds)
 			cmd->in = cmd->heredoc[cmd->idx];
 	set_fds_1(pipe_fds, cmd, cmd->idx);
 	set_fds_2(pipe_fds, cmd, cmd->count, cmd->idx);
+	if (cmd->bout == NAFD)
+		cmd->bout = STDOUT_FILENO;
+	if (cmd->bin == NAFD)
+		cmd->bin = STDIN_FILENO;
 }
 
 int	exec_built_in(t_state *state, t_token *token, t_cmd *cmd, int **pipe_fds)

@@ -8,11 +8,11 @@ static int	print_export(t_state *state, t_cmd *cmd);
 static bool	validate_export_value(t_state *state, t_token *arg);
 static int	export_env(t_token *arg, t_state *state);
 
-static void export_sort(t_state *state, int len)
+static void	export_sort(t_state *state, int len)
 {
-	int 	i;
+	int		i;
 	int		j;
-	int 	sorted;
+	int		sorted;
 	char	*temp;
 
 	i = 0;
